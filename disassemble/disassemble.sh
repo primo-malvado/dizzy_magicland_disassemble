@@ -8,7 +8,6 @@ taput extract -s 8 original/MagiclandDizzy-original.tap original/05.bin
 
 
 perl disassemble/disasemble_01.pl > source/01.asm
-perl disassemble/disasemble_03.pl > source/03.asm
-perl disassemble/disasemble_04.pl > source/04.asm
+perl disassemble/disasemble_03_04.pl > source/03_04.asm
 perl disassemble/disasemble_05.pl > source/05.asm
  
