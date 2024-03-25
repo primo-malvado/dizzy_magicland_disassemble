@@ -231,16 +231,16 @@ L_7330:
         cp b
         _if_not z
                 cp $2A
-                jr nz, L_7366
-                ld a, (posicao_hero_x_em_nibbles_copia_2)
-                add a, $20
-                ld l, a
-                ld a, ($9D0E)
-                sub $0A
-                ld h, a
-                ld ($8B7D), hl
+                _if_not nz
+                        ld a, (posicao_hero_x_em_nibbles_copia_2)
+                        add a, $20
+                        ld l, a
+                        ld a, ($9D0E)
+                        sub $0A
+                        ld h, a
+                        ld ($8B7D), hl
 
-L_7366:
+                _end_if
                 call L_A26B
         _end_if
 
@@ -3875,43 +3875,41 @@ L_914A:
 L_9152:
         call get_first_or_second_nibble
         cp $0F
-        jr z, L_9176
-        ld b, $0D
-        cp $0D
-        jr z, L_9165
-        ld b, $1D
-        cp $0E
-        jr nz, L_9169
+        _if_not z
+                ld b, $0D
+                cp $0D
+                jr z, L_9165
+                ld b, $1D
+                cp $0E
+                jr nz, L_9169
 
 L_9165:
-        call get_first_or_second_nibble
-        add a, b
+                call get_first_or_second_nibble
+                add a, b
 
 L_9169:
-        ld hl, indice_letras
-        ld c, a
-        ld b, $00
-        add hl, bc
-        ld a, (hl)
-        call desenha_uma_letra_no_ecra
-        jr L_9152
+                ld hl, indice_letras
+                ld c, a
+                ld b, $00
+                add hl, bc
+                ld a, (hl)
+                call desenha_uma_letra_no_ecra
+                jr L_9152
+        _end_if
 
-
-L_9176:
         call get_first_or_second_nibble
         cp $0F
         ret z
         cp $08
-        jr c, L_918C
-        jr z, L_9193
-        cp $09
-        jr z, L_91DA
-        cp $0D
-        jr z, L_91A1
-        jr L_9152
+        _if_not c
+                jr z, L_9193
+                cp $09
+                jr z, L_91DA
+                cp $0D
+                jr z, L_91A1
+                jr L_9152
+        _end_if
 
-
-L_918C:
         add a, $40
         ld ($9B3C), a
         jr L_9152
@@ -3935,19 +3933,19 @@ L_91A1:
 L_91AB:
         call get_first_or_second_nibble
         cp $0F
-        jr z, L_91C0
-        inc b
-        cp $0E
-        jr z, L_91BB
-        cp $0D
-        jr nz, L_91AB
+        _if_not z
+                inc b
+                cp $0E
+                _if_not z
+                        cp $0D
+                        jr nz, L_91AB
+                _end_if
 
-L_91BB:
-        call get_first_or_second_nibble
-        jr L_91AB
+                call get_first_or_second_nibble
+                jr L_91AB
+        _end_if
 
 
-L_91C0:
         ld a, (valor_inicia_do_a_20)
         sub b
         ld ($9B3D), a
@@ -4019,16 +4017,15 @@ get_first_or_second_nibble:
         ld hl, valor_inicia_do_a_21
         inc (hl)
         bit 0, (hl)
-        jr z, L_9270
-        ld hl, (posicao_onde_comeca_o_nome_do_nivel)
-        ld a, (hl)
-        and $0F
-        inc hl
-        ld (posicao_onde_comeca_o_nome_do_nivel), hl
-        ret
+        _if_not z
+                ld hl, (posicao_onde_comeca_o_nome_do_nivel)
+                ld a, (hl)
+                and $0F
+                inc hl
+                ld (posicao_onde_comeca_o_nome_do_nivel), hl
+                ret
+        _end_if
 
-
-L_9270:
         ld hl, (posicao_onde_comeca_o_nome_do_nivel)
         ld a, (hl)
         srl a
@@ -4212,31 +4209,30 @@ verifica_se_clicaram_tecla:
         push hl
         ld l, a
         bit 4, a
-        jr nz, L_9399
-        push bc
-        ld bc, $FFFE
-        and $E0
-        rrca
-        rrca
-        add a, $80
-        ld ($9390), a
-        ld a, l
-        rlca
-        rlca
-        rlca
-        and $38
-        add a, $47
-        ld ($9394), a
-        res 0, b
-        in a, (c)
-        bit 0, a
-        pop bc
-        pop hl
-        ei
-        ret
+        _if_not nz
+                push bc
+                ld bc, $FFFE
+                and $E0
+                rrca
+                rrca
+                add a, $80
+                ld ($9390), a
+                ld a, l
+                rlca
+                rlca
+                rlca
+                and $38
+                add a, $47
+                ld ($9394), a
+                res 0, b
+                in a, (c)
+                bit 0, a
+                pop bc
+                pop hl
+                ei
+                ret
+        _end_if
 
-
-L_9399:
         rlca
         rlca
         rlca
@@ -4335,31 +4331,33 @@ L_9458:
         call desenha_nivel
         ld a, ($7929)
         and a
-        jr nz, L_94A0
-        ld hl, $68B8
-        ld a, (nivel)
-        cp $50
-        jr z, L_9486
-        ld hl, $30B8
-        cp $67
-        jr z, L_9486
-        ld hl, $3064
-        cp $7E
-        jr nz, L_94A0
+        _if_not nz
+                ld hl, $68B8
+                ld a, (nivel)
+                cp $50
+                _if_not z
+                        ld hl, $30B8
+                        cp $67
+                        _if_not z
+                        
+                                ld hl, $3064
+                                cp $7E
+                                jr nz, L_94A0
+                        _end_if
+                _end_if
 
-L_9486:
-        ld ix, $8A0F
-        ld (ix+$03), h
-        ld (ix+$06), l
+                ld ix, $8A0F
+                ld (ix+$03), h
+                ld (ix+$06), l
 
 L_9490:
-        call L_7401
-        ld a, (ix+$03)
-        add a, $08
-        ld (ix+$03), a
-        cp (ix+$06)
-        jr c, L_9490
-
+                call L_7401
+                ld a, (ix+$03)
+                add a, $08
+                ld (ix+$03), a
+                cp (ix+$06)
+                jr c, L_9490
+        _end_if
 L_94A0:
         ld a, (nivel)
         cp $55
