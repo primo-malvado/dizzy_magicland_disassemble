@@ -4430,35 +4430,34 @@ L_951F:
         ld d, (hl)
         inc hl
         bit 7, e
-        jr z, L_954E
-        bit 5, (hl)
-        jr z, L_9537
-        ld a, (hl)
-        rlca
-        rlca
-        and $7F
-        inc a
-        ld (sprites_repetidos), a
-        inc hl
-        jr L_954E
+        _if_not z
+                bit 5, (hl)
+                _if_not z
+                        ld a, (hl)
+                        rlca
+                        rlca
+                        and $7F
+                        inc a
+                        ld (sprites_repetidos), a
+                        inc hl
+                        jr L_954E ; else
+                _end_if
 
-
-L_9537:
-        ld a, (hl)
-        and $47
-        ld (apenas_brite_and_ink), a
-        ld a, (hl)
-        rlca
-        and $01
-        ld (sprite_espelho), a
-        ld a, (hl)
-        and $18
-        rrca
-        rrca
-        rrca
-        ld (background_color), a
-        inc hl
-
+                ld a, (hl)
+                and $47
+                ld (apenas_brite_and_ink), a
+                ld a, (hl)
+                rlca
+                and $01
+                ld (sprite_espelho), a
+                ld a, (hl)
+                and $18
+                rrca
+                rrca
+                rrca
+                ld (background_color), a
+                inc hl
+        _end_if
 L_954E:
         res 7, e
         ld (sprite_left), de
@@ -4681,44 +4680,44 @@ function_nome_nivel:
         ld hl, $FBB1
         ld a, (nivel)
         cp $01
-        jr z, L_96D6
-        cp $18
-        jr z, L_96D6
-        ld hl, $FC69
-        cp $1E
-        jr z, L_96D6
-        ld hl, $FC92
-        cp $09
-        jr z, L_96D6
-        ld hl, $FD56
-        cp $54
-        jr z, L_96D6
-        add a, $80
-        ld b, a
-        ld hl, nomes_niveis
+        _if_not z
+                cp $18
+                jr z, L_96D6
+                ld hl, $FC69
+                cp $1E
+                jr z, L_96D6
+                ld hl, $FC92
+                cp $09
+                jr z, L_96D6
+                ld hl, $FD56
+                cp $54
+                jr z, L_96D6
+                add a, $80
+                ld b, a
+                ld hl, nomes_niveis
 
 L_96B8:
-        ld a, (hl)
-        cp $FF
-        jr z, L_96D6
-        cp b
-        jr z, L_96D6
-        inc hl
+                ld a, (hl)
+                cp $FF
+                jr z, L_96D6
+                cp b
+                jr z, L_96D6
+                inc hl
 
 L_96C1:
-        ld a, (hl)
-        inc hl
-        cp $FF
-        jr z, L_96B8
-        and $0F
-        cp $0F
-        jr nz, L_96C1
-        ld a, (hl)
-        cp $F0
-        jr nz, L_96C1
-        inc hl
-        jp L_96B8
-
+                ld a, (hl)
+                inc hl
+                cp $FF
+                jr z, L_96B8
+                and $0F
+                cp $0F
+                jr nz, L_96C1
+                ld a, (hl)
+                cp $F0
+                jr nz, L_96C1
+                inc hl
+                jp L_96B8
+        _end_if
 
 L_96D6:
         ld a, $20
@@ -4791,10 +4790,10 @@ L_9734:
         ld a, ($9D33)
         ld hl, $FA3D
         and a
-        jr nz, L_9755
-        ld hl, $FA20
+        _if_not nz
+                ld hl, $FA20
+        _end_if
 
-L_9755:
         call L_9141
         ld bc, $FF02
         ld a, ($9D3F)
@@ -4831,31 +4830,34 @@ L_9768:
         ld a, ($8CBD)
         and a
         ld a, b
-        jr z, L_97AF
+        _if_not z
 
 L_9796:
-        and a
-        jr z, L_97A2
-        bit 5, c
-        jr nz, L_97A1
-        bit 2, c
-        jr z, L_97A2
+                and a
+                _if_not z
+                        bit 5, c
+                        _if_not nz
+                                bit 2, c
+                                jr z, L_97A2
 
-L_97A1:
-        dec a
-
+                        _end_if
+                        dec a
+                _end_if
 L_97A2:
-        cp $03
-        jr z, L_97AF
-        bit 4, c
-        jr nz, L_97AE
-        bit 1, c
-        jr z, L_97AF
+                cp $03
+                _if_not z
+                        bit 4, c
+                        jr nz, L_97AE
+                        bit 1, c
+                        _if_not z
 
 L_97AE:
-        inc a
+                                inc a
 
-L_97AF:
+                        _end_if
+                _end_if
+
+        _end_if
         cp b
         jr z, L_9764
         call L_98C7
@@ -4876,40 +4878,40 @@ L_97C7:
         call L_98C7
         ld ($9819), a
         cp $01
-        jr z, L_980C
-        call L_9826
-        ld a, ($9819)
-        call L_9912
-        ld a, ($9947)
-        and a
-        jr z, L_97F4
-        ld a, ($9819)
-        cp $40
-        jr nz, L_97F6
-        ld hl, $85B0
-        call L_9926
-        ld a, ($9947)
-        and a
-        jr nz, L_97F6
+        _if_not z
+                call L_9826
+                ld a, ($9819)
+                call L_9912
+                ld a, ($9947)
+                and a
+                _if_not z
+                        ld a, ($9819)
+                        cp $40
+                        jr nz, L_97F6
+                        ld hl, $85B0
+                        call L_9926
+                        ld a, ($9947)
+                        and a
+                        jr nz, L_97F6
+                _end_if
 
-L_97F4:
-        jr L_980F
+                jr L_980F
 
 
 L_97F6:
-        ld hl, L_980F
-        push hl
-        ld a, ($9819)
-        cp $01
-        ret z
-        cp $4D
-        jr z, L_981A
-        cp $4E
-        jr z, L_9820
-        pop hl
-        call L_9841
+                ld hl, L_980F
+                push hl
+                ld a, ($9819)
+                cp $01
+                ret z
+                cp $4D
+                jr z, L_981A
+                cp $4E
+                jr z, L_9820
+                pop hl
+                call L_9841
+        _end_if
 
-L_980C:
         call L_A287
 
 L_980F:
@@ -4996,24 +4998,26 @@ L_9867:
         add a, $22
         ld (ix+$02), a
         cp $38
-        jr c, L_9885
-        ld a, (nivel)
-        cp $54
-        jr z, L_9890
-        ld a, (ix+$02)
 
-L_9885:
+        _if_not c
+                ld a, (nivel)
+                cp $54
+                jr z, L_9890
+                ld a, (ix+$02)
+        _end_if
+
         cp $50
-        jr nc, L_9894
-        ld a, (nivel)
-        cp $56
-        jr nz, L_9894
+        _if_not nc
+                ld a, (nivel)
+                cp $56
+                _if_not nz
 
 L_9890:
-        ld a, $90
-        jr L_989B
+                        ld a, $90
+                        jr L_989B
 
-
+                _end_if
+        _end_if
 L_9894:
         ld a, ($9D0E)
         and $F8
@@ -5025,12 +5029,13 @@ L_989B:
         ld a, (ix+$04)
         ld (next_sprite_index), a
         cp $13
-        jr nz, L_98AF
-        ld a, b
-        sub $08
-        ld (ix+$03), a
 
-L_98AF:
+        _if_not nz
+                ld a, b
+                sub $08
+                ld (ix+$03), a
+        _end_if
+
         ld a, $02
         ld (sound_to_play), a
         ret
@@ -5039,13 +5044,13 @@ L_98AF:
 L_98B5:
         call L_93AB
         and a
-        jr z, L_98C1
-        ld c, a
-        ld a, ($9D3E)
-        and a
-        ld a, c
+        _if_not z
+                ld c, a
+                ld a, ($9D3E)
+                and a
+                ld a, c
+        _end_if
 
-L_98C1:
         ld ($9D3E), a
         ret z
         xor a
@@ -5186,24 +5191,23 @@ L_9981:
 
 L_9984:
         rlc c
-        jr nc, L_9998
-        ld a, ($99C1)
-        ld b, a
+        _if_not nc
+                ld a, ($99C1)
+                ld b, a
 
- 
-        _do
-
-                exx
-                call L_9AC2
-                inc (ix)
-                exx
         
-        _djnz
+                _do
 
-        jr L_99A1
+                        exx
+                        call L_9AC2
+                        inc (ix)
+                        exx
+                
+                _djnz
 
+                jr L_99A1
+        _end_if
 
-L_9998:
         ld a, ($99C1)
         add a, (ix)
         ld (ix), a
@@ -5219,12 +5223,12 @@ L_99A1:
         inc (ix+$01)
         pop bc
         dec b
-        jr z, L_99B8
-        pop hl
-        jr L_997A
+        _if_not z
+                pop hl
+                jr L_997A
 
+        _end_if
 
-L_99B8:
         pop af
         dec c
         jr nz, L_9976
@@ -5262,11 +5266,12 @@ L_99DA:
         ld a, ($9D2F)
         sub b
         cp $03
-        jr c, L_99EE
-        ld a, ($9D2F)
-        ld ($9D2E), a
 
-L_99EE:
+        _if_not c
+                ld a, ($9D2F)
+                ld ($9D2E), a
+        _end_if
+
         ld ix, $5DE4
         ld b, $03
 
@@ -5323,11 +5328,10 @@ L_9A29:
         call L_9AFA
         ld a, (ix+$03)
         and a
-        jr z, L_9A3D
-        jr L_9AA7
+        _if_not z
+                jr L_9AA7
+        _end_if
 
-
-L_9A3D:
         push ix
         push bc
         ld e, (ix)
@@ -5439,10 +5443,11 @@ L_9AC2:
         ld bc, $9B19
         add a, c
         ld c, a
-        jr nc, L_9AF6
-        inc b
 
-L_9AF6:
+        _if_not nc
+                inc b
+        _end_if
+
         ld a, (bc)
         xor (hl)
         ld (hl), a
@@ -5951,30 +5956,33 @@ L_9D8C:
         ld c, a
         ld a, ($9D16)
         and a
-        jr nz, L_9DBB
-        ld a, ($9D31)
-        and a
-        jr nz, L_9DBB
-        bit 3, c
-        jr z, L_9DBB
-        ld a, $01
-        ld ($9D5F), a
-        ret
+        _if_not nz
+                ld a, ($9D31)
+                and a
+                _if_not nz
+                        bit 3, c
+                        _if_not z
+                                ld a, $01
+                                ld ($9D5F), a
+                                ret
+                        _end_if
+                _end_if
+        _end_if
 
 
-L_9DBB:
         bit 2, c
-        jr z, L_9DC4
-        ld a, $01
-        ld ($9D60), a
 
-L_9DC4:
+        _if_not z
+                ld a, $01
+                ld ($9D60), a
+        _end_if
+
         bit 1, c
-        jr z, L_9DCD
-        ld a, $01
-        ld ($9D61), a
+        _if_not z
+                ld a, $01
+                ld ($9D61), a
+        _end_if
 
-L_9DCD:
         bit 0, c
         jr z, L_9DD6
         ld a, $01
