@@ -4705,16 +4705,17 @@ L_96B8:
                 inc hl
 
 L_96C1:
-                ld a, (hl)
-                inc hl
-                cp $FF
-                jr z, L_96B8
-                and $0F
-                cp $0F
-                jr nz, L_96C1
-                ld a, (hl)
-                cp $F0
-                jr nz, L_96C1
+                _do
+                        ld a, (hl)
+                        inc hl
+                        cp $FF
+                        jr z, L_96B8
+                        and $0F
+                        cp $0F
+                        jr nz, L_96C1
+                        ld a, (hl)
+                        cp $F0
+                _while nz
                 inc hl
                 jp L_96B8
         _end_if
@@ -4806,10 +4807,11 @@ L_9764:
         ld a, ($9D2F)
         ld c, a
 
-L_9768:
-        ld a, ($9D2F)
-        cp c
-        jr z, L_9768
+        _do
+                ld a, ($9D2F)
+                cp c
+        _while z
+        
         ld a, ($9D35)
         inc a
         and $07
@@ -4830,6 +4832,7 @@ L_9768:
         ld a, ($8CBD)
         and a
         ld a, b
+
         _if_not z
 
 L_9796:
@@ -5984,11 +5987,11 @@ L_9D8C:
         _end_if
 
         bit 0, c
-        jr z, L_9DD6
-        ld a, $01
-        ld ($9D62), a
+        _if_not z
+                ld a, $01
+                ld ($9D62), a
+        _end_if
 
-L_9DD6:
         ld a, ($9D63)
         and a
         ret nz
@@ -6121,12 +6124,12 @@ L_9EA7:
 L_9EAE:
         ld a, ($8B85)
         and a
-        jr z, L_9EBA
-        ld a, ($9D14)
-        and a
-        jr z, L_9F15
+        _if_not z
+                ld a, ($9D14)
+                and a
+                jr z, L_9F15
 
-L_9EBA:
+        _end_if
         ld a, ($9D16)
         and a
         jr z, L_9EC9
@@ -6151,36 +6154,34 @@ L_9EE1:
         call L_9D8C
         ld a, ($9D60)
         cp $01
-        jr nz, L_9EEF
-        ld a, $01
-        jr L_9EFB
+        _if_not nz
+                ld a, $01
+                jr L_9EFB
+        _end_if
 
-
-L_9EEF:
         ld a, ($9D61)
         cp $01
-        jr nz, L_9EFA
-        ld a, $02
-        jr L_9EFB
+        _if_not nz
+                ld a, $02
+                jr L_9EFB
+        _end_if
 
-
-L_9EFA:
         xor a
 
 L_9EFB:
         ld b, a
         ld a, ($9D62)
         and a
-        jr z, L_9F11
-        xor a
-        ld (sound_to_play), a
-        xor a
-        ld (frame_movimento_do_hero), a
-        ld a, $F8
-        ld ($9D11), a
-        ld a, $03
+        _if_not z
+                xor a
+                ld (sound_to_play), a
+                xor a
+                ld (frame_movimento_do_hero), a
+                ld a, $F8
+                ld ($9D11), a
+                ld a, $03
+        _end_if
 
-L_9F11:
         add a, b
         ld ($9D16), a
 
@@ -6190,14 +6191,14 @@ L_9F15:
         ld a, ($9D63)
         and a
         ld a, ($9D16)
-        jr nz, L_9F2A
-        ld hl, $A18D
-        ld c, a
-        ld b, $00
-        add hl, bc
-        ld a, (hl)
+        _if_not nz
+                ld hl, $A18D
+                ld c, a
+                ld b, $00
+                add hl, bc
+                ld a, (hl)
+        _end_if
 
-L_9F2A:
         sla a
         rla
         rla
@@ -6244,33 +6245,33 @@ L_9F6E:
 L_9F7E:
         ld a, ($8B85)
         and a
-        jr nz, L_9F8D
-        ld a, ($9D11)
-        and a
-        ld a, $01
-        jp p, L_9F9E
+        _if_not nz
+                ld a, ($9D11)
+                and a
+                ld a, $01
+                jp p, L_9F9E
+        _end_if
 
-L_9F8D:
         ld a, ($9D16)
         cp $06
-        jr z, L_9FAC
-        cp $08
-        ld a, $FA
-        jr z, L_9F9E
-        ld a, ($9D11)
-        inc a
-
+        _if_not z
+                cp $08
+                ld a, $FA
+                _if_not z
+                        ld a, ($9D11)
+                        inc a
+                _end_if
 L_9F9E:
-        ld ($9D11), a
-        bit 7, a
-        jp nz, L_9FB8
-        jr L_9FED
+                        ld ($9D11), a
+                        bit 7, a
+                        jp nz, L_9FB8
+                        jr L_9FED
 
 
 L_9FA8:
-        xor a
-        ld ($9D14), a
-
+                        xor a
+                        ld ($9D14), a
+        _end_if
 L_9FAC:
         ld a, (nivel)
         ld b, a
@@ -6316,11 +6317,11 @@ L_9FB8:
 
 L_9FED:
         cp $08
-        jr c, L_9FF6
-        ld a, $07
-        ld ($9D11), a
+        _if_not c
+                ld a, $07
+                ld ($9D11), a
+        _end_if
 
-L_9FF6:
         add a, $04
         ld b, a
         call L_A0E6
@@ -6367,11 +6368,13 @@ L_A034:
         ld ($9D14), a
         ld a, ($9D11)
         cp $02
-        jr c, L_A053
-        ld a, $01
-        ld (sound_to_play), a
+        
+        _if_not c
+                ld a, $01
+                ld (sound_to_play), a
 
-L_A053:
+        _end_if
+
         xor a
         ld ($9D11), a
         jp L_9FAC
@@ -6504,14 +6507,13 @@ L_A134:
         ld c, a
         ld b, $00
         srl c
-        jr c, L_A140
-        add hl, bc
-        ld a, (hl)
-        and $F0
-        ret
+        _if_not c
+                add hl, bc
+                ld a, (hl)
+                and $F0
+                ret
+        _end_if
 
-
-L_A140:
         add hl, bc
         ld a, (hl)
         and $0F
@@ -6532,11 +6534,15 @@ L_A196:
         ld de, (posicao_hero_x_em_nibbles)
         ld a, (sera_o_nivel_copia_3)
         cp $67
-        jr z, L_A1A5
-        cp $7E
-        jr nz, L_A1AA
+
+        _if_not z
+                cp $7E
+                jr nz, L_A1AA
+        _end_if
+
 
 L_A1A5:
+       
         ld a, $50
         ld de, $6B16
 
@@ -6545,16 +6551,15 @@ L_A1AA:
         ld (nivel_copy), a
         ld (nivel), a
         cp $56
-        jr z, L_A1C3
-        cp $54
-        jr nz, L_A1DD
-        ld a, e
-        cp $18
-        jr c, L_A1DD
-        jr L_A1C8
+        _if_not z
+                cp $54
+                jr nz, L_A1DD
+                ld a, e
+                cp $18
+                jr c, L_A1DD
+                jr L_A1C8
+        _end_if
 
-
-L_A1C3:
         ld a, e
         cp $30
         jr nc, L_A1DD
@@ -6573,11 +6578,12 @@ L_A1C8:
 L_A1DD:
         ld a, (nivel)
         cp $4C
-        jr z, L_A1E8
-        cp $4F
-        jr nz, L_A1F0
+        _if_not z
+                cp $4F
+                jr nz, L_A1F0
 
-L_A1E8:
+        _end_if
+
         ld a, d
         cp $90
         jr c, L_A205
@@ -6589,13 +6595,12 @@ L_A1F0:
 
 L_A1F5:
         cp (hl)
-        jr nz, L_A202
-        ld de, ($9D1D)
-        ld (posicao_hero_x_em_nibbles_copia_2), de
-        jr L_A205
+        _if_not nz
+                ld de, ($9D1D)
+                ld (posicao_hero_x_em_nibbles_copia_2), de
+                jr L_A205
+        _end_if
 
-
-L_A202:
         inc hl
         djnz L_A1F5
 
@@ -6652,10 +6657,10 @@ L_A26B:
         and $FE
         cp $2C
         ld a, $FF
-        jr nz, L_A27A
-        xor a
+        _if_not nz
+                xor a
+        _end_if
 
-L_A27A:
         ld ($9D63), a
         ld hl, (posicao_hero_x_em_nibbles_copia_2)
         ld ($9D1D), hl
