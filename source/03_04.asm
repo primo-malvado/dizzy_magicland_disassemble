@@ -3878,12 +3878,12 @@ L_9152:
         _if_not z
                 ld b, $0D
                 cp $0D
-                jr z, L_9165
-                ld b, $1D
-                cp $0E
-                jr nz, L_9169
+                _if_not z
+                        ld b, $1D
+                        cp $0E
+                        jr nz, L_9169
 
-L_9165:
+                _end_if
                 call get_first_or_second_nibble
                 add a, b
 
@@ -4410,10 +4410,11 @@ L_9503:
         ld de, numero_de_sprites_por_nivel
         add a, e
         ld e, a
-        jr nc, L_950E
-        inc d
 
-L_950E:
+        _if_not nc
+                inc d
+        _end_if
+
         ld a, (de)
         ld (valor_atual_index_001), a
         and a
@@ -4463,13 +4464,12 @@ L_954E:
         ld (sprite_left), de
         ld a, (sprites_repetidos)
         and a
-        jr z, L_9560
-        dec a
-        ld (sprites_repetidos), a
-        jr L_9565
+        _if_not z
+                dec a
+                ld (sprites_repetidos), a
+                jr L_9565
+        _end_if
 
-
-L_9560:
         ld a, (hl)
         inc hl
         ld (next_sprite_index), a
@@ -4477,28 +4477,28 @@ L_9560:
 L_9565:
         ld a, b
         and a
-        jr nz, L_9592
-        push bc
-        push hl
-        call function_print_sprite
-        ld a, (background_color)
-        push af
-        xor a
-        ld (background_color), a
-        call L_8DD7
-        pop af
-        ld (background_color), a
-        call desenha_sprite
-        ld a, (next_sprite_index)
-        cp $5B
-        call z, L_89EA
-        ld a, (next_sprite_index)
-        cp $73
-        call z, L_89E0
-        pop hl
-        pop bc
+        _if_not nz
+                push bc
+                push hl
+                call function_print_sprite
+                ld a, (background_color)
+                push af
+                xor a
+                ld (background_color), a
+                call L_8DD7
+                pop af
+                ld (background_color), a
+                call desenha_sprite
+                ld a, (next_sprite_index)
+                cp $5B
+                call z, L_89EA
+                ld a, (next_sprite_index)
+                cp $73
+                call z, L_89E0
+                pop hl
+                pop bc
+        _end_if
 
-L_9592:
         ld a, (valor_atual_index_001)
         dec a
         ld (valor_atual_index_001), a
@@ -4606,13 +4606,12 @@ L_962C:
         ld a, ($9D2B)
         cp (hl)
         ret z
-        jr c, L_963A
-        inc (hl)
-        ld a, (hl)
-        jr L_963E
+        _if_not c
+                inc (hl)
+                ld a, (hl)
+                jr L_963E
+        _end_if
 
-
-L_963A:
         add a, (hl)
         srl a
         ld (hl), a
@@ -4645,14 +4644,13 @@ L_9661:
 
 L_9668:
         sub $08
-        jr c, L_9673
-        ld (hl), $FF
-        inc l
-        djnz L_9668
-        jr L_967C
+        _if_not c
+                ld (hl), $FF
+                inc l
+                djnz L_9668
+                jr L_967C
+        _end_if
 
-
-L_9673:
         ld (hl), c
         inc l
         jr L_967A
