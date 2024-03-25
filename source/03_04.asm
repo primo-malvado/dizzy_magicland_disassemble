@@ -690,15 +690,15 @@ L_7A97:
         ld hl, $8CBD
         ld b, $00
 
-L_7A9C:
-        ld a, (hl)
-        cp $01
-        jr z, L_7AC0
-        and a
-        jr z, L_7AA8
-        inc hl
-        inc b
-        jr L_7A9C
+        _do
+                ld a, (hl)
+                cp $01
+                jr z, L_7AC0
+                and a
+                jr z, L_7AA8
+                inc hl
+                inc b
+        _while_true
 
 
 L_7AA8:
@@ -816,16 +816,16 @@ L_7B4F:
         ld ($9D27), a
         call L_9141
 
-L_7B57:
-        call L_73E5
-        call L_924F
-        ld hl, (posicao_onde_comeca_o_nome_do_nivel)
-        dec hl
-        ld (posicao_onde_comeca_o_nome_do_nivel), hl
-        cp $FF
-        jp z, L_A287
-        call L_9152
-        jr L_7B57
+        _do 
+                call L_73E5
+                call L_924F
+                ld hl, (posicao_onde_comeca_o_nome_do_nivel)
+                dec hl
+                ld (posicao_onde_comeca_o_nome_do_nivel), hl
+                cp $FF
+                jp z, L_A287
+                call L_9152
+        _while_true
 
 
 function_7B6E:
@@ -3785,16 +3785,15 @@ L_9124:
 L_912F:
         call coloca_em_de_hl_6020_B800
 
-L_9132:
-        ld a, (hl)
-        and a
-        jr z, L_913E
-        push hl
-        call desenha_uma_letra_no_ecra
-        pop hl
-        inc hl
-        jr L_9132
-
+        _do
+                ld a, (hl)
+                and a
+                jr z, L_913E
+                push hl
+                call desenha_uma_letra_no_ecra
+                pop hl
+                inc hl
+        _while_true
 
 L_913E:
         jp coloca_em_de_hl_5E22_B830
@@ -4687,15 +4686,15 @@ L_96FA:
         ld b, a
         ld c, $00
 
-L_96FD:
-        ld a, c
-        call L_98C7
-        cp $02
-        ret c
-        cp b
-        ret z
-        inc c
-        jr L_96FD
+        _do
+                ld a, c
+                call L_98C7
+                cp $02
+                ret c
+                cp b
+                ret z
+                inc c
+        _while_true
 
 
 L_9709:
@@ -4915,15 +4914,15 @@ L_9851:
         cp c
         jr nz, L_9851
 
-L_9859:
-        inc hl
-        ld a, (hl)
-        dec hl
-        cp $01
-        jr z, L_9864
-        ld (hl), a
-        inc hl
-        jr L_9859
+        _do
+                inc hl
+                ld a, (hl)
+                dec hl
+                cp $01
+                jr z, L_9864
+                ld (hl), a
+                inc hl
+        _while_true
 
 
 L_9864:

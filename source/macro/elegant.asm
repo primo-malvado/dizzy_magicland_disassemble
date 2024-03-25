@@ -33,6 +33,12 @@ DLOOP_5 =  0
         DLOOP_POP
     ENDM
 
+    MACRO _while_true
+
+        jr DLOOP_TOP
+        DLOOP_POP
+    ENDM
+
 
     MACRO _djnz
 
