@@ -13,10 +13,10 @@ start:
         ld sp, numero_de_sprites_por_nivel
         ld hl, $5B00
 
-        _do 
+        _do
+
                 ld a, l
                 ld b, $08
-
 
                 _do
 
@@ -27,13 +27,14 @@ start:
 
                 ld (hl), c
                 inc l
+                
         _while nz
 
         ld hl, $5C64
         ld de, $4000
         ld b, $C0
 
-
+  
         _do
 
                 ld (hl), e
@@ -64,6 +65,7 @@ L_5E8D:
         ld bc, $5000
 
 
+ 
         _do
 
                 in a, ($1F)
@@ -72,7 +74,7 @@ L_5E8D:
                 ei
                 halt
                 di
-        
+                
         _djnz
 
         ld a, c
@@ -164,10 +166,13 @@ restart_game:
         ld hl, $FF9C
         call L_9141
 
+
 L_72D4:
-        _do 
+        _do
+
                 call L_93AB
                 and $09
+        
         _while z
 
         ld a, $FF
@@ -244,12 +249,13 @@ L_7369:
         jr z, L_73BB
 
         _do
+
                 ld bc, ($9D2E)
                 ld a, b
                 sub c
                 cp $03
+        
         _while c
-
 
         ld a, b
         ld ($9D2E), a
@@ -305,16 +311,23 @@ L_73C3:
         ; End of unknown area $73E2 to $73E4
 
 
-L_73E5:
-        call L_93AB
-        and a
-        jr nz, L_73E5
 
-        _do 
+L_73E5:
+        _do
+
+                call L_93AB
+                and a
+        
+        _while nz
+
+        _do
+
                 call playsound
                 call L_93AB
                 and a
+        
         _while z
+
         ret
 
 
@@ -686,77 +699,83 @@ function_7A6A:
         cp $27
         jp c, L_7B32
 
+
 L_7A97:
-        ld hl, $8CBD
-        ld b, $00
+        _do
+
+                ld hl, $8CBD
+                ld b, $00
 
 L_7A9C:
-        ld a, (hl)
-        cp $01
-        jr z, L_7AC0
-        and a
-        jr z, L_7AA8
-        inc hl
-        inc b
-        jr L_7A9C
+                ld a, (hl)
+                cp $01
+                jr z, L_7AC0
+                and a
+                jr z, L_7AA8
+                inc hl
+                inc b
+                jr L_7A9C
+
 
 
 L_7AA8:
-        _do
+                _do
 
-                ld a, b
-                and a
-                jr z, L_7AB3
-                dec hl
-                ld a, (hl)
-                inc hl
-                ld (hl), a
-                dec hl
-        
-        _djnz
+                        ld a, b
+                        and a
+                        jr z, L_7AB3
+                        dec hl
+                        ld a, (hl)
+                        inc hl
+                        ld (hl), a
+                        dec hl
+                
+                _djnz
 
 
 L_7AB3:
-        ld a, ($9D40)
-        ld ($8CBD), a
+                ld a, ($9D40)
+                ld ($8CBD), a
 
 L_7AB9:
-        ld (ix), $FF
-        jp L_9725
+                ld (ix), $FF
+                jp L_9725
 
 
 L_7AC0:
-        dec hl
-        ld a, (hl)
-        cp $4E
-        jr z, L_7AC0
-        cp $4D
-        jr z, L_7AC0
-        ld ($9D34), a
-        push ix
-        push bc
-        call L_9826
-        call L_9867
-        pop bc
-        pop ix
-        dec b
-        ld a, $01
-        ld ($9D33), a
-        jr L_7AA8
+                dec hl
+                ld a, (hl)
+                cp $4E
+                jr z, L_7AC0
+                cp $4D
+                jr z, L_7AC0
+                ld ($9D34), a
+                push ix
+                push bc
+                call L_9826
+                call L_9867
+                pop bc
+                pop ix
+                dec b
+                ld a, $01
+                ld ($9D33), a
+                jr L_7AA8
 
 
 L_7AE1:
-        push ix
-        ld hl, $EBE6
-        call L_96EC
-        pop ix
-        jr L_7A97
+                push ix
+                ld hl, $EBE6
+                call L_96EC
+                pop ix
+                jr L_7A97
 
 
 L_7AED:
-        ld a, (dados_mapa_4)
-        inc a
-        jr z, L_7A97
+                ld a, (dados_mapa_4)
+                inc a
+        
+        _while z
+
         push ix
         ld a, $FF
         ld (dados_mapa_4), a
@@ -2434,6 +2453,7 @@ L_88A0:
 
                 call prepara_dados_mapa
                 add ix, de
+        
         _djnz
 
         ld a, $05
@@ -2461,7 +2481,7 @@ L_88A0:
         ld hl, $7A60
         ld b, $0A
 
- 
+
         _do
 
                 ld (hl), $00
@@ -3162,24 +3182,27 @@ colocar_attributos_de_cor:
         add hl, de
         ld de, $0020
 
-L_8DC7:
-        push hl
-        ld b, $01
-
- 
         _do
 
-                ld a, $01
-                xor (hl)
-                ld (hl), a
-                inc hl
-                
-        _djnz
+                push hl
+                ld b, $01
 
-        pop hl
-        add hl, de
-        dec c
-        jr nz, L_8DC7
+        
+                _do
+
+                        ld a, $01
+                        xor (hl)
+                        ld (hl), a
+                        inc hl
+                
+                _djnz
+
+                pop hl
+                add hl, de
+                dec c
+                
+        _while nz
+
         ret
 
 
@@ -3321,10 +3344,14 @@ desenha_sprite:
         ld a, b
         ld b, $00
 
-L_8E9C:
-        add hl, bc
-        inc a
-        jr nz, L_8E9C
+
+        _do
+
+                add hl, bc
+                inc a
+        
+        _while nz
+
         ld (primeiro_byte_da_sprite_a_desenhar), hl
         pop hl
 
@@ -3457,36 +3484,40 @@ L_8F85:
         srl a
         ld (largura_sprite_a_desenhar_copy), a
 
-L_8F90:
-        ld l, (ix)
-        inc ix
-        ld h, (ix)
-        inc ix
-        ld bc, $0000
-        add hl, bc
-        dec hl
-        ld a, (largura_sprite_a_desenhar_copy)
-        ld b, a
 
         _do
 
-                ld a, (de)
-                nop
-                inc de
-                inc hl
-                and (hl)
-                ld (hl), a
-        
-        _djnz
+                ld l, (ix)
+                inc ix
+                ld h, (ix)
+                inc ix
+                ld bc, $0000
+                add hl, bc
+                dec hl
+                ld a, (largura_sprite_a_desenhar_copy)
+                ld b, a
 
-        ex de, hl
-        ld bc, $0000
-        add hl, bc
-        ex de, hl
-        ld a, (altura_sprite_a_desenhar_copy)
-        dec a
-        ld (altura_sprite_a_desenhar_copy), a
-        jr nz, L_8F90
+                _do
+
+                        ld a, (de)
+                        nop
+                        inc de
+                        inc hl
+                        and (hl)
+                        ld (hl), a
+                        
+                _djnz
+
+                ex de, hl
+                ld bc, $0000
+                add hl, bc
+                ex de, hl
+                ld a, (altura_sprite_a_desenhar_copy)
+                dec a
+                ld (altura_sprite_a_desenhar_copy), a
+                
+        _while nz
+
         ret
 
 
@@ -3520,26 +3551,30 @@ L_8FE9:
 L_8FF0:
         ld ($900B), hl
 
-L_8FF3:
-        ld l, (ix)
-        inc ix
-        ld h, (ix)
-        inc ix
-        ld bc, $0000
-        add hl, bc
-        ld a, $00
-        ld ($9B31), a
-        ld a, (largura_sprite_a_desenhar_copy)
-        ld b, a
-        call function_901d
-        ex de, hl
-        ld bc, $0000
-        add hl, bc
-        ex de, hl
-        ld a, (altura_sprite_a_desenhar_copy)
-        dec a
-        ld (altura_sprite_a_desenhar_copy), a
-        jr nz, L_8FF3
+
+        _do
+
+                ld l, (ix)
+                inc ix
+                ld h, (ix)
+                inc ix
+                ld bc, $0000
+                add hl, bc
+                ld a, $00
+                ld ($9B31), a
+                ld a, (largura_sprite_a_desenhar_copy)
+                ld b, a
+                call function_901d
+                ex de, hl
+                ld bc, $0000
+                add hl, bc
+                ex de, hl
+                ld a, (altura_sprite_a_desenhar_copy)
+                dec a
+                ld (altura_sprite_a_desenhar_copy), a
+                
+        _while nz
+
         ret
 
 
@@ -3555,27 +3590,32 @@ function_901d:
         jp L_9039
 
 
+
 L_902B:
-        ld a, (de)
-        rlca
-        rlca
-        rlca
-        rlca
-        ld c, a
-        and $0F
-        xor (hl)
-        ld (hl), a
-        inc hl
-        dec b
-        ret z
-        ld a, c
+        _do
+
+                ld a, (de)
+                rlca
+                rlca
+                rlca
+                rlca
+                ld c, a
+                and $0F
+                xor (hl)
+                ld (hl), a
+                inc hl
+                dec b
+                ret z
+                ld a, c
 
 L_9039:
-        and $F0
-        xor (hl)
-        ld (hl), a
-        inc de
-        djnz L_902B
+                and $F0
+                xor (hl)
+                ld (hl), a
+                inc de
+                
+        _djnz
+
         ret
 
 
@@ -3592,33 +3632,38 @@ function_9041:
         jp L_9065
 
 
+
 L_9052:
-        ld a, (hl)
-        and $F0
-        ld c, a
-        ld a, (de)
-        rlca
-        rlca
-        rlca
-        rlca
-        ld ($8E49), a
-        and $0F
-        add a, c
-        ld (hl), a
-        inc hl
-        dec b
-        ret z
+        _do
+
+                ld a, (hl)
+                and $F0
+                ld c, a
+                ld a, (de)
+                rlca
+                rlca
+                rlca
+                rlca
+                ld ($8E49), a
+                and $0F
+                add a, c
+                ld (hl), a
+                inc hl
+                dec b
+                ret z
 
 L_9065:
-        ld a, (hl)
-        and $0F
-        ld c, a
-        ld a, ($8E49)
-        and $F0
-        add a, c
-        ld (hl), a
-        inc de
-        djnz L_9052
+                ld a, (hl)
+                and $0F
+                ld c, a
+                ld a, ($8E49)
+                and $F0
+                add a, c
+                ld (hl), a
+                inc de
+        
+        _djnz
+
         ret
 
 
@@ -3639,32 +3684,37 @@ function_9074:
         jp L_909C
 
 
+
 L_9088:
-        ld a, (de)
-        push bc
-        ld b, $5B
-        ld c, a
-        ld a, (bc)
-        pop bc
-        rlca
-        rlca
-        rlca
-        rlca
-        ld c, a
-        and $0F
-        xor (hl)
-        ld (hl), a
-        inc hl
-        dec b
-        ret z
-        ld a, c
+        _do
+
+                ld a, (de)
+                push bc
+                ld b, $5B
+                ld c, a
+                ld a, (bc)
+                pop bc
+                rlca
+                rlca
+                rlca
+                rlca
+                ld c, a
+                and $0F
+                xor (hl)
+                ld (hl), a
+                inc hl
+                dec b
+                ret z
+                ld a, c
 
 L_909C:
-        and $F0
-        xor (hl)
-        ld (hl), a
-        dec de
-        djnz L_9088
+                and $F0
+                xor (hl)
+                ld (hl), a
+                dec de
+                
+        _djnz
+
         ret
 
 
@@ -3686,38 +3736,43 @@ function_90a4:
         jp L_90D4
 
 
+
 L_90BB:
-        ld a, (hl)
-        and $F0
-        ld c, a
-        ld a, (de)
-        push bc
-        ld b, $5B
-        ld c, a
-        ld a, (bc)
-        pop bc
-        rlca
-        rlca
-        rlca
-        rlca
-        ld ($8E49), a
-        and $0F
-        add a, c
-        ld (hl), a
-        inc hl
-        dec b
-        ret z
+        _do
+
+                ld a, (hl)
+                and $F0
+                ld c, a
+                ld a, (de)
+                push bc
+                ld b, $5B
+                ld c, a
+                ld a, (bc)
+                pop bc
+                rlca
+                rlca
+                rlca
+                rlca
+                ld ($8E49), a
+                and $0F
+                add a, c
+                ld (hl), a
+                inc hl
+                dec b
+                ret z
 
 L_90D4:
-        ld a, (hl)
-        and $0F
-        ld c, a
-        ld a, ($8E49)
-        and $F0
-        add a, c
-        ld (hl), a
-        dec de
-        djnz L_90BB
+                ld a, (hl)
+                and $0F
+                ld c, a
+                ld a, ($8E49)
+                and $F0
+                add a, c
+                ld (hl), a
+                dec de
+        
+        _djnz
+
         ret
 
 
@@ -3733,7 +3788,7 @@ L_90EC:
         inc ix
         add hl, de
         ld b, $1E
-
+ 
         _do
 
                 ld (hl), $00
@@ -3771,10 +3826,15 @@ L_9106:
 L_9122:
         ld b, $2F
 
-L_9124:
-        inc b
-        sub $0A
-        jr nc, L_9124
+
+ 
+        _do
+
+                inc b
+                sub $0A
+        
+        _while nc
+
         add a, $3A
         ld (hl), b
         inc hl
@@ -3871,15 +3931,20 @@ L_91A1:
         push af
         ld b, $00
 
+
 L_91AB:
-        call get_first_or_second_nibble
-        cp $0F
-        jr z, L_91C0
-        inc b
-        cp $0E
-        jr z, L_91BB
-        cp $0D
-        jr nz, L_91AB
+        _do
+
+                call get_first_or_second_nibble
+                cp $0F
+                jr z, L_91C0
+                inc b
+                cp $0E
+                jr z, L_91BB
+                cp $0D
+                
+        _while nz
+
 
 L_91BB:
         call get_first_or_second_nibble
@@ -4031,11 +4096,14 @@ L_92C1:
         call L_92F8
         ld d, $00
 
-L_92CD:
-        ld a, $28
-        call L_92F8
-        dec d
-        jr nz, L_92CD
+        _do
+
+                ld a, $28
+                call L_92F8
+                dec d
+        
+        _while nz
+
         ld a, $2E
         call L_92F8
         ld a, $2B
@@ -4096,14 +4164,17 @@ L_931A:
         ld l, a
         ld d, $00
 
-L_9325:
-        ld a, $29
-        call L_92DC
-        ld a, l
-        add a, $08
-        ld l, a
-        dec d
-        jr nz, L_9325
+        _do
+
+                ld a, $29
+                call L_92DC
+                ld a, l
+                add a, $08
+                ld l, a
+                dec d
+        
+        _while nz
+
         ld a, l
         add a, $08
         ld l, a
@@ -4126,23 +4197,25 @@ L_933A:
         add ix, de
         ld c, $00
 
-        _do 
-                ld l, (ix)
-                ld h, (ix+$01)
-                ld de, $0000
-                add hl, de
-                ld b, $00
+L_9358:
+        ld l, (ix)
+        ld h, (ix+$01)
+        ld de, $0000
+        add hl, de
+        ld b, $00
 
-                _do
-                        ld (hl), d
-                        inc hl
+
+        _do
+
+                ld (hl), d
+                inc hl
         
-                _djnz
+        _djnz
 
-                inc ix
-                inc ix
-                dec c
-        _while nz
+        inc ix
+        inc ix
+        dec c
+        jr nz, L_9358
         ret
 
 
@@ -4225,25 +4298,28 @@ copia_color_attributes_para_ecra:
         ld hl, $5E05
         ld c, $11
 
-L_9433:
-        ld b, $1E
-
         _do
 
-                ld a, (hl)
-                set 6, a
-                ld (de), a
+                ld b, $1E
+
+                _do
+
+                        ld a, (hl)
+                        set 6, a
+                        ld (de), a
+                        inc hl
+                        inc de
+                
+                _djnz
+
                 inc hl
                 inc de
+                inc hl
+                inc de
+                dec c
         
-        _djnz
+        _while nz
 
-        inc hl
-        inc de
-        inc hl
-        inc de
-        dec c
-        jr nz, L_9433
         ret
 
 
@@ -4251,15 +4327,20 @@ L_9445:
         push af
         push bc
 
-L_9447:
-        ld bc, ($9D2E)
+ 
+        _do
 
-L_944B:
-        ld a, ($9D2F)
-        cp b
-        jr z, L_944B
-        and $03
-        jr z, L_9447
+                ld bc, ($9D2E)
+
+                _do
+                        ld a, ($9D2F)
+                        cp b
+                _while z
+                
+                and $03
+                
+        _while z
+
         pop bc
         pop af
         ret
@@ -4364,86 +4445,90 @@ L_950E:
         sub c
         ld b, a
 
-L_951F:
-        ld e, (hl)
-        inc hl
-        ld d, (hl)
-        inc hl
-        bit 7, e
-        jr z, L_954E
-        bit 5, (hl)
-        jr z, L_9537
-        ld a, (hl)
-        rlca
-        rlca
-        and $7F
-        inc a
-        ld (sprites_repetidos), a
-        inc hl
-        jr L_954E
+
+        _do
+
+                ld e, (hl)
+                inc hl
+                ld d, (hl)
+                inc hl
+                bit 7, e
+                jr z, L_954E
+                bit 5, (hl)
+                jr z, L_9537
+                ld a, (hl)
+                rlca
+                rlca
+                and $7F
+                inc a
+                ld (sprites_repetidos), a
+                inc hl
+                jr L_954E
 
 
 L_9537:
-        ld a, (hl)
-        and $47
-        ld (apenas_brite_and_ink), a
-        ld a, (hl)
-        rlca
-        and $01
-        ld (sprite_espelho), a
-        ld a, (hl)
-        and $18
-        rrca
-        rrca
-        rrca
-        ld (background_color), a
-        inc hl
+                ld a, (hl)
+                and $47
+                ld (apenas_brite_and_ink), a
+                ld a, (hl)
+                rlca
+                and $01
+                ld (sprite_espelho), a
+                ld a, (hl)
+                and $18
+                rrca
+                rrca
+                rrca
+                ld (background_color), a
+                inc hl
 
 L_954E:
-        res 7, e
-        ld (sprite_left), de
-        ld a, (sprites_repetidos)
-        and a
-        jr z, L_9560
-        dec a
-        ld (sprites_repetidos), a
-        jr L_9565
+                res 7, e
+                ld (sprite_left), de
+                ld a, (sprites_repetidos)
+                and a
+                jr z, L_9560
+                dec a
+                ld (sprites_repetidos), a
+                jr L_9565
 
 
 L_9560:
-        ld a, (hl)
-        inc hl
-        ld (next_sprite_index), a
+                ld a, (hl)
+                inc hl
+                ld (next_sprite_index), a
 
 L_9565:
-        ld a, b
-        and a
-        jr nz, L_9592
-        push bc
-        push hl
-        call function_print_sprite
-        ld a, (background_color)
-        push af
-        xor a
-        ld (background_color), a
-        call L_8DD7
-        pop af
-        ld (background_color), a
-        call desenha_sprite
-        ld a, (next_sprite_index)
-        cp $5B
-        call z, L_89EA
-        ld a, (next_sprite_index)
-        cp $73
-        call z, L_89E0
-        pop hl
-        pop bc
+                ld a, b
+                and a
+                jr nz, L_9592
+                push bc
+                push hl
+                call function_print_sprite
+                ld a, (background_color)
+                push af
+                xor a
+                ld (background_color), a
+                call L_8DD7
+                pop af
+                ld (background_color), a
+                call desenha_sprite
+                ld a, (next_sprite_index)
+                cp $5B
+                call z, L_89EA
+                ld a, (next_sprite_index)
+                cp $73
+                call z, L_89E0
+                pop hl
+                pop bc
 
 L_9592:
-        ld a, (valor_atual_index_001)
-        dec a
-        ld (valor_atual_index_001), a
-        jr nz, L_951F
+                ld a, (valor_atual_index_001)
+                dec a
+                ld (valor_atual_index_001), a
+                
+        _while nz
+
 
 L_959B:
         ld a, (posicao_atual_index_001)
@@ -4535,8 +4620,10 @@ L_9624:
         ld hl, $FF98
 
         _do
+
                 ld (hl), a
-                inc hl        
+                inc hl
+                
         _djnz
 
         ret
@@ -4578,38 +4665,50 @@ L_963E:
         ld de, $00F8
         ld b, $06
 
-L_9661:
-        push bc
-        ld a, ($9D2C)
-        add a, a
-        ld b, $08
+ 
+        _do
 
-L_9668:
-        sub $08
-        jr c, L_9673
-        ld (hl), $FF
-        inc l
-        djnz L_9668
-        jr L_967C
+                push bc
+                ld a, ($9D2C)
+                add a, a
+                ld b, $08
 
 
-L_9673:
-        ld (hl), c
-        inc l
-        jr L_967A
+        
+                _do
+
+                        sub $08
+                        jr c, L_9673
+                        ld (hl), $FF
+                        inc l
+                        
+                _djnz
+
+                jr L_967C
 
 
-L_9677:
-        ld (hl), $00
-        inc l
+        L_9673:
+                ld (hl), c
+                inc l
+                jr L_967A
 
-L_967A:
-        djnz L_9677
+        
+                _do
 
-L_967C:
-        add hl, de
-        pop bc
-        djnz L_9661
+                        ld (hl), $00
+                        inc l
+
+        L_967A:
+                
+                _djnz
+
+
+        L_967C:
+                add hl, de
+                pop bc
+        
+        _djnz
+
         ret
 
 
@@ -4640,19 +4739,24 @@ function_nome_nivel:
         ld b, a
         ld hl, nomes_niveis
 
+
 L_96B8:
-        ld a, (hl)
-        cp $FF
-        jr z, L_96D6
-        cp b
-        jr z, L_96D6
-        inc hl
+        _do
+
+                ld a, (hl)
+                cp $FF
+                jr z, L_96D6
+                cp b
+                jr z, L_96D6
+                inc hl
 
 L_96C1:
-        ld a, (hl)
-        inc hl
-        cp $FF
-        jr z, L_96B8
+                ld a, (hl)
+                inc hl
+                cp $FF
+                
+        _while z
+
         and $0F
         cp $0F
         jr nz, L_96C1
@@ -4719,14 +4823,18 @@ L_9725:
         call L_9141
         ld b, $00
 
-L_9734:
-        push bc
-        call L_98D2
-        pop bc
-        inc b
-        ld a, b
-        cp $04
-        jr nz, L_9734
+
+        _do
+
+                push bc
+                call L_98D2
+                pop bc
+                inc b
+                ld a, b
+                cp $04
+        
+        _while nz
+
         ld hl, $FA5F
         ld a, ($8CBD)
         and a
@@ -4746,61 +4854,67 @@ L_9755:
         jr nz, L_9796
         ld b, $03
 
+
 L_9764:
-        ld a, ($9D2F)
-        ld c, a
+        _do
 
-L_9768:
-        ld a, ($9D2F)
-        cp c
-        jr z, L_9768
-        ld a, ($9D35)
-        inc a
-        and $07
-        ld ($9D35), a
-        ld hl, $9D36
-        ld e, a
-        ld d, $00
-        add hl, de
-        ld a, (hl)
-        ld ($9B3C), a
-        push bc
-        call L_98D2
-        call L_98B5
-        pop bc
-        ld c, a
-        bit 3, c
-        jr nz, L_97C7
-        ld a, ($8CBD)
-        and a
-        ld a, b
-        jr z, L_97AF
+                ld a, ($9D2F)
+                ld c, a
 
-L_9796:
-        and a
-        jr z, L_97A2
-        bit 5, c
-        jr nz, L_97A1
-        bit 2, c
-        jr z, L_97A2
+                _do
+                        ld a, ($9D2F)
+                        cp c
+                _while z
 
-L_97A1:
-        dec a
+                ld a, ($9D35)
+                inc a
+                and $07
+                ld ($9D35), a
+                ld hl, $9D36
+                ld e, a
+                ld d, $00
+                add hl, de
+                ld a, (hl)
+                ld ($9B3C), a
+                push bc
+                call L_98D2
+                call L_98B5
+                pop bc
+                ld c, a
+                bit 3, c
+                jr nz, L_97C7
+                ld a, ($8CBD)
+                and a
+                ld a, b
+                jr z, L_97AF
 
-L_97A2:
-        cp $03
-        jr z, L_97AF
-        bit 4, c
-        jr nz, L_97AE
-        bit 1, c
-        jr z, L_97AF
+        L_9796:
+                and a
+                jr z, L_97A2
+                bit 5, c
+                jr nz, L_97A1
+                bit 2, c
+                jr z, L_97A2
 
-L_97AE:
-        inc a
+        L_97A1:
+                dec a
 
-L_97AF:
-        cp b
-        jr z, L_9764
+        L_97A2:
+                cp $03
+                jr z, L_97AF
+                bit 4, c
+                jr nz, L_97AE
+                bit 1, c
+                jr z, L_97AF
+
+        L_97AE:
+                inc a
+
+        L_97AF:
+                cp b
+        
+        _while z
+
         call L_98C7
         ld a, d
         jr z, L_9796
@@ -4882,9 +4996,13 @@ L_9826:
         ld b, a
         ld ix, dados_mapa_0
         ld de, $000F
-        
+
+
+
         _do
+
                 add ix, de
+        
         _djnz
 
         ret
@@ -4907,13 +5025,17 @@ L_9847:
         ld c, a
         ld hl, $8CBC
 
-L_9851:
-        inc hl
-        ld a, (hl)
-        cp $01
-        ret z
-        cp c
-        jr nz, L_9851
+
+        _do
+
+                inc hl
+                ld a, (hl)
+                cp $01
+                ret z
+                cp c
+                
+        _while nz
+
 
 L_9859:
         inc hl
@@ -5024,7 +5146,9 @@ L_98D2:
         ld b, a
 
         _do
+
                 add hl, de
+        
         _djnz
 
         ld e, (hl)
@@ -5123,40 +5247,44 @@ L_997A:
         rrca
         ld d, a
 
-L_9981:
-        ld e, $08
-        ld c, (hl)
 
-L_9984:
-        rlc c
-        jr nc, L_9998
-        ld a, ($99C1)
-        ld b, a
-
- 
         _do
 
-                exx
-                call L_9AC2
-                inc (ix)
-                exx
+                        ld e, $08
+                        ld c, (hl)
+
+                L_9984:
+                        rlc c
+                        jr nc, L_9998
+                        ld a, ($99C1)
+                        ld b, a
+
+
+                        _do
+
+                                exx
+                                call L_9AC2
+                                inc (ix)
+                                exx
+                                
+                        _djnz
+
+                        jr L_99A1
+
+
+                L_9998:
+                        ld a, ($99C1)
+                        add a, (ix)
+                        ld (ix), a
+
+                L_99A1:
+                        dec e
+                        jr nz, L_9984
+                        inc hl
+                        dec d
         
-        _djnz
+        _while nz
 
-        jr L_99A1
-
-
-L_9998:
-        ld a, ($99C1)
-        add a, (ix)
-        ld (ix), a
-
-L_99A1:
-        dec e
-        jr nz, L_9984
-        inc hl
-        dec d
-        jr nz, L_9981
         ld a, (ix+$02)
         ld (ix), a
         inc (ix+$01)
@@ -5187,51 +5315,54 @@ L_99C4:
         ld hl, $1000
 
 
- 
         _do
 
                 call L_9A88
                 add ix, de
-        
+                
         _djnz
 
         ld de, $0800
-
-L_99DA:
-        push de
-        halt
-        ld a, ($9D2E)
-        ld b, a
-        ld a, ($9D2F)
-        sub b
-        cp $03
-        jr c, L_99EE
-        ld a, ($9D2F)
-        ld ($9D2E), a
-
-L_99EE:
-        ld ix, $5DE4
-        ld b, $03
 
 
  
         _do
 
-                push bc
-                push ix
-                call L_9A29
-                pop ix
-                ld de, $00C8
-                add ix, de
-                pop bc
-        
-        _djnz
+                push de
+                halt
+                ld a, ($9D2E)
+                ld b, a
+                ld a, ($9D2F)
+                sub b
+                cp $03
+                jr c, L_99EE
+                ld a, ($9D2F)
+                ld ($9D2E), a
 
-        pop de
-        dec de
-        ld a, d
-        or e
-        jr nz, L_99DA
+        L_99EE:
+                ld ix, $5DE4
+                ld b, $03
+
+
+                _do
+
+                        push bc
+                        push ix
+                        call L_9A29
+                        pop ix
+                        ld de, $00C8
+                        add ix, de
+                        pop bc
+                
+                _djnz
+
+                pop de
+                dec de
+                ld a, d
+                or e
+                
+        _while nz
+
         ret
 
 
@@ -5253,7 +5384,7 @@ L_9A0B:
                 call L_9AC2
                 exx
                 add ix, de
-                
+        
         _djnz
 
         ret
@@ -5309,13 +5440,14 @@ L_9A76:
         ld de, $0004
         ld b, $32
 
+ 
         _do
 
                 exx
                 call L_9AC2
                 exx
                 add ix, de
-               
+        
         _djnz
 
         pop ix
@@ -6202,48 +6334,52 @@ L_9F9E:
         jr L_9FED
 
 
+
 L_9FA8:
-        xor a
-        ld ($9D14), a
-
-L_9FAC:
-        ld a, (nivel)
-        ld b, a
-        ld a, ($9D25)
-        cp b
-        ret nz
-        jp L_9DE5
-
-
-L_9FB8:
-        neg
-        ld b, a
-        call L_A0E6
-        ld de, $FFD8
-        add ix, de
-        ld a, ($9D19)
-        sub $14
-        ld ($9D19), a
-
-
- 
         _do
 
-                push bc
-                call L_A0F8
-                pop bc
-                jr nz, L_9FA8
-                dec ix
-                dec ix
-                ld a, ($9D19)
-                dec a
-                ld ($9D19), a
-                ld a, ($9D0E)
-                dec a
-                cp $42
-                jp c, L_9E24
-                ld ($9D0E), a
-        
+                        xor a
+                        ld ($9D14), a
+
+                L_9FAC:
+                        ld a, (nivel)
+                        ld b, a
+                        ld a, ($9D25)
+                        cp b
+                        ret nz
+                        jp L_9DE5
+
+
+                L_9FB8:
+                        neg
+                        ld b, a
+                        call L_A0E6
+                        ld de, $FFD8
+                        add ix, de
+                        ld a, ($9D19)
+                        sub $14
+                        ld ($9D19), a
+
+                
+                        _do
+
+                                push bc
+                                call L_A0F8
+                                pop bc
+                        
+                        _while nz
+
+                        dec ix
+                        dec ix
+                        ld a, ($9D19)
+                        dec a
+                        ld ($9D19), a
+                        ld a, ($9D0E)
+                        dec a
+                        cp $42
+                        jp c, L_9E24
+                        ld ($9D0E), a
+                        
         _djnz
 
         jr L_9FA8
@@ -6269,7 +6405,6 @@ L_9FF6:
         ld ($9D0E), a
 
 
- 
         _do
 
                 push bc
@@ -6522,17 +6657,21 @@ L_A1F0:
         ld hl, $A267
         ld b, $04
 
-L_A1F5:
-        cp (hl)
-        jr nz, L_A202
-        ld de, ($9D1D)
-        ld (posicao_hero_x_em_nibbles_copia_2), de
-        jr L_A205
+ 
+        _do
+
+                        cp (hl)
+                        jr nz, L_A202
+                        ld de, ($9D1D)
+                        ld (posicao_hero_x_em_nibbles_copia_2), de
+                        jr L_A205
 
 
-L_A202:
-        inc hl
-        djnz L_A1F5
+                L_A202:
+                        inc hl
+        
+        _djnz
+
 
 L_A205:
         ld hl, $0000
@@ -6557,23 +6696,28 @@ L_A205:
         call L_7CCF
         call L_9458
 
-L_A23E:
-        call L_895C
-        call L_962C
-        call playsound
 
-L_A247:
-        ld a, ($9D2E)
-        ld b, a
-        ld a, ($9D2F)
-        sub b
-        cp $03
-        jr c, L_A247
-        ld a, ($9D2F)
-        ld ($9D2E), a
-        ld a, (dados_mapa_52)
-        inc a
-        jr nz, L_A23E
+        _do
+
+                call L_895C
+                call L_962C
+                call playsound
+
+                _do
+                        ld a, ($9D2E)
+                        ld b, a
+                        ld a, ($9D2F)
+                        sub b
+                        cp $03
+                _while c
+
+                ld a, ($9D2F)
+                ld ($9D2E), a
+                ld a, (dados_mapa_52)
+                inc a
+        
+        _while nz
+
         call L_9DE5
 
         ; Start of unknown area $A262 to $A26A
@@ -7761,7 +7905,9 @@ playsound:
                 ld a, c
 
                 _do
+
                         dec a
+                        
                 _while nz
 
                 ld a, e
@@ -7771,7 +7917,7 @@ playsound:
                 ld a, c
                 add a, d
                 ld c, a
-        
+                
         _djnz
 
         ret
