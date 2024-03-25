@@ -208,13 +208,14 @@ L_730E:
         inc (hl)
         ld a, ($9D16)
         and a
-        jr nz, L_7330
-        ld a, ($9D30)
-        bit 3, a
-        jr z, L_7330
-        ld a, $FF
-        ld ($9D32), a
-
+        _if_not nz
+                ld a, ($9D30)
+                bit 3, a
+                _if_not z
+                        ld a, $FF
+                        ld ($9D32), a
+                _end_if
+        _end_if
 L_7330:
         call L_895C
         call L_962C
@@ -228,63 +229,63 @@ L_7330:
         ld bc, (nivel)
         ld a, c
         cp b
-        jr z, L_7369
-        cp $2A
-        jr nz, L_7366
-        ld a, (posicao_hero_x_em_nibbles_copia_2)
-        add a, $20
-        ld l, a
-        ld a, ($9D0E)
-        sub $0A
-        ld h, a
-        ld ($8B7D), hl
+        _if_not z
+                cp $2A
+                jr nz, L_7366
+                ld a, (posicao_hero_x_em_nibbles_copia_2)
+                add a, $20
+                ld l, a
+                ld a, ($9D0E)
+                sub $0A
+                ld h, a
+                ld ($8B7D), hl
 
 L_7366:
-        call L_A26B
+                call L_A26B
+        _end_if
 
-L_7369:
         ld a, ($940A)
         cp $FD
-        jr z, L_73BB
+        _if_not z
 
-        _do
-                ld bc, ($9D2E)
+                _do
+                        ld bc, ($9D2E)
+                        ld a, b
+                        sub c
+                        cp $03
+                _while c
+
+
                 ld a, b
-                sub c
-                cp $03
-        _while c
+                ld ($9D2E), a
+                ld a, ($9D41)
+                and a
+                jr z, L_73C3
+                ld a, ($9D4C)
+                ld ($9D4B), a
+                ld a, ($9D2C)
+                and a
+                jp nz, L_730E
+                ld a, ($9D44)
+                and a
+                jp nz, L_730E
+                ld a, $01
+                ld ($9D27), a
+                ld hl, $F85E
+                call L_9141
+                ld hl, ($9D28)
+                call L_9141
+                ld a, $FF
+                ld ($9D46), a
+                call L_73E5
+                call L_9C7B
 
+                ld hl, $9D2D
+                dec (hl)
+                jp nz, L_72FD
 
-        ld a, b
-        ld ($9D2E), a
-        ld a, ($9D41)
-        and a
-        jr z, L_73C3
-        ld a, ($9D4C)
-        ld ($9D4B), a
-        ld a, ($9D2C)
-        and a
-        jp nz, L_730E
-        ld a, ($9D44)
-        and a
-        jp nz, L_730E
-        ld a, $01
-        ld ($9D27), a
-        ld hl, $F85E
-        call L_9141
-        ld hl, ($9D28)
-        call L_9141
-        ld a, $FF
-        ld ($9D46), a
-        call L_73E5
-        call L_9C7B
+        _end_if
 
-after_call_force_disassemle_002:
-        ld hl, $9D2D
-        dec (hl)
-        jp nz, L_72FD
-
-L_73BB:
         ld a, $FF
         ld ($9D46), a
         jp restart_game
@@ -686,10 +687,10 @@ function_7A6A:
         cp $13
         jp z, L_7AED
         cp $1D
-        jr c, L_7A97
-        cp $27
-        jp c, L_7B32
-
+        _if_not c
+                cp $27
+                jp c, L_7B32
+        _end_if
 L_7A97:
         ld hl, $8CBD
         ld b, $00
@@ -773,12 +774,11 @@ L_7AED:
 L_7B04:
         ld a, $4D
         call L_96FA
-        jr z, L_7B11
-        ld hl, $F41E
-        jp L_96EC
+        _if_not z
+                ld hl, $F41E
+                jp L_96EC
+        _end_if
 
-
-L_7B11:
         ld (hl), $4E
         push ix
         ld a, $FF
@@ -1535,11 +1535,10 @@ L_801B:
         add hl, de
         ld a, c
         cp $28
-        jr c, L_803B
-        bit 6, (hl)
-        jr nz, L_803D
-
-L_803B:
+        _if_not c
+                bit 6, (hl)
+                jr nz, L_803D
+        _end_if
         set 1, b
 
 L_803D:
@@ -1578,11 +1577,10 @@ L_8051:
         add hl, de
         ld a, c
         cp $3C
-        jr c, L_8075
-        bit 6, (hl)
-        jr nz, L_8077
-
-L_8075:
+        _if_not c
+                bit 6, (hl)
+                jr nz, L_8077
+        _end_if
         set 3, b
 
 L_8077:
@@ -3187,12 +3185,14 @@ L_8D97:
         ld a, (background_color)
         cp $01
         ld a, l
-        jr nz, colocar_attributos_de_cor
-        xor $47
-        ld l, a
-        ld a, $AE
-        ld ($8DCC), a
-        ld a, l
+        
+        _if_not nz 
+                xor $47
+                ld l, a
+                ld a, $AE
+                ld ($8DCC), a
+                ld a, l
+        _end_if
 
 colocar_attributos_de_cor:
         ld ($8DCB), a
@@ -3407,82 +3407,84 @@ desenha_sprite:
         ld ($9002), a
         ld a, (sprite_left)
         sub e
-        jr nc, L_8F00
-        neg
-        ld b, a
-        and $01
-        ld ($9002), a
-        ld a, (largura_sprite_a_desenhar_copy)
-        sub b
-        ld (largura_sprite_a_desenhar_copy), a
-        ld a, (sprite_left_copy)
-        add a, b
-        ld (sprite_left_copy), a
-        ld a, b
-        srl a
-        ld ($8FAD), a
-        ld c, a
-        ld b, $00
-        push hl
-        ld hl, (primeiro_byte_da_sprite_a_desenhar)
-        add hl, bc
-        ld a, (sprite_espelho)
-        and a
-        jr z, L_8EFB
-        sbc hl, bc
-        and a
-        sbc hl, bc
+        _if_not nc
+                neg
+                ld b, a
+                and $01
+                ld ($9002), a
+                ld a, (largura_sprite_a_desenhar_copy)
+                sub b
+                ld (largura_sprite_a_desenhar_copy), a
+                ld a, (sprite_left_copy)
+                add a, b
+                ld (sprite_left_copy), a
+                ld a, b
+                srl a
+                ld ($8FAD), a
+                ld c, a
+                ld b, $00
+                push hl
+                ld hl, (primeiro_byte_da_sprite_a_desenhar)
+                add hl, bc
+                ld a, (sprite_espelho)
+                and a
+                _if_not z
+                        sbc hl, bc
+                        and a
+                        sbc hl, bc
 
-L_8EFB:
-        ld (primeiro_byte_da_sprite_a_desenhar), hl
-        pop hl
-        ld b, a
+                _end_if
 
-L_8F00:
+                ld (primeiro_byte_da_sprite_a_desenhar), hl
+                pop hl
+                ld b, a
+
+        _end_if
+
         ld a, (sprite_left_copy)
         ld b, a
         ld a, (largura_sprite_a_desenhar_copy)
         add a, b
         dec a
         sub d
-        jr c, L_8F21
-        inc a
-        ld b, a
-        ld a, (largura_sprite_a_desenhar_copy)
-        sub b
-        ld (largura_sprite_a_desenhar_copy), a
-        ld a, b
-        inc a
-        srl a
-        ld b, a
-        ld a, ($8FAD)
-        add a, b
-        ld ($8FAD), a
+        _if_not c
+                inc a
+                ld b, a
+                ld a, (largura_sprite_a_desenhar_copy)
+                sub b
+                ld (largura_sprite_a_desenhar_copy), a
+                ld a, b
+                inc a
+                srl a
+                ld b, a
+                ld a, ($8FAD)
+                add a, b
+                ld ($8FAD), a
+        _end_if
 
-L_8F21:
         ld hl, $2313
         ld a, (sprite_espelho)
         and a
-        jr z, L_8F4E
-        ld hl, (primeiro_byte_da_sprite_a_desenhar)
-        ld a, (largura_sprite_a_desenhar)
-        srl a
-        dec a
-        ld c, a
-        ld b, $00
-        add hl, bc
-        ld (primeiro_byte_da_sprite_a_desenhar), hl
-        ld a, (largura_sprite_a_desenhar)
-        res 0, a
-        ld b, a
-        ld a, ($8FAD)
-        neg
-        add a, b
-        ld ($8FAD), a
-        ld hl, $8FBB
-        ld a, $C3
+        _if_not z
+                ld hl, (primeiro_byte_da_sprite_a_desenhar)
+                ld a, (largura_sprite_a_desenhar)
+                srl a
+                dec a
+                ld c, a
+                ld b, $00
+                add hl, bc
+                ld (primeiro_byte_da_sprite_a_desenhar), hl
+                ld a, (largura_sprite_a_desenhar)
+                res 0, a
+                ld b, a
+                ld a, ($8FAD)
+                neg
+                add a, b
+                ld ($8FAD), a
+                ld hl, $8FBB
+                ld a, $C3
+        _end_if
 
-L_8F4E:
         ld ($8FA4), a
         ld ($8FA5), hl
         ld a, (sprite_top_copy)
@@ -3505,45 +3507,46 @@ L_8F4E:
         jp nz, L_8FC6
         ld a, (background_color)
         and a
-        jr z, L_8F85
-        ld a, $AE
+        _if_not z
+                ld a, $AE
+        _end_if
 
-L_8F85:
         ld ($8FA7), a
         ld a, (largura_sprite_a_desenhar_copy)
         srl a
         ld (largura_sprite_a_desenhar_copy), a
 
-L_8F90:
-        ld l, (ix)
-        inc ix
-        ld h, (ix)
-        inc ix
-        ld bc, $0000
-        add hl, bc
-        dec hl
-        ld a, (largura_sprite_a_desenhar_copy)
-        ld b, a
-
         _do
+                ld l, (ix)
+                inc ix
+                ld h, (ix)
+                inc ix
+                ld bc, $0000
+                add hl, bc
+                dec hl
+                ld a, (largura_sprite_a_desenhar_copy)
+                ld b, a
 
-                ld a, (de)
-                nop
-                inc de
-                inc hl
-                and (hl)
-                ld (hl), a
-        
-        _djnz
+                _do
 
-        ex de, hl
-        ld bc, $0000
-        add hl, bc
-        ex de, hl
-        ld a, (altura_sprite_a_desenhar_copy)
-        dec a
-        ld (altura_sprite_a_desenhar_copy), a
-        jr nz, L_8F90
+                        ld a, (de)
+                        nop
+                        inc de
+                        inc hl
+                        and (hl)
+                        ld (hl), a
+                
+                _djnz
+
+                ex de, hl
+                ld bc, $0000
+                add hl, bc
+                ex de, hl
+                ld a, (altura_sprite_a_desenhar_copy)
+                dec a
+                ld (altura_sprite_a_desenhar_copy), a
+        _while nz
+
         ret
 
 
@@ -3603,178 +3606,180 @@ L_8FF3:
 function_901d:
         ld a, ($9B31)
         and a
-        jr z, L_902B
-        ld a, (de)
-        rlca
-        rlca
-        rlca
-        rlca
-        jp L_9039
+        _if_not z
+                ld a, (de)
+                rlca
+                rlca
+                rlca
+                rlca
+                jp L_9039
 
+        _end_if
 
-L_902B:
-        ld a, (de)
-        rlca
-        rlca
-        rlca
-        rlca
-        ld c, a
-        and $0F
-        xor (hl)
-        ld (hl), a
-        inc hl
-        dec b
-        ret z
-        ld a, c
+        _do
+                        ld a, (de)
+                        rlca
+                        rlca
+                        rlca
+                        rlca
+                        ld c, a
+                        and $0F
+                        xor (hl)
+                        ld (hl), a
+                        inc hl
+                        dec b
+                        ret z
+                        ld a, c
 
 L_9039:
-        and $F0
-        xor (hl)
-        ld (hl), a
-        inc de
-        djnz L_902B
+                        and $F0
+                        xor (hl)
+                        ld (hl), a
+                        inc de
+        _djnz
         ret
 
 
 function_9041:
         ld a, ($9B31)
         and a
-        jr z, L_9052
-        ld a, (de)
-        rlca
-        rlca
-        rlca
-        rlca
-        ld ($8E49), a
-        jp L_9065
+        _if_not z
+                ld a, (de)
+                rlca
+                rlca
+                rlca
+                rlca
+                ld ($8E49), a
+                jp L_9065
+        _end_if
 
-
-L_9052:
-        ld a, (hl)
-        and $F0
-        ld c, a
-        ld a, (de)
-        rlca
-        rlca
-        rlca
-        rlca
-        ld ($8E49), a
-        and $0F
-        add a, c
-        ld (hl), a
-        inc hl
-        dec b
-        ret z
+        _do
+                ld a, (hl)
+                and $F0
+                ld c, a
+                ld a, (de)
+                rlca
+                rlca
+                rlca
+                rlca
+                ld ($8E49), a
+                and $0F
+                add a, c
+                ld (hl), a
+                inc hl
+                dec b
+                ret z
 
 L_9065:
-        ld a, (hl)
-        and $0F
-        ld c, a
-        ld a, ($8E49)
-        and $F0
-        add a, c
-        ld (hl), a
-        inc de
-        djnz L_9052
+                ld a, (hl)
+                and $0F
+                ld c, a
+                ld a, ($8E49)
+                and $F0
+                add a, c
+                ld (hl), a
+                inc de
+        _djnz 
         ret
 
 
 function_9074:
         ld a, ($9B31)
         and a
-        jr z, L_9088
-        ld a, (de)
-        push bc
-        ld b, $5B
-        ld c, a
-        ld a, (bc)
-        pop bc
-        rlca
-        rlca
-        rlca
-        rlca
-        jp L_909C
+        _if_not z
+                ld a, (de)
+                push bc
+                ld b, $5B
+                ld c, a
+                ld a, (bc)
+                pop bc
+                rlca
+                rlca
+                rlca
+                rlca
+                jp L_909C
+        _end_if
 
 
-L_9088:
-        ld a, (de)
-        push bc
-        ld b, $5B
-        ld c, a
-        ld a, (bc)
-        pop bc
-        rlca
-        rlca
-        rlca
-        rlca
-        ld c, a
-        and $0F
-        xor (hl)
-        ld (hl), a
-        inc hl
-        dec b
-        ret z
-        ld a, c
+        _do
+                ld a, (de)
+                push bc
+                ld b, $5B
+                ld c, a
+                ld a, (bc)
+                pop bc
+                rlca
+                rlca
+                rlca
+                rlca
+                ld c, a
+                and $0F
+                xor (hl)
+                ld (hl), a
+                inc hl
+                dec b
+                ret z
+                ld a, c
 
 L_909C:
-        and $F0
-        xor (hl)
-        ld (hl), a
-        dec de
-        djnz L_9088
+                and $F0
+                xor (hl)
+                ld (hl), a
+                dec de
+        _djnz
         ret
 
 
 function_90a4:
         ld a, ($9B31)
         and a
-        jr z, L_90BB
-        ld a, (de)
-        push bc
-        ld b, $5B
-        ld c, a
-        ld a, (bc)
-        pop bc
-        rlca
-        rlca
-        rlca
-        rlca
-        ld ($8E49), a
-        jp L_90D4
+        _if_not z
+                ld a, (de)
+                push bc
+                ld b, $5B
+                ld c, a
+                ld a, (bc)
+                pop bc
+                rlca
+                rlca
+                rlca
+                rlca
+                ld ($8E49), a
+                jp L_90D4
+        _end_if
 
-
-L_90BB:
-        ld a, (hl)
-        and $F0
-        ld c, a
-        ld a, (de)
-        push bc
-        ld b, $5B
-        ld c, a
-        ld a, (bc)
-        pop bc
-        rlca
-        rlca
-        rlca
-        rlca
-        ld ($8E49), a
-        and $0F
-        add a, c
-        ld (hl), a
-        inc hl
-        dec b
-        ret z
+        _do
+                ld a, (hl)
+                and $F0
+                ld c, a
+                ld a, (de)
+                push bc
+                ld b, $5B
+                ld c, a
+                ld a, (bc)
+                pop bc
+                rlca
+                rlca
+                rlca
+                rlca
+                ld ($8E49), a
+                and $0F
+                add a, c
+                ld (hl), a
+                inc hl
+                dec b
+                ret z
 
 L_90D4:
-        ld a, (hl)
-        and $0F
-        ld c, a
-        ld a, ($8E49)
-        and $F0
-        add a, c
-        ld (hl), a
-        dec de
-        djnz L_90BB
+                ld a, (hl)
+                and $0F
+                ld c, a
+                ld a, ($8E49)
+                and $F0
+                add a, c
+                ld (hl), a
+                dec de
+        _djnz 
         ret
 
 
