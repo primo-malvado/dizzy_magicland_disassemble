@@ -4090,13 +4090,13 @@ L_9458:
                 ld (ix+$03), h
                 ld (ix+$06), l
 
-L_9490:
-                call L_7401
-                ld a, (ix+$03)
-                add a, $08
-                ld (ix+$03), a
-                cp (ix+$06)
-                jr c, L_9490
+                _do
+                        call L_7401
+                        ld a, (ix+$03)
+                        add a, $08
+                        ld (ix+$03), a
+                        cp (ix+$06)
+                _while c
         _end_if
 L_94A0:
         ld a, (nivel)
@@ -4182,25 +4182,24 @@ L_951F:
                         inc a
                         ld (sprites_repetidos), a
                         inc hl
-                        jr L_954E ; else
+                _else
+                        ld a, (hl)
+                        and $47
+                        ld (apenas_brite_and_ink), a
+                        ld a, (hl)
+                        rlca
+                        and $01
+                        ld (sprite_espelho), a
+                        ld a, (hl)
+                        and $18
+                        rrca
+                        rrca
+                        rrca
+                        ld (background_color), a
+                        inc hl
                 _end_if
-
-                ld a, (hl)
-                and $47
-                ld (apenas_brite_and_ink), a
-                ld a, (hl)
-                rlca
-                and $01
-                ld (sprite_espelho), a
-                ld a, (hl)
-                and $18
-                rrca
-                rrca
-                rrca
-                ld (background_color), a
-                inc hl
         _end_if
-L_954E:
+
         res 7, e
         ld (sprite_left), de
         ld a, (sprites_repetidos)
