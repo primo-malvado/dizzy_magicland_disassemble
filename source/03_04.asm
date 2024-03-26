@@ -4159,7 +4159,7 @@ desenha_nivel:
 
 L_9503:
 
-        _do
+        ;_do
                 ld (posicao_atual_index_001), a
                 ld de, numero_de_sprites_por_nivel
                 add a, e
