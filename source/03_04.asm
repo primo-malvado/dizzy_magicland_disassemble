@@ -120,7 +120,8 @@ start:
 
 
 index_mask_image_hero:
-        defw $0002, $0082, $00FC, $016A, $01C0, $022E, $02A8, $0316, $036C, $03D4, $0454, $04D4, $054E, $05CE, $064E, $06CE, $0748, $07C8, $0848, $08C8, $0948, $09C8, $0A48, $0AC8, $0B42, $0BC2, $0C30, $0C8C, $0D06, $0D86, $0E00, $0E5C, $0ED6, $0F50, $0FAC, $1026, $10A6, $1120, $117C
+        defw image_mask_0-mask_images_hero
+         defw  $0082, $00FC, $016A, $01C0, $022E, $02A8, $0316, $036C, $03D4, $0454, $04D4, $054E, $05CE, $064E, $06CE, $0748, $07C8, $0848, $08C8, $0948, $09C8, $0A48, $0AC8, $0B42, $0BC2, $0C30, $0C8C, $0D06, $0D86, $0E00, $0E5C, $0ED6, $0F50, $0FAC, $1026, $10A6, $1120, $117C
 
 mask_images_hero:
         defw $11FC
@@ -709,7 +710,7 @@ L_7AA8:
 
                 ld a, b
                 and a
-                jr z, L_7AB3 : break
+                jr z, L_7AB3 ;; break
                 dec hl
                 ld a, (hl)
                 inc hl
