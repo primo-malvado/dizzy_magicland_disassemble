@@ -13,6 +13,7 @@ espelho_bytes equ $5b00
 start:
         di
         ld sp, numero_de_sprites_por_nivel
+
         ld hl, espelho_bytes
 
         _do 
@@ -34,7 +35,6 @@ start:
         ld hl, screen_memory_map
         ld de, $4000
         ld b, $C0
-
 
         _do
 
@@ -89,6 +89,7 @@ start:
 
         ld ($728F), a
         ei
+
         jp restart_game
 
 
@@ -198,18 +199,21 @@ L_730E:
         ld ($9D4C), a
         ld hl, $9D31
         dec (hl)
-        jp p, L_7330 ; jp não mexer
-        inc (hl)
-        ld a, ($9D16)
-        and a
-        _if_not nz
-                ld a, ($9D30)
-                bit 3, a
-                _if_not z
-                        ld a, $FF
-                        ld ($9D32), a
+
+        
+        jp p, L_7330 ;  _if_not p
+                inc (hl)
+                ld a, ($9D16)
+                and a
+                _if_not nz
+                        ld a, ($9D30)
+                        bit 3, a
+                        _if_not z
+                                ld a, $FF
+                                ld ($9D32), a
+                        _end_if
                 _end_if
-        _end_if
+        ;_end_if
 L_7330:
         call L_895C
         call L_962C
@@ -454,7 +458,9 @@ L_7AC0:
                 dec hl
                 ld a, (hl)
                 cp $4E
-                jr z, L_7AC0; continue
+                
+                _continue_if z 
+                
                 cp $4D
                 
         _while z
@@ -4150,106 +4156,113 @@ desenha_nivel:
         ld (sprites_repetidos), a
 
 L_9503:
-        ld (posicao_atual_index_001), a
-        ld de, numero_de_sprites_por_nivel
-        add a, e
-        ld e, a
 
-        _if_not nc
-                inc d
-        _end_if
+        _do
+                ld (posicao_atual_index_001), a
+                ld de, numero_de_sprites_por_nivel
+                add a, e
+                ld e, a
 
-        ld a, (de)
-        ld (valor_atual_index_001), a
-        and a
-        jp z, L_959B
-        ld a, (posicao_atual_index_001)
-        ld bc, (nivel)
-        sub c
-        ld b, a
-
-L_951F:
-        ld e, (hl)
-        inc hl
-        ld d, (hl)
-        inc hl
-        bit 7, e
-        _if_not z
-                bit 5, (hl)
-                _if_not z
-                        ld a, (hl)
-                        rlca
-                        rlca
-                        and $7F
-                        inc a
-                        ld (sprites_repetidos), a
-                        inc hl
-                _else
-                        ld a, (hl)
-                        and $47
-                        ld (apenas_brite_and_ink), a
-                        ld a, (hl)
-                        rlca
-                        and $01
-                        ld (sprite_espelho), a
-                        ld a, (hl)
-                        and $18
-                        rrca
-                        rrca
-                        rrca
-                        ld (background_color), a
-                        inc hl
+                _if_not nc
+                        inc d
                 _end_if
-        _end_if
 
-        res 7, e
-        ld (sprite_left), de
-        ld a, (sprites_repetidos)
-        and a
+                ld a, (de)
+                ld (valor_atual_index_001), a
+                and a
+                
+                ;_if_not z
+                jp z, L_959B
+                        ld a, (posicao_atual_index_001)
+                        ld bc, (nivel)
+                        sub c
+                        ld b, a
 
-        _if_not z
-                dec a
-                ld (sprites_repetidos), a
-        _else
+                        _do
+                                ld e, (hl)
+                                inc hl
+                                ld d, (hl)
+                                inc hl
+                                bit 7, e
+                                _if_not z
+                                        bit 5, (hl)
+                                        _if_not z
+                                                ld a, (hl)
+                                                rlca
+                                                rlca
+                                                and $7F
+                                                inc a
+                                                ld (sprites_repetidos), a
+                                                inc hl
+                                        _else
+                                                ld a, (hl)
+                                                and $47
+                                                ld (apenas_brite_and_ink), a
+                                                ld a, (hl)
+                                                rlca
+                                                and $01
+                                                ld (sprite_espelho), a
+                                                ld a, (hl)
+                                                and $18
+                                                rrca
+                                                rrca
+                                                rrca
+                                                ld (background_color), a
+                                                inc hl
+                                        _end_if
+                                _end_if
 
-                ld a, (hl)
-                inc hl
-                ld (next_sprite_index), a
-        _end_if
+                                res 7, e
+                                ld (sprite_left), de
+                                ld a, (sprites_repetidos)
+                                and a
 
-        ld a, b
-        and a
-        _if_not nz
-                push bc
-                push hl
-                call function_print_sprite
-                ld a, (background_color)
-                push af
-                xor a
-                ld (background_color), a
-                call L_8DD7
-                pop af
-                ld (background_color), a
-                call desenha_sprite
-                ld a, (next_sprite_index)
-                cp $5B
-                call z, L_89EA
-                ld a, (next_sprite_index)
-                cp $73
-                call z, L_89E0
-                pop hl
-                pop bc
-        _end_if
+                                _if_not z
+                                        dec a
+                                        ld (sprites_repetidos), a
+                                _else
 
-        ld a, (valor_atual_index_001)
-        dec a
-        ld (valor_atual_index_001), a
-        jr nz, L_951F
+                                        ld a, (hl)
+                                        inc hl
+                                        ld (next_sprite_index), a
+                                _end_if
 
+                                ld a, b
+                                and a
+                                _if_not nz
+                                        push bc
+                                        push hl
+                                        call function_print_sprite
+                                        ld a, (background_color)
+                                        push af
+                                        xor a
+                                        ld (background_color), a
+                                        call L_8DD7
+                                        pop af
+                                        ld (background_color), a
+                                        call desenha_sprite
+                                        ld a, (next_sprite_index)
+                                        cp $5B
+                                        call z, L_89EA
+                                        ld a, (next_sprite_index)
+                                        cp $73
+                                        call z, L_89E0
+                                        pop hl
+                                        pop bc
+                                _end_if
+
+                                ld a, (valor_atual_index_001)
+                                dec a
+                                ld (valor_atual_index_001), a
+                        _while nz
+                ;_end_if
 L_959B:
-        ld a, (posicao_atual_index_001)
-        inc a
+                ld a, (posicao_atual_index_001)
+                inc a
+
+        ;_while p
         jp p, L_9503
+
         ret
 
 
@@ -4393,7 +4406,7 @@ L_9668:
 
                         ld (hl), c
                         inc l
-                        jr L_967A
+                        jr L_967A ; if b >0
 
 
                         _do
@@ -4419,6 +4432,7 @@ L_967A:
 function_nome_nivel:
         ld hl, $FF77
         call L_9141
+
         ld hl, $FBB1
         ld a, (nivel)
         cp $01
@@ -4454,7 +4468,7 @@ L_96C1:
                         jr z, L_96B8
                         and $0F
                         cp $0F
-                        jr nz, L_96C1
+                        jr nz, L_96C1 ; continue 
                         ld a, (hl)
                         cp $F0
                 _while nz
@@ -5049,71 +5063,72 @@ L_9A0B:
         ld a, (ix+$01)
         cp $C0
 
-        _if_not nc
-                ld b, $32
-                ld de, $0004
+        jr nc, label_0002
 
-        
-                _do
+        ld b, $32
+        ld de, $0004
 
-                        exx
-                        call L_9AC2
-                        exx
-                        call L_9AFA
-                        exx
-                        call L_9AC2
-                        exx
-                        add ix, de
-                        
-                _djnz
 
-                ret
+        _do
+
+                exx
+                call L_9AC2
+                exx
+                call L_9AFA
+                exx
+                call L_9AC2
+                exx
+                add ix, de
+                
+        _djnz
+
+        ret
 
 
 L_9A29:
-                bit 0, (ix+$02)
-                jr nz, L_9A0B
-                call L_9AA7
-                call L_9AFA
-                ld a, (ix+$03)
-                and a
-                _if_not z
-                        jr L_9AA7
-                _end_if
-
-                push ix
-                push bc
-                ld e, (ix)
-                ld d, (ix+$01)
-                ld b, $32
-
-                _do
-                        push bc
-                        ld (ix), e
-                        ld (ix+$01), d
-                        ld a, (hl)
-                        inc l
-                        and $3F
-                        sub $20
-                        ld (ix+$02), a
-                        set 0, (ix+$02)
-                        ld a, (hl)
-                        inc l
-                        and $07
-                        sub $0F
-                        ld (ix+$03), a
-                        exx
-                        call L_9AC2
-                        exx
-                        ld bc, $0004
-                        add ix, bc
-                        pop bc
-                _djnz 
-                pop bc
-                pop ix
-                ret
-
+        bit 0, (ix+$02)
+        jr nz, L_9A0B
+        call L_9AA7
+        call L_9AFA
+        ld a, (ix+$03)
+        and a
+        _if_not z
+                jr L_9AA7
         _end_if
+
+        push ix
+        push bc
+        ld e, (ix)
+        ld d, (ix+$01)
+        ld b, $32
+
+        _do
+                push bc
+                ld (ix), e
+                ld (ix+$01), d
+                ld a, (hl)
+                inc l
+                and $3F
+                sub $20
+                ld (ix+$02), a
+                set 0, (ix+$02)
+                ld a, (hl)
+                inc l
+                and $07
+                sub $0F
+                ld (ix+$03), a
+                exx
+                call L_9AC2
+                exx
+                ld bc, $0004
+                add ix, bc
+                pop bc
+        _djnz 
+        pop bc
+        pop ix
+        ret
+
+label_0002:
 
 
         push ix
