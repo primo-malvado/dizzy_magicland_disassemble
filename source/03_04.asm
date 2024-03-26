@@ -464,6 +464,7 @@ L_7AC0:
                 cp $4D
                 
         _while z
+
         ld ($9D34), a
         push ix
         push bc
@@ -1732,7 +1733,7 @@ function_834B:
         add a, (ix+$09)
         ld (ix+$05), a
 
-L_8374:
+
         _do
                 ld a, (ix+$02)
                 cp (ix+$05)
@@ -1742,7 +1743,8 @@ L_8374:
                         dec (ix+$02)
                         dec (ix+$02)
                         call L_7401
-                        jr L_8374 ; break
+                        
+                        _continue
 
                 _end_if
 
@@ -4460,7 +4462,6 @@ L_96B8:
                 jr z, L_96D6
                 inc hl
 
-L_96C1:
                 _do
                         ld a, (hl)
                         inc hl
@@ -4468,7 +4469,9 @@ L_96C1:
                         jr z, L_96B8
                         and $0F
                         cp $0F
-                        jr nz, L_96C1 ; continue 
+                        
+                        _continue_if nz
+
                         ld a, (hl)
                         cp $F0
                 _while nz

@@ -44,6 +44,11 @@ DLOOP_5 =  0
         jr flag,  DLOOP_TOP
     ENDM
 
+    MACRO _continue
+
+        jr DLOOP_TOP
+    ENDM
+
 
     MACRO _djnz
 
