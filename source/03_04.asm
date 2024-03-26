@@ -2,11 +2,10 @@
         org $5E49
 
 
-        ; Start of unknown area $5E49 to $5E5D
+        
         defb $0C, $11, $CD, $3E, $5E, $21, $00
         defb $C0, $11, $00, $40, $01, $00, $1B, $ED, $B0, $3E, $10, $CD, $3E, $5E
-        ; End of unknown area $5E49 to $5E5D
-
+        
 
 start:
         di
@@ -6687,6 +6686,7 @@ L_A26B:
         and $FE
         cp $2C
         ld a, $FF
+
         _if_not nz
                 xor a
         _end_if
