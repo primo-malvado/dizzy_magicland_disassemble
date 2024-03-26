@@ -217,7 +217,7 @@ $dis->defb(0x9B2D, 1, 'valor_hl');
 
 $dis->defb(0xc40f, 1, "sprite_0"); 
 $dis->defw(0xc20f, 1, "index_de_sprites"); 
-$dis->defb(0xea29, 1, "after_sprites");  
+$dis->defb(0xea29, 1, "texts");  
 $dis->defb(0xfb97, 1, 'nomes_niveis'); 
 $dis->defb(0xfa0b, 1, 'inicio_qq_usado_em_9725'); 
 # $dis->code(0xff01, 'playsound'); 
