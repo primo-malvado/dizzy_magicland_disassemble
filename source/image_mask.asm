@@ -1,3 +1,49 @@
+index_mask_image_hero:
+        defw image_mask_0-mask_images_hero
+        defw image_mask_1-mask_images_hero
+        defw image_mask_2-mask_images_hero
+        defw image_mask_3-mask_images_hero
+        defw image_mask_4-mask_images_hero
+        defw image_mask_5-mask_images_hero
+        defw image_mask_6-mask_images_hero
+        defw image_mask_7-mask_images_hero
+        defw image_mask_8-mask_images_hero
+        defw image_mask_9-mask_images_hero
+        defw image_mask_10-mask_images_hero
+        defw image_mask_11-mask_images_hero
+        defw image_mask_12-mask_images_hero
+        defw image_mask_13-mask_images_hero
+        defw image_mask_14-mask_images_hero
+        defw image_mask_15-mask_images_hero
+        defw image_mask_16-mask_images_hero
+        defw image_mask_17-mask_images_hero
+        defw image_mask_18-mask_images_hero
+        defw image_mask_19-mask_images_hero
+        defw image_mask_20-mask_images_hero
+        defw image_mask_21-mask_images_hero
+        defw image_mask_22-mask_images_hero
+        defw image_mask_23-mask_images_hero
+        defw image_mask_24-mask_images_hero
+        defw image_mask_25-mask_images_hero
+        defw image_mask_26-mask_images_hero
+        defw image_mask_27-mask_images_hero
+        defw image_mask_28-mask_images_hero
+        defw image_mask_29-mask_images_hero
+        defw image_mask_30-mask_images_hero
+        defw image_mask_31-mask_images_hero
+        defw image_mask_32-mask_images_hero
+        defw image_mask_33-mask_images_hero
+        defw image_mask_34-mask_images_hero
+        defw image_mask_35-mask_images_hero
+        defw image_mask_36-mask_images_hero
+        defw image_mask_37-mask_images_hero
+        defw image_mask_38-mask_images_hero
+
+mask_images_hero:
+        defw $11FC
+
+
+
 image_mask_0:
         db $15
         db $3
