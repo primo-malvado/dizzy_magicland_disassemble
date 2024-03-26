@@ -4205,17 +4205,17 @@ L_954E:
         ld (sprite_left), de
         ld a, (sprites_repetidos)
         and a
+
         _if_not z
                 dec a
                 ld (sprites_repetidos), a
-                jr L_9565
+        _else
+
+                ld a, (hl)
+                inc hl
+                ld (next_sprite_index), a
         _end_if
 
-        ld a, (hl)
-        inc hl
-        ld (next_sprite_index), a
-
-L_9565:
         ld a, b
         and a
         _if_not nz
@@ -4351,14 +4351,12 @@ L_962C:
         _if_not c
                 inc (hl)
                 ld a, (hl)
-                jr L_963E
+        _else
+                add a, (hl)
+                srl a
+                ld (hl), a
         _end_if
 
-        add a, (hl)
-        srl a
-        ld (hl), a
-
-L_963E:
         add a, a
         add a, a
         add a, a
@@ -4390,22 +4388,22 @@ L_9668:
                         ld (hl), $FF
                         inc l
                         djnz L_9668
-                        jr L_967C
-                _end_if
+                _else
 
-                ld (hl), c
-                inc l
-                jr L_967A
-
-
-                _do
-                        ld (hl), $00
+                        ld (hl), c
                         inc l
+                        jr L_967A
+
+
+                        _do
+                                ld (hl), $00
+                                inc l
 
 L_967A:
-                _djnz
+                        _djnz
 
-L_967C:
+                _end_if
+
                 add hl, de
                 pop bc
         _djnz 
@@ -4953,14 +4951,13 @@ L_997A:
                                         
                                         _djnz
 
-                                        jr L_99A1
+                                _else
+
+                                        ld a, ($99C1)
+                                        add a, (ix)
+                                        ld (ix), a
                                 _end_if
 
-                                ld a, ($99C1)
-                                add a, (ix)
-                                ld (ix), a
-
-L_99A1:
                                 dec e
                         
                         _while nz
@@ -5906,19 +5903,18 @@ L_9EAE:
         cp $01
         _if_not nz
                 ld a, $01
-                jr L_9EFB
+        _else
+
+                ld a, ($9D61)
+                cp $01
+                _if_not nz
+                        ld a, $02
+                _else
+                        xor a
+                _end_if
         _end_if
 
-        ld a, ($9D61)
-        cp $01
-        _if_not nz
-                ld a, $02
-                jr L_9EFB
-        _end_if
 
-        xor a
-
-L_9EFB:
         ld b, a
         ld a, ($9D62)
         and a
@@ -6301,20 +6297,20 @@ L_A1AA:
         ld (nivel_copy), a
         ld (nivel), a
         cp $56
+
         _if_not z
                 cp $54
                 jr nz, L_A1DD
                 ld a, e
                 cp $18
                 jr c, L_A1DD
-                jr L_A1C8
+        _else
+                ld a, e
+                cp $30
+                jr nc, L_A1DD
         _end_if
 
-        ld a, e
-        cp $30
-        jr nc, L_A1DD
 
-L_A1C8:
         ld a, $9F
         ld ($9D0E), a
         ld a, $A0
