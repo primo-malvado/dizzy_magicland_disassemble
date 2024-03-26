@@ -1123,11 +1123,7 @@ function_7F26:
                 ld a, (ix+$0A)
                 xor $80
                 ld (ix+$0A), a
-             
-                jr L_7F8B
-
-        ;_else
-        _end_if
+        _else
 
                 cp $64
                 _if_not nz
@@ -1145,14 +1141,16 @@ function_7F26:
                         ld (ix+$04), a
 
                 _end_if
+
                 cp $98
+                
                 _if_not nz
                         ld a, $31
                         sub (ix+$04)
                         ld (ix+$04), a
                 _end_if
-        ;_end_if
-L_7F8B:
+        _end_if
+
         ld a, (ix+$05)
         ld (ix+$02), a
         ld a, (ix+$06)
@@ -1615,24 +1613,25 @@ function_8298:
                 _end_if
 
                 ld (ix+$03), a
-                jr L_82D5
+                
+        _else
+
+                ld a, ($9D16)
+                cp $03
+                _if_not c
+                        cp $06
+                        _if_not nc
+                                ld a, (frame_movimento_do_hero)
+                                cp $07
+                                jr z, L_82D5
+                                and a
+                                jr z, L_82D5
+                        _end_if
+                _end_if 
+
+                inc (ix+$03)
+
         _end_if
-
-        ld a, ($9D16)
-        cp $03
-        _if_not c
-                cp $06
-                _if_not nc
-                        ld a, (frame_movimento_do_hero)
-                        cp $07
-                        jr z, L_82D5
-                        and a
-                        jr z, L_82D5
-                _end_if
-        _end_if 
-
-        inc (ix+$03)
-
 L_82D5:
         jp L_7401
 
@@ -2370,15 +2369,12 @@ L_89BD:
         _if_not c
                 cp $06
                 ret nc
-                jr L_89C9
-
+        _else
+                dec a
+                add a, e
+                ret nc
         _end_if
 
-        dec a
-        add a, e
-        ret nc
-
-L_89C9:
         ld a, h
         sub b
         _if_not c
