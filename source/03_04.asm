@@ -701,7 +701,7 @@ L_7A97:
                 cp $01
                 jr z, L_7AC0
                 and a
-                jr z, L_7AA8
+                jr z, L_7AA8 ; break
                 inc hl
                 inc b
         _while_true
@@ -712,7 +712,7 @@ L_7AA8:
 
                 ld a, b
                 and a
-                jr z, L_7AB3
+                jr z, L_7AB3 : break
                 dec hl
                 ld a, (hl)
                 inc hl
@@ -736,7 +736,7 @@ L_7AC0:
                 dec hl
                 ld a, (hl)
                 cp $4E
-                jr z, L_7AC0; break
+                jr z, L_7AC0; continue
                 cp $4D
                 
         _while z
@@ -3863,7 +3863,7 @@ L_912F:
         _do
                 ld a, (hl)
                 and a
-                jr z, L_913E
+                jr z, L_913E; break 
                 push hl
                 call desenha_uma_letra_no_ecra
                 pop hl
@@ -4737,7 +4737,7 @@ L_96C1:
                         cp $F0
                 _while nz
                 inc hl
-                jp L_96B8
+                jp L_96B8; jp não mexer
         _end_if
 
 L_96D6:
@@ -4849,55 +4849,55 @@ L_9764:
         pop bc
         ld c, a
         bit 3, c
-        jr nz, L_97C7
-        ld a, ($8CBD)
-        and a
-        ld a, b
+        _if_not nz
+                ld a, ($8CBD)
+                and a
+                ld a, b
 
-        _if_not z
+                _if_not z
 
 L_9796:
-                and a
-                _if_not z
-                        bit 5, c
-                        _if_not nz
-                                bit 2, c
-                                jr z, L_97A2
-
-                        _end_if
-                        dec a
-                _end_if
-L_97A2:
-                cp $03
-                _if_not z
-                        bit 4, c
-                        jr nz, L_97AE
-                        bit 1, c
+                        and a
                         _if_not z
+                                bit 5, c
+                                _if_not nz
+                                        bit 2, c
+                                        jr z, L_97A2
+
+                                _end_if
+                                dec a
+                        _end_if
+L_97A2:
+                        cp $03
+                        _if_not z
+                                bit 4, c
+                                jr nz, L_97AE
+                                bit 1, c
+                                _if_not z
 
 L_97AE:
-                                inc a
+                                        inc a
 
+                                _end_if
                         _end_if
+
                 _end_if
-
+                cp b
+                jr z, L_9764
+                call L_98C7
+                ld a, d
+                jr z, L_9796
+                push af
+                ld a, $42
+                ld ($9B3C), a
+                ld a, b
+                cp $FF
+                call nz, L_98D2
+                pop bc
+                jr L_9764
         _end_if
-        cp b
-        jr z, L_9764
-        call L_98C7
-        ld a, d
-        jr z, L_9796
-        push af
-        ld a, $42
-        ld ($9B3C), a
-        ld a, b
-        cp $FF
-        call nz, L_98D2
-        pop bc
-        jr L_9764
 
 
-L_97C7:
         ld a, b
         call L_98C7
         ld ($9819), a
@@ -5003,7 +5003,7 @@ L_9847:
                 ld a, (hl)
                 dec hl
                 cp $01
-                jr z, L_9864
+                jr z, L_9864 ; break
                 ld (hl), a
                 inc hl
         _while_true
@@ -5199,65 +5199,66 @@ L_9948:
         ld hl, (primeiro_byte_da_sprite_a_desenhar)
         ld bc, (altura_sprite_a_desenhar)
 
-L_9976:
-        ld a, ($99C1)
-        ld b, a
+        _do
+                ld a, ($99C1)
+                ld b, a
 
 L_997A:
-        push hl
-        push bc
-        ld a, (largura_sprite_a_desenhar)
-        rrca
-        ld d, a
+                push hl
+                push bc
+                ld a, (largura_sprite_a_desenhar)
+                rrca
+                ld d, a
 
-L_9981:
-        ld e, $08
-        ld c, (hl)
+                _do
+                        ld e, $08
+                        ld c, (hl)
 
-        _do
-                rlc c
-                _if_not nc
-                        ld a, ($99C1)
-                        ld b, a
-
-                
                         _do
+                                rlc c
+                                _if_not nc
+                                        ld a, ($99C1)
+                                        ld b, a
 
-                                exx
-                                call L_9AC2
-                                inc (ix)
-                                exx
-                        
-                        _djnz
+                                
+                                        _do
 
-                        jr L_99A1
-                _end_if
+                                                exx
+                                                call L_9AC2
+                                                inc (ix)
+                                                exx
+                                        
+                                        _djnz
 
-                ld a, ($99C1)
-                add a, (ix)
-                ld (ix), a
+                                        jr L_99A1
+                                _end_if
+
+                                ld a, ($99C1)
+                                add a, (ix)
+                                ld (ix), a
 
 L_99A1:
-                dec e
-        
+                                dec e
+                        
+                        _while nz
+                        inc hl
+                        dec d
+                _while nz
+
+                ld a, (ix+$02)
+                ld (ix), a
+                inc (ix+$01)
+                pop bc
+                dec b
+                _if_not z
+                        pop hl
+                        jr L_997A
+
+                _end_if
+
+                pop af
+                dec c
         _while nz
-        inc hl
-        dec d
-        jr nz, L_9981
-        ld a, (ix+$02)
-        ld (ix), a
-        inc (ix+$01)
-        pop bc
-        dec b
-        _if_not z
-                pop hl
-                jr L_997A
-
-        _end_if
-
-        pop af
-        dec c
-        jr nz, L_9976
         ret
 
 
@@ -5326,71 +5327,72 @@ L_99C4:
 L_9A0B:
         ld a, (ix+$01)
         cp $C0
-        jr nc, L_9A76
-        ld b, $32
-        ld de, $0004
 
- 
-        _do
+        _if_not nc
+                ld b, $32
+                ld de, $0004
 
-                exx
-                call L_9AC2
-                exx
-                call L_9AFA
-                exx
-                call L_9AC2
-                exx
-                add ix, de
-                
-        _djnz
+        
+                _do
 
-        ret
+                        exx
+                        call L_9AC2
+                        exx
+                        call L_9AFA
+                        exx
+                        call L_9AC2
+                        exx
+                        add ix, de
+                        
+                _djnz
+
+                ret
 
 
 L_9A29:
-        bit 0, (ix+$02)
-        jr nz, L_9A0B
-        call L_9AA7
-        call L_9AFA
-        ld a, (ix+$03)
-        and a
-        _if_not z
-                jr L_9AA7
+                bit 0, (ix+$02)
+                jr nz, L_9A0B
+                call L_9AA7
+                call L_9AFA
+                ld a, (ix+$03)
+                and a
+                _if_not z
+                        jr L_9AA7
+                _end_if
+
+                push ix
+                push bc
+                ld e, (ix)
+                ld d, (ix+$01)
+                ld b, $32
+
+                _do
+                        push bc
+                        ld (ix), e
+                        ld (ix+$01), d
+                        ld a, (hl)
+                        inc l
+                        and $3F
+                        sub $20
+                        ld (ix+$02), a
+                        set 0, (ix+$02)
+                        ld a, (hl)
+                        inc l
+                        and $07
+                        sub $0F
+                        ld (ix+$03), a
+                        exx
+                        call L_9AC2
+                        exx
+                        ld bc, $0004
+                        add ix, bc
+                        pop bc
+                _djnz 
+                pop bc
+                pop ix
+                ret
+
         _end_if
-
-        push ix
-        push bc
-        ld e, (ix)
-        ld d, (ix+$01)
-        ld b, $32
-
-L_9A48:
-        push bc
-        ld (ix), e
-        ld (ix+$01), d
-        ld a, (hl)
-        inc l
-        and $3F
-        sub $20
-        ld (ix+$02), a
-        set 0, (ix+$02)
-        ld a, (hl)
-        inc l
-        and $07
-        sub $0F
-        ld (ix+$03), a
-        exx
-        call L_9AC2
-        exx
-        ld bc, $0004
-        add ix, bc
-        pop bc
-        djnz L_9A48
-        pop bc
-        pop ix
-        ret
-
-
 L_9A76:
         push ix
         ld de, $0004
@@ -5813,36 +5815,37 @@ L_9C7B:
         pop hl
         ld a, b
 
-L_9C8A:
-        ex af, af'
-        ld e, (hl)
-        inc hl
-        ld d, (hl)
-        inc hl
-        ex de, hl
-        ld bc, $0000
-        add hl, bc
-        pop bc
-        ld a, (hl)
-        xor c
-        ld (hl), a
-        inc hl
-        ld a, (hl)
-        xor b
-        ld (hl), a
-        inc hl
-        pop bc
-        ld a, (hl)
-        xor c
-        ld (hl), a
-        inc hl
-        ld a, (hl)
-        xor b
-        ld (hl), a
-        ex de, hl
-        ex af, af'
-        dec a
-        jr nz, L_9C8A
+        _do
+                ex af, af'
+                ld e, (hl)
+                inc hl
+                ld d, (hl)
+                inc hl
+                ex de, hl
+                ld bc, $0000
+                add hl, bc
+                pop bc
+                ld a, (hl)
+                xor c
+                ld (hl), a
+                inc hl
+                ld a, (hl)
+                xor b
+                ld (hl), a
+                inc hl
+                pop bc
+                ld a, (hl)
+                xor c
+                ld (hl), a
+                inc hl
+                ld a, (hl)
+                xor b
+                ld (hl), a
+                ex de, hl
+                ex af, af'
+                dec a
+        _while nz
+
         ld sp, ($9CB3)
         ei
         ret
@@ -6324,7 +6327,7 @@ L_9FB8:
                 push bc
                 call L_A0F8
                 pop bc
-                jr nz, L_9FA8
+                jr nz, L_9FA8 ; break
                 dec ix
                 dec ix
                 ld a, ($9D19)
