@@ -1,3 +1,6 @@
+color_attribute_temp equ $5de4
+screen_memory_map equ $5c64
+espelho_bytes equ $5b00
 
         org $5E49
 
@@ -10,7 +13,7 @@
 start:
         di
         ld sp, numero_de_sprites_por_nivel
-        ld hl, $5B00
+        ld hl, espelho_bytes
 
         _do 
                 ld a, l
@@ -28,7 +31,7 @@ start:
                 inc l
         _while nz
 
-        ld hl, $5C64
+        ld hl, screen_memory_map
         ld de, $4000
         ld b, $C0
 
@@ -132,7 +135,7 @@ after_mask_images:
 
 
 restart_game:
-        ld hl, $5DE4
+        ld hl, color_attribute_temp
         ld de, $5DE5
         ld bc, $025F
         ld (hl), $42
@@ -3219,7 +3222,7 @@ desenha_sprite:
         ld l, a
         ld h, $00
         add hl, hl
-        ld bc, $5C64
+        ld bc, screen_memory_map
         add hl, bc
         push hl
         pop ix
@@ -3913,7 +3916,7 @@ L_933A:
         ld d, $00
         sla e
         rl d
-        ld ix, $5C64
+        ld ix, screen_memory_map
         add ix, de
         ld c, $00
 
@@ -4988,7 +4991,7 @@ L_99A1:
 
 
 L_99C4:
-        ld ix, $5DE4
+        ld ix, color_attribute_temp
         ld b, $03
         ld de, $00C8
         ld hl, $1000
@@ -5018,7 +5021,7 @@ L_99C4:
                         ld ($9D2E), a
                 _end_if
 
-                ld ix, $5DE4
+                ld ix, color_attribute_temp
                 ld b, $03
 
 
@@ -5165,7 +5168,7 @@ L_9AC2:
         cp $88
         ret nc
         add a, $30
-        ld de, $5C64
+        ld de, screen_memory_map
         ld l, a
         ld h, $00
         add hl, hl
@@ -5338,7 +5341,7 @@ L_9B40:
         ld l, a
         ld h, $00
         add hl, hl
-        ld bc, $5C64
+        ld bc, screen_memory_map
         add hl, bc
         ld a, l
         ld (de), a
@@ -6203,7 +6206,7 @@ L_A0E6:
         ld l, a
         ld h, $00
         add hl, hl
-        ld de, $5C64
+        ld de, screen_memory_map
         add hl, de
         push hl
         pop ix
