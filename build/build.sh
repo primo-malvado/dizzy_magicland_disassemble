@@ -24,4 +24,7 @@ taput add  dist/03.bin  dist/dizzy.tap
 taput add  dist/04.bin  dist/dizzy.tap
 taput add  dist/05.bin  dist/dizzy.tap
 
-fuse dist/dizzy.tap
+
+sh compare/compare.sh
+
+# fuse dist/dizzy.tap

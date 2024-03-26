@@ -1117,36 +1117,41 @@ function_7F26:
         call L_7401
         ld a, (ix+$0E)
         cp $73
+
+
         _if_not nz
                 ld a, (ix+$0A)
                 xor $80
                 ld (ix+$0A), a
+             
                 jr L_7F8B
 
+        ;_else
         _end_if
 
-        cp $64
-        _if_not nz
-                inc (ix+$09)
-                ld a, (ix+$09)
-                and $03
-                cp $03
-
+                cp $64
                 _if_not nz
-                        ld a, $01
+                        inc (ix+$09)
+                        ld a, (ix+$09)
+                        and $03
+                        cp $03
+
+                        _if_not nz
+                                ld a, $01
+                        _end_if
+
+
+                        add a, (ix+$0E)
+                        ld (ix+$04), a
+
                 _end_if
-
-
-                add a, (ix+$0E)
-                ld (ix+$04), a
-
-        _end_if
-        cp $98
-        _if_not nz
-                ld a, $31
-                sub (ix+$04)
-                ld (ix+$04), a
-        _end_if
+                cp $98
+                _if_not nz
+                        ld a, $31
+                        sub (ix+$04)
+                        ld (ix+$04), a
+                _end_if
+        ;_end_if
 L_7F8B:
         ld a, (ix+$05)
         ld (ix+$02), a
