@@ -189,8 +189,6 @@ restart_game:
 
 L_72FD:
         call L_A196
-
-after_call_force_disassemle_001:
         call L_9607
         ld a, $01
         ld ($9D46), a
@@ -204,7 +202,7 @@ L_730E:
         ld ($9D4C), a
         ld hl, $9D31
         dec (hl)
-        jp p, L_7330
+        jp p, L_7330 ; jp não mexer
         inc (hl)
         ld a, ($9D16)
         and a
@@ -265,10 +263,10 @@ L_7330:
                 ld ($9D4B), a
                 ld a, ($9D2C)
                 and a
-                jp nz, L_730E
+                jp nz, L_730E ; jp não mexer
                 ld a, ($9D44)
                 and a
-                jp nz, L_730E
+                jp nz, L_730E ; jp não mexer
                 ld a, $01
                 ld ($9D27), a
                 ld hl, $F85E
@@ -282,13 +280,13 @@ L_7330:
 
                 ld hl, $9D2D
                 dec (hl)
-                jp nz, L_72FD
+                jp nz, L_72FD ; jp não mexer
 
         _end_if
 
         ld a, $FF
         ld ($9D46), a
-        jp restart_game
+        jp restart_game  ; jp não mexer
 
 
 L_73C3:
@@ -302,7 +300,7 @@ L_73C3:
         call L_73E5
         call L_9458
         call L_99C4
-        jp restart_game
+        jp restart_game ; jp não mexer
 
 
         ; Start of unknown area $73E2 to $73E4
@@ -680,17 +678,17 @@ function_7A6A:
         ld ($9D32), a
         ld a, (ix+$04)
         cp $07
-        jp z, L_7B24
+        jp z, L_7B24 ; jp não mexer
         cp $0B
-        jp z, L_7AE1
+        jp z, L_7AE1 ; jp não mexer
         cp $0F
-        jp z, L_7B04
+        jp z, L_7B04 ; jp não mexer
         cp $13
-        jp z, L_7AED
+        jp z, L_7AED ; jp não mexer
         cp $1D
         _if_not c
                 cp $27
-                jp c, L_7B32
+                jp c, L_7B32 ; jp não mexer
         _end_if
 L_7A97:
         ld hl, $8CBD
@@ -728,7 +726,7 @@ L_7AB3:
 
 L_7AB9:
         ld (ix), $FF
-        jp L_9725
+        jp L_9725 ; jp não mexer
 
 
 L_7AC0:
@@ -779,7 +777,7 @@ L_7B04:
         call L_96FA
         _if_not z
                 ld hl, $F41E
-                jp L_96EC
+                jp L_96EC ; jp não mexer
         _end_if
 
         ld (hl), $4E
@@ -795,7 +793,7 @@ L_7B04:
 L_7B24:
         ld a, $42
         call L_96FA
-        jp nz, L_7A97
+        jp nz, L_7A97 ; jp não mexer
         ld a, $FF
         ld ($9D32), a
         ret
@@ -830,7 +828,7 @@ L_7B4F:
                 dec hl
                 ld (posicao_onde_comeca_o_nome_do_nivel), hl
                 cp $FF
-                jp z, L_A287
+                jp z, L_A287 ; jp não mexer
                 call L_9152
         _while_true
 
@@ -6094,28 +6092,26 @@ L_9E41:
         _do
                 ld a, (frame_movimento_do_hero)
                 and a
-                jp z, L_9EAE
+                jp z, L_9EAE; break
                 jp L_9F15
 
 
-                ; Start of unknown area $9E54 to $9E62
-                defb $3A, $2F, $9D, $E6, $03, $C0, $21, $44, $5D, $22, $13, $91
-                defb $CD, $6A, $9E
-                ; End of unknown area $9E54 to $9E62
+function_9254:
+                ld a , ($9d2f)
+                and $03
+                ret nz
+                ld hl, $5d44
 
-
-
-after_call_force_disassemle_003:
+                ld ($9113), hl
+                call function_9e6a
 
                 ld hl, $5800
                 ld ($9113), hl
                 ret
 
-
-                ; Start of unknown area $9E6A to $9E6C
-                defb $CD, $7B, $9C
-                ; End of unknown area $9E6A to $9E6C
-
+function_9e6a:
+                call L_9C7B
+                
                 ld a, ($9D16)
                 cp $06
                 jp z, L_9F15
