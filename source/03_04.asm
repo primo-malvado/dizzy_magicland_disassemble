@@ -937,20 +937,21 @@ function_7C23:
         ld (ix+$04), $DD
         ld b, $05
 
-L_7C2C:
-        ld a, (hl)
-        inc hl
-        ld (ix+$02), a
-        ld a, (hl)
-        ld (ix+$03), a
-        inc hl
-        push hl
-        push bc
-        call L_7401
-        pop bc
-        pop hl
-        inc (ix+$04)
-        djnz L_7C2C
+        _do
+                ld a, (hl)
+                inc hl
+                ld (ix+$02), a
+                ld a, (hl)
+                ld (ix+$03), a
+                inc hl
+                push hl
+                push bc
+                call L_7401
+                pop bc
+                pop hl
+                inc (ix+$04)
+        _djnz 
+
         ret
 
 
@@ -2041,42 +2042,43 @@ function_83B4:
         ld iy, area_negra
         ld b, $0A
 
-L_83BA:
-        push bc
-        ld a, (iy+$03)
-        and a
-        _if_not z
-                ld (iy+$03), $40
-                rlca
-                _if_not c
-                        call L_842F
-                        dec (iy+$01)
-                        ld a, (iy+$01)
-                        cp $28
-                        jr z, L_83EC
-                        and $0F
-                        _if_not nz
-                                inc (iy+$02)
-                                ld a, (iy+$02)
-                                cp $D2
+        _do
+                push bc
+                ld a, (iy+$03)
+                and a
+                _if_not z
+                        ld (iy+$03), $40
+                        rlca
+                        _if_not c
+                                call L_842F
+                                dec (iy+$01)
+                                ld a, (iy+$01)
+                                cp $28
                                 jr z, L_83EC
-                                cp $D9
-                                jr z, L_83EC
+                                and $0F
+                                _if_not nz
+                                        inc (iy+$02)
+                                        ld a, (iy+$02)
+                                        cp $D2
+                                        jr z, L_83EC
+                                        cp $D9
+                                        jr z, L_83EC
+                                _end_if
                         _end_if
-                _end_if
 
-                call L_842F
-                jr L_83F0
+                        call L_842F
+                        jr L_83F0
 
 
 L_83EC:
-                ld (iy+$03), $00
-        _end_if
+                        ld (iy+$03), $00
+                _end_if
 L_83F0:
-        pop bc
-        ld de, $0004
-        add iy, de
-        djnz L_83BA
+                pop bc
+                ld de, $0004
+                add iy, de
+        _djnz 
+
         ret
 
 
@@ -2755,33 +2757,33 @@ L_8A55:
         ld b, $1E
         ld ix, $FFA2
 
-L_8A60:
-        ld a, (nivel)
-        cp (ix+$02)
-        _if_not nz
-                push bc
-                xor a
-                call L_8990
-                _if_not nc
-                        set 7, (ix+$02)
-                        push ix
-                        ld a, $03
-                        ld (sound_to_play), a
-                        call L_95EB
+        _do
+                ld a, (nivel)
+                cp (ix+$02)
+                _if_not nz
+                        push bc
                         xor a
-                        ld ($9D32), a
-                        ld hl, $F9EB
-                        call L_96EC
-                        pop ix
+                        call L_8990
+                        _if_not nc
+                                set 7, (ix+$02)
+                                push ix
+                                ld a, $03
+                                ld (sound_to_play), a
+                                call L_95EB
+                                xor a
+                                ld ($9D32), a
+                                ld hl, $F9EB
+                                call L_96EC
+                                pop ix
 
+                        _end_if
+
+                        pop bc  
                 _end_if
 
-                pop bc  
-        _end_if
-
-        ld de, $0003
-        add ix, de
-        djnz L_8A60
+                ld de, $0003
+                add ix, de
+        _djnz 
         ret
 
 
@@ -3869,6 +3871,7 @@ L_912F:
                 pop hl
                 inc hl
         _while_true
+        
 
 L_913E:
         jp coloca_em_de_hl_5E22_B830
@@ -4543,26 +4546,27 @@ L_95A6:
         ld b, $1E
         ld ix, $FFA2
 
-L_95AC:
-        ld a, (nivel)
-        cp (ix+$02)
-        jr nz, L_95CD
-        push bc
-        push ix
-        xor a
-        ld bc, $0046
-        ld e, (ix)
-        ld l, (ix+$01)
-        call L_8D3E
-        call desenha_sprite
-        call L_8DD7
-        pop ix
-        pop bc
+        _do
+                ld a, (nivel)
+                cp (ix+$02)
 
-L_95CD:
-        ld de, $0003
-        add ix, de
-        djnz L_95AC
+                _if_not nz
+                        push bc
+                        push ix
+                        xor a
+                        ld bc, $0046
+                        ld e, (ix)
+                        ld l, (ix+$01)
+                        call L_8D3E
+                        call desenha_sprite
+                        call L_8DD7
+                        pop ix
+                        pop bc
+                _end_if
+
+                ld de, $0003
+                add ix, de
+        _djnz 
         ret
 
 
@@ -4573,10 +4577,10 @@ L_95D5:
         ld ix, $FFA2
         ld de, $0003
 
-L_95E3:
-        res 7, (ix+$02)
-        add ix, de
-        djnz L_95E3
+        _do     
+                res 7, (ix+$02)
+                add ix, de
+        _djnz 
 
 L_95EB:
         ld a, ($9D2A)
@@ -4655,37 +4659,37 @@ L_963E:
         ld de, $00F8
         ld b, $06
 
-L_9661:
-        push bc
-        ld a, ($9D2C)
-        add a, a
-        ld b, $08
+        _do 
+                push bc
+                ld a, ($9D2C)
+                add a, a
+                ld b, $08
 
 L_9668:
-        sub $08
-        _if_not c
-                ld (hl), $FF
+                sub $08
+                _if_not c
+                        ld (hl), $FF
+                        inc l
+                        djnz L_9668
+                        jr L_967C
+                _end_if
+
+                ld (hl), c
                 inc l
-                djnz L_9668
-                jr L_967C
-        _end_if
-
-        ld (hl), c
-        inc l
-        jr L_967A
+                jr L_967A
 
 
-L_9677:
-        ld (hl), $00
-        inc l
+                _do
+                        ld (hl), $00
+                        inc l
 
 L_967A:
-        djnz L_9677
+                _djnz
 
 L_967C:
-        add hl, de
-        pop bc
-        djnz L_9661
+                add hl, de
+                pop bc
+        _djnz 
         ret
 
 
