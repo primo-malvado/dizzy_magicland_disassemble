@@ -732,12 +732,14 @@ L_7AB9:
 
 
 L_7AC0:
-        dec hl
-        ld a, (hl)
-        cp $4E
-        jr z, L_7AC0
-        cp $4D
-        jr z, L_7AC0
+        _do
+                dec hl
+                ld a, (hl)
+                cp $4E
+                jr z, L_7AC0; break
+                cp $4D
+                
+        _while z
         ld ($9D34), a
         push ix
         push bc
@@ -1405,21 +1407,21 @@ function_7F26:
         _end_if
 
         cp $64
-        jr nz, L_7F7F
-        inc (ix+$09)
-        ld a, (ix+$09)
-        and $03
-        cp $03
-
         _if_not nz
-                ld a, $01
+                inc (ix+$09)
+                ld a, (ix+$09)
+                and $03
+                cp $03
+
+                _if_not nz
+                        ld a, $01
+                _end_if
+
+
+                add a, (ix+$0E)
+                ld (ix+$04), a
+
         _end_if
-
-
-        add a, (ix+$0E)
-        ld (ix+$04), a
-
-L_7F7F:
         cp $98
         _if_not nz
                 ld a, $31
@@ -2043,33 +2045,33 @@ L_83BA:
         push bc
         ld a, (iy+$03)
         and a
-        jr z, L_83F0
-        ld (iy+$03), $40
-        rlca
-        _if_not c
-                call L_842F
-                dec (iy+$01)
-                ld a, (iy+$01)
-                cp $28
-                jr z, L_83EC
-                and $0F
-                _if_not nz
-                        inc (iy+$02)
-                        ld a, (iy+$02)
-                        cp $D2
+        _if_not z
+                ld (iy+$03), $40
+                rlca
+                _if_not c
+                        call L_842F
+                        dec (iy+$01)
+                        ld a, (iy+$01)
+                        cp $28
                         jr z, L_83EC
-                        cp $D9
-                        jr z, L_83EC
+                        and $0F
+                        _if_not nz
+                                inc (iy+$02)
+                                ld a, (iy+$02)
+                                cp $D2
+                                jr z, L_83EC
+                                cp $D9
+                                jr z, L_83EC
+                        _end_if
                 _end_if
-        _end_if
 
-        call L_842F
-        jr L_83F0
+                call L_842F
+                jr L_83F0
 
 
 L_83EC:
-        ld (iy+$03), $00
-
+                ld (iy+$03), $00
+        _end_if
 L_83F0:
         pop bc
         ld de, $0004
@@ -3069,16 +3071,17 @@ L_8CC1:
         ld hl, $781B
         ld a, (hl)
         and a
-        jr z, L_8CFC
-        dec a
-        jr z, L_8CFC
-        dec (hl)
-        and $07
-        ret nz
-        dec (hl)
-        jr L_8D06
+        _if_not z
+                dec a
+                _if_not z
+                        dec (hl)
+                        and $07
+                        ret nz
+                        dec (hl)
+                        jr L_8D06
 
-
+                _end_if
+        _end_if
 L_8CFC:
         ld hl, $8D21
         inc (hl)
@@ -3588,26 +3591,26 @@ L_8FE9:
 L_8FF0:
         ld ($900B), hl
 
-L_8FF3:
-        ld l, (ix)
-        inc ix
-        ld h, (ix)
-        inc ix
-        ld bc, $0000
-        add hl, bc
-        ld a, $00
-        ld ($9B31), a
-        ld a, (largura_sprite_a_desenhar_copy)
-        ld b, a
-        call function_901d
-        ex de, hl
-        ld bc, $0000
-        add hl, bc
-        ex de, hl
-        ld a, (altura_sprite_a_desenhar_copy)
-        dec a
-        ld (altura_sprite_a_desenhar_copy), a
-        jr nz, L_8FF3
+        _do
+                ld l, (ix)
+                inc ix
+                ld h, (ix)
+                inc ix
+                ld bc, $0000
+                add hl, bc
+                ld a, $00
+                ld ($9B31), a
+                ld a, (largura_sprite_a_desenhar_copy)
+                ld b, a
+                call function_901d
+                ex de, hl
+                ld bc, $0000
+                add hl, bc
+                ex de, hl
+                ld a, (altura_sprite_a_desenhar_copy)
+                dec a
+                ld (altura_sprite_a_desenhar_copy), a
+        _while nz
         ret
 
 
@@ -3796,23 +3799,24 @@ limpa_a_area_de_jogo:
         ld a, $88
         ld de, $0001
 
-L_90EC:
-        ld l, (ix)
-        ld h, (ix+$01)
-        inc ix
-        inc ix
-        add hl, de
-        ld b, $1E
-
         _do
+                ld l, (ix)
+                ld h, (ix+$01)
+                inc ix
+                inc ix
+                add hl, de
+                ld b, $1E
 
-                ld (hl), $00
-                inc hl
-        
-        _djnz
+                _do
 
-        dec a
-        jr nz, L_90EC
+                        ld (hl), $00
+                        inc hl
+                
+                _djnz
+
+                dec a
+        _while nz
+
         ld a, $47
         jp L_8D89
 
@@ -3841,10 +3845,11 @@ L_9106:
 L_9122:
         ld b, $2F
 
-L_9124:
-        inc b
-        sub $0A
-        jr nc, L_9124
+        _do
+                inc b
+                sub $0A
+        _while nc
+
         add a, $3A
         ld (hl), b
         inc hl
@@ -4097,11 +4102,12 @@ L_92C1:
         call L_92F8
         ld d, $00
 
-L_92CD:
-        ld a, $28
-        call L_92F8
-        dec d
-        jr nz, L_92CD
+        _do
+                ld a, $28
+                call L_92F8
+                dec d
+        _while nz
+
         ld a, $2E
         call L_92F8
         ld a, $2B
@@ -4162,14 +4168,15 @@ L_931A:
         ld l, a
         ld d, $00
 
-L_9325:
-        ld a, $29
-        call L_92DC
-        ld a, l
-        add a, $08
-        ld l, a
-        dec d
-        jr nz, L_9325
+        _do
+                ld a, $29
+                call L_92DC
+                ld a, l
+                add a, $08
+                ld l, a
+                dec d
+        _while nz
+
         ld a, l
         add a, $08
         ld l, a
@@ -4290,25 +4297,27 @@ copia_color_attributes_para_ecra:
         ld hl, $5E05
         ld c, $11
 
-L_9433:
-        ld b, $1E
-
         _do
+                ld b, $1E
 
-                ld a, (hl)
-                set 6, a
-                ld (de), a
+                _do
+
+                        ld a, (hl)
+                        set 6, a
+                        ld (de), a
+                        inc hl
+                        inc de
+                
+                _djnz
+
                 inc hl
                 inc de
-        
-        _djnz
+                inc hl
+                inc de
+                dec c
 
-        inc hl
-        inc de
-        inc hl
-        inc de
-        dec c
-        jr nz, L_9433
+        _while nz
+
         ret
 
 
@@ -4316,15 +4325,16 @@ L_9445:
         push af
         push bc
 
-L_9447:
-        ld bc, ($9D2E)
+        _do
+                ld bc, ($9D2E)
 
-L_944B:
-        ld a, ($9D2F)
-        cp b
-        jr z, L_944B
-        and $03
-        jr z, L_9447
+                _do
+                        ld a, ($9D2F)
+                        cp b
+                _while z
+
+                and $03
+        _while z
         pop bc
         pop af
         ret
