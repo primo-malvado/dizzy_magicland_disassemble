@@ -2839,6 +2839,9 @@ L_8D06:
         ; End of unknown area $8D1F to $8D21
 
 
+
+
+
 coloca_em_de_hl_5E22_B830:
         push hl
         push de
