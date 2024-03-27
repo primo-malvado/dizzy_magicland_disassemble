@@ -1,10 +1,14 @@
+rm dist/dizzy.tap
+rm dist/*.bin
+
+
+
 sjasmplus build/01_container.asm
 sjasmplus build/03_container.asm
 sjasmplus build/04_container.asm
 sjasmplus build/05_container.asm
 
 
-rm dist/dizzy.tap
 
 bas2tap -a -s"Dizzy_4" source/00.bas
 
@@ -20,4 +24,7 @@ taput add  dist/03.bin  dist/dizzy.tap
 taput add  dist/04.bin  dist/dizzy.tap
 taput add  dist/05.bin  dist/dizzy.tap
 
-fuse dist/dizzy.tap
+
+sh compare/compare.sh
+
+# fuse dist/dizzy.tap
