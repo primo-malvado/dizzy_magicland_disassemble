@@ -1,258 +1,258 @@
 index_de_sprites:
-        dw $14C5
-        dw $14E7 
+        dw $14c5
+        dw $14e7 
         dw $1509 
-        dw $152B 
-        dw $154D 
-        dw $156F 
+        dw $152b 
+        dw $154d 
+        dw $156f 
         dw $1591 
-        dw $15B3 
-        dw $15D5 
-        dw $15F7 
+        dw $15b3 
+        dw $15d5 
+        dw $15f7 
         dw $1619 
-        dw $163B 
-        dw $165D 
-        dw $167F 
-        dw $16A1
-        dw $16C3
-        dw $16E5
+        dw $163b 
+        dw $165d 
+        dw $167f 
+        dw $16a1
+        dw $16c3
+        dw $16e5
         dw $1707
         dw $1729
-        dw $174B
-        dw $176D
-        dw $178F
-        dw $17B1
-        dw $17D3
-        dw $17F5
+        dw $174b
+        dw $176d
+        dw $178f
+        dw $17b1
+        dw $17d3
+        dw $17f5
         dw $1817
         dw $1839
         dw $0000
         dw $0080
-        dw $1F54
-        dw $1FC2
-        dw $185B
-        dw $00BB
-        dw $00DE
+        dw $1f54
+        dw $1fc2
+        dw $185b
+        dw $00bb
+        dw $00de
         dw $0128
-        dw $016F
-        dw $01AA
-        dw $01E8
+        dw $016f
+        dw $01aa
+        dw $01e8
         dw $0229
         dw $0233
-        dw $023D
+        dw $023d
         dw $0247
         dw $0251
-        dw $025B
+        dw $025b
         dw $0265
-        dw $026F
+        dw $026f
         dw $0279
         dw $0283
-        dw $028D
+        dw $028d
         dw $0297
-        dw $02A1
-        dw $02AB
-        dw $02B5
-        dw $02BF
-        dw $02C9
-        dw $02D3
-        dw $02DD
-        dw $02E7
-        dw $02F1
-        dw $02FB
+        dw $02a1
+        dw $02ab
+        dw $02b5
+        dw $02bf
+        dw $02c9
+        dw $02d3
+        dw $02dd
+        dw $02e7
+        dw $02f1
+        dw $02fb
         dw $0305
-        dw $030F
+        dw $030f
         dw $0319
         dw $0323
-        dw $032D
+        dw $032d
         dw $0337
         dw $0341
-        dw $034B
+        dw $034b
         dw $0355
-        dw $035F
+        dw $035f
         dw $0369
         dw $0373
-        dw $037D
+        dw $037d
         dw $0387
         dw $0391
-        dw $039B
-        dw $03A5
-        dw $03AF
-        dw $03B9
-        dw $03C3
-        dw $03CD
-        dw $03D7
-        dw $03E1
-        dw $03EB
-        dw $03F5
-        dw $03FF
+        dw $039b
+        dw $03a5
+        dw $03af
+        dw $03b9
+        dw $03c3
+        dw $03cd
+        dw $03d7
+        dw $03e1
+        dw $03eb
+        dw $03f5
+        dw $03ff
         dw $0409
         dw $0413
-        dw $041D
+        dw $041d
         dw $0427
         dw $0431
-        dw $043B
+        dw $043b
         dw $0455
-        dw $046F
+        dw $046f
         dw $0489
-        dw $04A3
-        dw $18BD
+        dw $04a3
+        dw $18bd
         dw $1937
         dw $1981
-        dw $19CB
+        dw $19cb
         dw $2033
         dw $2047
         dw $2059
         dw $2071
-        dw $FFFF
-        dw $20EB
+        dw $ffff
+        dw $20eb
         dw $2144
-        dw $FFFF
-        dw $219D
-        dw $FFFF
-        dw $21F3
-        dw $19E5
-        dw $1A2F
-        dw $FFFF
-        dw $1A79
-        dw $04BD
-        dw $FFFF
-        dw $22D1
-        dw $1AF3
-        dw $FFFF
-        dw $04D9
-        dw $0A89
-        dw $04E3
+        dw $ffff
+        dw $219d
+        dw $ffff
+        dw $21f3
+        dw $19e5
+        dw $1a2f
+        dw $ffff
+        dw $1a79
+        dw $04bd
+        dw $ffff
+        dw $22d1
+        dw $1af3
+        dw $ffff
+        dw $04d9
+        dw $0a89
+        dw $04e3
         dw $2390
-        dw $1B3D
-        dw $1B87
-        dw $04F9
+        dw $1b3d
+        dw $1b87
+        dw $04f9
         dw $1002
-        dw $FFFF
-        dw $FFFF
-        dw $063C
+        dw $ffff
+        dw $ffff
+        dw $063c
         dw $0686
-        dw $06B8
-        dw $06EA
-        dw $070C
+        dw $06b8
+        dw $06ea
+        dw $070c
         dw $0726
         dw $0736
         dw $0758
-        dw $076A
-        dw $078A
-        dw $07AC
-        dw $07CC
-        dw $07EE
+        dw $076a
+        dw $078a
+        dw $07ac
+        dw $07cc
+        dw $07ee
         dw $0800
-        dw $080A
+        dw $080a
         dw $0854
-        dw $089E
-        dw $08E5
-        dw $1BD1
-        dw $1BDB
-        dw $1BE5
-        dw $1BEF
-        dw $104C
-        dw $105E
-        dw $1BF9
+        dw $089e
+        dw $08e5
+        dw $1bd1
+        dw $1bdb
+        dw $1be5
+        dw $1bef
+        dw $104c
+        dw $105e
+        dw $1bf9
         dw $1070
         dw $1092
         dw $0927
-        dw $10B4
-        dw $10D6
+        dw $10b4
+        dw $10d6
         dw $1108
-        dw $23C2
+        dw $23c2
         dw $2404
         dw $2486
-        dw $24A0
-        dw $24BA
+        dw $24a0
+        dw $24ba
         dw $0941
         dw $0963
         dw $0985
-        dw $09A7
-        dw $09B9
-        dw $FFFF
-        dw $112A
-        dw $09F9
-        dw $114C
-        dw $115E
+        dw $09a7
+        dw $09b9
+        dw $ffff
+        dw $112a
+        dw $09f9
+        dw $114c
+        dw $115e
         dw $1170
         dw $1178
         dw $1186
         dw $1198
-        dw $0AAB
-        dw $0AD5
-        dw $0B95
-        dw $0BF1
-        dw $0C1B
-        dw $0C53
-        dw $0C7F
-        dw $0D01
-        dw $251C
-        dw $254E
+        dw $0aab
+        dw $0ad5
+        dw $0b95
+        dw $0bf1
+        dw $0c1b
+        dw $0c53
+        dw $0c7f
+        dw $0d01
+        dw $251c
+        dw $254e
         dw $2570
         dw $2592
-        dw $0A13
-        dw $0A35
-        dw $0A45
-        dw $0A63
-        dw $25B4
-        dw $0D63
-        dw $25D6
-        dw $25F8
-        dw $0D75
-        dw $0DC7
-        dw $0DF9
-        dw $0E13
-        dw $0E45
-        dw $0E67
-        dw $0EA8
-        dw $1C43
-        dw $1C49
-        dw $1C53
-        dw $0ECA
-        dw $0EEC
-        dw $FFFF
-        dw $0F0E
-        dw $1C67
-        dw $1C6D
-        dw $1C76
-        dw $FFFF
-        dw $0F30
-        dw $0F52
-        dw $FFFF
-        dw $11A6
+        dw $0a13
+        dw $0a35
+        dw $0a45
+        dw $0a63
+        dw $25b4
+        dw $0d63
+        dw $25d6
+        dw $25f8
+        dw $0d75
+        dw $0dc7
+        dw $0df9
+        dw $0e13
+        dw $0e45
+        dw $0e67
+        dw $0ea8
+        dw $1c43
+        dw $1c49
+        dw $1c53
+        dw $0eca
+        dw $0eec
+        dw $ffff
+        dw $0f0e
+        dw $1c67
+        dw $1c6d
+        dw $1c76
+        dw $ffff
+        dw $0f30
+        dw $0f52
+        dw $ffff
+        dw $11a6
         dw $1254
         dw $1290
         dw $1316
         dw $1376
-        dw $FFFF
-        dw $FFFF
-        dw $0F74
-        dw $0F96
-        dw $0FB2
-        dw $0FC8
-        dw $0FE2
-        dw $13E7
-        dw $1C8A
-        dw $1CE3
-        dw $1D2D
-        dw $1D9D
-        dw $1DC9
-        dw $1DFB
-        dw $1E59
-        dw $1E6A
-        dw $1EB4
-        dw $1EC0
-        dw $1ECE
-        dw $1EF0
-        dw $1F22
-        dw $051B
+        dw $ffff
+        dw $ffff
+        dw $0f74
+        dw $0f96
+        dw $0fb2
+        dw $0fc8
+        dw $0fe2
+        dw $13e7
+        dw $1c8a
+        dw $1ce3
+        dw $1d2d
+        dw $1d9d
+        dw $1dc9
+        dw $1dfb
+        dw $1e59
+        dw $1e6a
+        dw $1eb4
+        dw $1ec0
+        dw $1ece
+        dw $1ef0
+        dw $1f22
+        dw $051b
         dw $0556
         dw $0591
-        dw $05CF
-        dw $060D
+        dw $05cf
+        dw $060d
         dw $1415
-        dw $143F
+        dw $143f
         dw $1467
         dw $1495
 

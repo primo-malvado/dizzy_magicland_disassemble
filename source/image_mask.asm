@@ -40,7 +40,7 @@ index_mask_image_hero:
         defw image_mask_38-mask_images_hero
 
 mask_images_hero:
-        defw $11FC
+        defw $11fc
 
 
 

@@ -39,7 +39,7 @@ desenha_sprite:
 		ld a, l
 		ld (sprite_top_copy), a
 		push hl
-		ld hl, (primeiro_byte_da_sprite_a_desenhar)
+		ld hl, (sprit_actual_byte_to_draw)
 		ld a, (largura_sprite_a_desenhar)
 		srl a
 		ld c, a
@@ -51,7 +51,7 @@ desenha_sprite:
 			inc a
 		_while nz
 
-		ld (primeiro_byte_da_sprite_a_desenhar), hl
+		ld (sprit_actual_byte_to_draw), hl
 		pop hl
 
 	_end_if
@@ -97,7 +97,7 @@ desenha_sprite:
 		ld c, a
 		ld b, $00
 		push hl
-		ld hl, (primeiro_byte_da_sprite_a_desenhar)
+		ld hl, (sprit_actual_byte_to_draw)
 		add hl, bc
 		ld a, (sprite_espelho)
 		and a
@@ -108,7 +108,7 @@ desenha_sprite:
 			sbc hl, bc
 		_end_if
 
-		ld (primeiro_byte_da_sprite_a_desenhar), hl
+		ld (sprit_actual_byte_to_draw), hl
 		pop hl
 		ld b, a
 
@@ -143,14 +143,14 @@ desenha_sprite:
 	and a
 	
 	_if_not z
-		ld hl, (primeiro_byte_da_sprite_a_desenhar)
+		ld hl, (sprit_actual_byte_to_draw)
 		ld a, (largura_sprite_a_desenhar)
 		srl a
 		dec a
 		ld c, a
 		ld b, $00
 		add hl, bc
-		ld (primeiro_byte_da_sprite_a_desenhar), hl
+		ld (sprit_actual_byte_to_draw), hl
 		ld a, (largura_sprite_a_desenhar)
 		res 0, a
 		ld b, a
@@ -173,7 +173,7 @@ desenha_sprite:
 	add hl, bc
 	push hl
 	pop ix
-	ld de, (primeiro_byte_da_sprite_a_desenhar)
+	ld de, (sprit_actual_byte_to_draw)
 	ld a, (sprite_left_copy)
 	sub $20
 	srl a

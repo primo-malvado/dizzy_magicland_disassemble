@@ -1,14 +1,16 @@
 color_attribute_temp equ $5de4
 screen_memory_map equ $5c64
 espelho_bytes equ $5b00
+screenpixels equ $4000
+screenattributes equ $5800
+data_ffff equ $ffff
 
-        org $5E49
+dizzy_image_xor_background equ $5c00
 
 
-        
-        defb $0C, $11, $CD, $3E, $5E, $21, $00
-        defb $C0, $11, $00, $40, $01, $00, $1B, $ED, $B0, $3E, $10, $CD, $3E, $5E
-        
+        org $5e49
+
+        db $0c, $11, $cd, $3e, $5e, $21, $00, $c0, $11, $00, $40, $01, $00, $1b, $ed, $b0, $3e, $10, $cd, $3e, $5e
 
 start:
         di
@@ -20,12 +22,9 @@ start:
                 ld a, l
                 ld b, $08
 
-
                 _do
-
                         rra
                         rl c
-                
                 _djnz
 
                 ld (hl), c
@@ -33,8 +32,8 @@ start:
         _while nz
 
         ld hl, screen_memory_map
-        ld de, $4000
-        ld b, $C0
+        ld de, screenpixels
+        ld b, $c0
 
         _do
 
@@ -61,16 +60,16 @@ start:
         _djnz
 
         xor a
-        out ($FE), a
+        out ($fe), a
         im 2
-        ld a, $FE
+        ld a, $fe
         ld i, a
-        ld bc, $5000
+        ld bc, $5000 ; static
 
 
         _do
 
-                in a, ($1F)
+                in a, ($1f)
                 or c
                 ld c, a
                 ei
@@ -80,174 +79,176 @@ start:
         _djnz
 
         ld a, c
-        and $E0
-        ld a, $FF
+        and $e0
+        ld a, $ff
 
         _if_not z
                 xor a
         _end_if
 
-        ld ($728F), a
+        ld (data_728f), a
         ei
 
         jp restart_game
 
 
-        ; Start of unknown area $5EB3 to $6043
-        defb $63, $22, $D6, $5E, $7A, $32, $FA, $5D, $F1, $08, $E1, $7C, $ED
-        defb $47, $7D, $ED, $4F, $F1, $FD, $E1, $DD, $E1, $C1, $D1, $E1, $D9, $C1, $D1, $E1
-        defb $ED, $7B, $14, $5F, $00, $CD, $00, $50, $C3, $D6, $5D, $DB, $3F, $AA, $0F, $38
-        defb $FA, $DB, $1F, $5F, $7A, $D3, $3F, $EE, $81, $57, $C9, $D3, $1F, $7A, $D3, $3F
-        defb $EE, $81, $57, $DB, $3F, $AA, $0F, $30, $FA, $C9, $23, $5E, $78, $08, $31, $00
-        defb $40, $10, $3A, $5C, $C0, $E2, $FD, $7F, $9B, $36, $58, $27, $FD, $7F, $00, $00
-        defb $00, $A1, $2B, $2D, $A8, $5D, $C1, $FB, $C9, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $A8, $00, $00, $00, $69, $CF, $96, $01
-        defb $01, $FD, $7F, $ED, $79, $11, $00, $C0, $21, $00, $61, $01, $00, $40, $ED, $B0
-        defb $01, $FD, $7F, $3E, $10, $ED, $79, $C9, $3E, $13, $18, $E4, $3E, $11, $18, $E0
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00
-        ; End of unknown area $5EB3 to $6043
+        ; start of unknown area 0x5eb3 to 0x6043
+        db $63, $22, $d6, $5e, $7a, $32, $fa, $5d, $f1, $08, $e1, $7c, $ed
+        db $47, $7d, $ed, $4f, $f1, $fd, $e1, $dd, $e1, $c1, $d1, $e1, $d9, $c1, $d1, $e1
+        db $ed, $7b, $14, $5f, $00, $cd, $00, $50, $c3, $d6, $5d, $db, $3f, $aa, $0f, $38
+        db $fa, $db, $1f, $5f, $7a, $d3, $3f, $ee, $81, $57, $c9, $d3, $1f, $7a, $d3, $3f
+        db $ee, $81, $57, $db, $3f, $aa, $0f, $30, $fa, $c9, $23, $5e, $78, $08, $31, $00
+        db $40, $10, $3a, $5c, $c0, $e2, $fd, $7f, $9b, $36, $58, $27, $fd, $7f, $00, $00
+        db $00, $a1, $2b, $2d, $a8, $5d, $c1, $fb, $c9, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $a8, $00, $00, $00, $69, $cf, $96, $01
+        db $01, $fd, $7f, $ed, $79, $11, $00, $c0, $21, $00, $61, $01, $00, $40, $ed, $b0
+        db $01, $fd, $7f, $3e, $10, $ed, $79, $c9, $3e, $13, $18, $e4, $3e, $11, $18, $e0
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00
+        ; end of unknown area 0x5eb3 to 0x6043
 
 
 
         include "image_mask.asm"
 
-after_mask_images:
-        defb $01
+data_728e:
+        db $01
 
-        ; Start of unknown area $728F to $7290
-        defb $00
-        defb $01
-        ; End of unknown area $728F to $7290
+data_728f:
+        db $00
+
+        db $01
 
 
 restart_game:
         ld hl, color_attribute_temp
-        ld de, $5DE5
-        ld bc, $025F
+        ld de, color_attribute_temp+1
+        ld bc, $025f ; static ,  copiar 608 bytes, 19 linhas menos um byte
         ld (hl), $42
         ldir
+
         ld a, $01
-        ld ($9D27), a
+        ld (data_9d27), a
         xor a
         ld (nivel), a
-        call L_9458
-        ld hl, texts
-        call L_9141
+
+        call l_9458
+        ld hl, texts ; posicao onde comeca o nome do nivel
+        call write_on_screen
         ld a, $46
         ld (apenas_brite_and_ink), a
-        ld a, $1B
-        ld e, $3A
-        ld l, $3C
-        call L_8D51
-        call L_8DD7
+        ld a, $1b
+        ld e, $3a
+        ld l, $3c
+        call l_8d51
+        call l_8dd7
         call desenha_sprite
         xor a
-        ld ($9D46), a
-        ld a, ($FFFF)
+        ld (data_9d46), a
+        ld a, (data_ffff)
         and a
 
         _if_not nz
-                ld hl, $FF9C
-                call L_9141
+                ld hl, data_ff9c 
+                call write_on_screen
         _end_if
 
         _do 
-                call L_93AB
+                call l_93ab
                 and $09
         _while z
 
-        ld a, $FF
-        ld ($9D46), a
-        call L_88A0
-        call L_95D5
-        call L_9905
+        ld a, $ff
+        ld (data_9d46), a
+        call l_88a0
+        call l_95d5
+        call l_9905
         ld a, $03
-        ld ($9D2D), a
-        ld de, $781D
+        ld (data_9d2d), a
+        ld de, $781d ; static value
         ld (posicao_hero_x_em_nibbles), de
         ld a, $53
         ld (sera_o_nivel_copia_3), a
-        ld ($9D41), a
+        ld (data_9d41), a
 
-L_72FD:
-        call L_A196
-        call L_9607
+l_72fd:
+        call l_a196
+        call l_9607
         ld a, $01
-        ld ($9D46), a
-        ld hl, $0000
-        ld ($9D2E), hl
+        ld (data_9d46), a
+        ld hl, $0000  ; static
+        ld (data_9d2e), hl
 
-L_730E:
+l_730e:
         xor a
-        ld ($9D32), a
+        ld (data_9d32), a
         dec a
-        ld ($9D4C), a
-        ld hl, $9D31
+        ld (data_9d4c), a
+        ld hl, data_9d31
         dec (hl)
 
         
-        jp p, L_7330 ;  _if_not p
+        jp p, l_7330 ;  _if_not p
                 inc (hl)
-                ld a, ($9D16)
+                ld a, (data_9d16)
                 and a
                 _if_not nz
-                        ld a, ($9D30)
+                        ld a, (data_9d30)
                         bit 3, a
                         _if_not z
-                                ld a, $FF
-                                ld ($9D32), a
+                                ld a, $ff
+                                ld (data_9d32), a
                         _end_if
                 _end_if
         ;_end_if
-L_7330:
-        call L_895C
-        call L_962C
-        call L_8A55
-        call L_9709
-        call L_8B87
-        call L_8C18
-        call L_8CC1
-        call L_8A92
+l_7330:
+        call l_895c
+        call l_962c
+        call l_8a55
+        call l_9709
+        call l_8b87
+        call l_8c18
+        call l_8cc1
+        call l_8a92
         call playsound
         ld bc, (nivel)
         ld a, c
         cp b
         _if_not z
-                cp $2A
+                cp $2a
                 _if_not nz
-                        ld a, (posicao_hero_x_em_nibbles_copia_2)
+                        ld a, (data_9d0d)
                         add a, $20
                         ld l, a
-                        ld a, ($9D0E)
-                        sub $0A
+                        ld a, (data_9d0e)
+                        sub $0a
                         ld h, a
-                        ld ($8B7D), hl
+                        ld (data_8b7d), hl
 
                 _end_if
-                call L_A26B
+                call l_a26b
         _end_if
 
-        ld a, ($940A)
-        cp $FD
+        ld a, (data_940a)
+        cp $fd
         _if_not z
 
                 _do
-                        ld bc, ($9D2E)
+                        ld bc, (data_9d2e)
                         ld a, b
                         sub c
                         cp $03
@@ -255,81 +256,81 @@ L_7330:
 
 
                 ld a, b
-                ld ($9D2E), a
-                ld a, ($9D41)
+                ld (data_9d2e), a
+                ld a, (data_9d41)
                 and a
-                jr z, L_73C3
-                ld a, ($9D4C)
-                ld ($9D4B), a
-                ld a, ($9D2C)
+                jr z, l_73c3
+                ld a, (data_9d4c)
+                ld (data_9d4b), a
+                ld a, (data_9d2c)
                 and a
-                jp nz, L_730E ; jp não mexer
-                ld a, ($9D44)
+                jp nz, l_730e ; jp não mexer
+                ld a, (data_9d44)
                 and a
-                jp nz, L_730E ; jp não mexer
+                jp nz, l_730e ; jp não mexer
                 ld a, $01
-                ld ($9D27), a
-                ld hl, $F85E
-                call L_9141
-                ld hl, ($9D28)
-                call L_9141
-                ld a, $FF
-                ld ($9D46), a
-                call L_73E5
-                call L_9C7B
+                ld (data_9d27), a
+                ld hl, data_f85e ; posicao onde comeca o nome do nivel
+                call write_on_screen
+                ld hl, (posicao_texto_a_escrever)
+                call write_on_screen
+                ld a, $ff
+                ld (data_9d46), a
+                call l_73e5
+                call l_9c7b
 
-                ld hl, $9D2D
+                ld hl, data_9d2d
                 dec (hl)
-                jp nz, L_72FD ; jp não mexer
+                jp nz, l_72fd ; jp não mexer
 
         _end_if
 
-        ld a, $FF
-        ld ($9D46), a
+        ld a, $ff
+        ld (data_9d46), a
         jp restart_game  ; jp não mexer
 
 
-L_73C3:
+l_73c3:
         ld a, $01
-        ld ($9D27), a
+        ld (data_9d27), a
         ld a, $02
         ld (nivel), a
-        call L_9458
-        ld hl, $F231
-        call L_9141
-        call L_73E5
-        call L_9458
-        call L_99C4
+        call l_9458
+        ld hl, data_f231 ; posicao onde comeca o nome do nivel
+        call write_on_screen
+        call l_73e5
+        call l_9458
+        call l_99c4
         jp restart_game ; jp não mexer
 
 
-        ; Start of unknown area $73E2 to $73E4
-        defb $CD, $41, $91
-        ; End of unknown area $73E2 to $73E4
+        ; start of unknown area 0x73e2 to 0x73e4
+        db $cd, $41, $91
+        ; end of unknown area 0x73e2 to 0x73e4
 
 
-L_73E5:
+l_73e5:
         _do
-                call L_93AB
+                call l_93ab
                 and a
         _while nz
 
         _do 
                 call playsound
-                call L_93AB
+                call l_93ab
                 and a
         _while z
         ret
 
 
-L_73F5:
-        set 5, (ix+$0A)
-        call L_7401
-        res 5, (ix+$0A)
+l_73f5:
+        set 5, (ix+$0a)
+        call l_7401
+        res 5, (ix+$0a)
         ret
 
 
-L_7401:
+l_7401:
         push ix
         ld a, (ix+$04)
         ld e, (ix+$02)
@@ -339,102 +340,110 @@ L_7401:
         ld (sprite_left), a
         ld a, l
         ld (sprite_top), a
-        ld a, (ix+$0A)
+        ld a, (ix+$0a)
         and $47
         ld (apenas_brite_and_ink), a
-        ld a, (ix+$0A)
+        ld a, (ix+$0a)
         rlca
         and $01
         ld (sprite_espelho), a
-        ld a, (ix+$0A)
+        ld a, (ix+$0a)
         and $08
         rrca
         rrca
         rrca
-        ld ($743E), a
+        ld (dynamic_743d+1), a
         call function_print_sprite
-        bit 5, (ix+$0A)
-        call z, L_7453
+        bit 5, (ix+$0a)
+        call z, l_7453
+dynamic_743d:        
         ld a, $01
         ld (background_color), a
         call desenha_sprite
         pop ix
         push ix
-        bit 5, (ix+$0A)
-        call nz, L_745F
+        bit 5, (ix+$0a)
+        call nz, l_745f
         pop ix
         ret
 
 
-L_7453:
-        bit 4, (ix+$0A)
+l_7453:
+        bit 4, (ix+$0a)
         ret nz
         xor a
         ld (background_color), a
-        jp L_8DD7
+        jp l_8dd7
 
 
-L_745F:
-        bit 4, (ix+$0A)
+l_745f:
+        bit 4, (ix+$0a)
         ret nz
         xor a
         ld (background_color), a
         ld a, $47
         ld (apenas_brite_and_ink), a
-        jp L_8DD7
+        jp l_8dd7
 
 
         include "dados_mapa.asm"
 
 function_index:
-        defw function_88F1, L_7401, function_88F1, L_7401, L_7401, L_7401, L_7401, L_7401, function_7B9C, L_7401, L_7401, function_83A6, function_862C, function_7C4E, L_7401, L_7401, L_7401, L_7401, function_7E8F, function_8091, function_81F8, L_7401, L_7401, L_7401, L_7401, L_7401, function_7C23, L_7401, function_7D74, function_7D74, function_7D74, function_8268, L_7401, function_833F, function_8306
+        defw function_88f1, l_7401, function_88f1, l_7401, l_7401, l_7401, l_7401, l_7401, function_7b9c, l_7401, l_7401, function_83a6, function_862c, function_7c4e, l_7401, l_7401, l_7401, l_7401, function_7e8f, function_8091, function_81f8, l_7401, l_7401, l_7401, l_7401, l_7401, function_7c23, l_7401, function_7d74, function_7d74, function_7d74, function_8268, l_7401, function_833f, function_8306
 
 function_index_04:
-        defw function_88F1, function_88F1, function_7A6A, function_7B6E, function_887D, function_7B85, function_880C, function_7A6A, function_7A6A, function_7BBA, function_7C9B, function_83B4, function_8637, function_7C56, function_7D43, function_7E57, function_7F26, function_8107, function_7E94, function_809C, function_822D, function_8134, function_8189, function_81C4, function_8737, function_7BC6, function_7C4D, function_7CF0, function_7DFA, function_7DB1, function_7D7A, function_8298, function_82D8, function_834B, function_88F1, $0000, $0000, $0000, $0000, $0000
+        defw function_88f1, function_88f1, function_7a6a, function_7b6e, function_887d, function_7b85, function_880c, function_7a6a, function_7a6a, function_7bba, function_7c9b, function_83b4, function_8637, function_7c56, function_7d43, function_7e57, function_7f26, function_8107, function_7e94, function_809c, function_822d, function_8134, function_8189, function_81c4, function_8737, function_7bc6, function_7c4d, function_7cf0, function_7dfa, function_7db1, function_7d7a, function_8298, function_82d8, function_834b, function_88f1
 
-function_7A6A:
-        ld a, ($9D32)
+data_7a60:        
+        dw $0000, $0000, $0000, $0000, $0000 ; static
+
+function_7a6a:
+        ld a, (data_9d32)
         and a
         ret z
-        call L_8998
+        call l_8998
         ret nc
         xor a
-        ld ($9D32), a
+        ld (data_9d32), a
         ld a, (ix+$04)
         cp $07
-        jp z, L_7B24 ; jp não mexer
-        cp $0B
-        jp z, L_7AE1 ; jp não mexer
-        cp $0F
-        jp z, L_7B04 ; jp não mexer
+        jp z, l_7b24 ; jp não mexer
+        cp $0b
+        jp z, l_7ae1 ; jp não mexer
+        cp $0f
+        jp z, l_7b04 ; jp não mexer
         cp $13
-        jp z, L_7AED ; jp não mexer
-        cp $1D
+        jp z, l_7aed ; jp não mexer
+        cp $1d
         _if_not c
                 cp $27
-                jp c, L_7B32 ; jp não mexer
+                jp c, l_7b32 ; jp não mexer
         _end_if
-L_7A97:
-        ld hl, $8CBD
+l_7a97:
+        ld hl, data_8cbd
         ld b, $00
 
         _do
                 ld a, (hl)
                 cp $01
-                jr z, L_7AC0
+                jr z, l_7ac0
                 and a
-                jr z, L_7AA8 ; break
+                
+                _break_if z
+
                 inc hl
                 inc b
         _while_true
 
 
-L_7AA8:
+l_7aa8:
         _do
 
                 ld a, b
                 and a
-                jr z, L_7AB3 ;; break
+
+                _break_if z
+
                 dec hl
                 ld a, (hl)
                 inc hl
@@ -444,171 +453,170 @@ L_7AA8:
         _djnz
 
 
-L_7AB3:
-        ld a, ($9D40)
-        ld ($8CBD), a
+        ld a, (data_9d40)
+        ld (data_8cbd), a
 
-L_7AB9:
-        ld (ix), $FF
-        jp L_9725 ; jp não mexer
+l_7ab9:
+        ld (ix), $ff
+        jp l_9725 ; jp não mexer
 
 
-L_7AC0:
+l_7ac0:
         _do
                 dec hl
                 ld a, (hl)
-                cp $4E
+                cp $4e
                 
                 _continue_if z 
                 
-                cp $4D
+                cp $4d
                 
         _while z
 
-        ld ($9D34), a
+        ld (data_9d34), a
         push ix
         push bc
-        call L_9826
-        call L_9867
+        call l_9826
+        call l_9867
         pop bc
         pop ix
         dec b
         ld a, $01
-        ld ($9D33), a
-        jr L_7AA8
+        ld (data_9d33), a
+        jr l_7aa8
 
 
-L_7AE1:
+l_7ae1:
         push ix
-        ld hl, $EBE6
-        call L_96EC
+        ld hl, data_ebe6
+        call l_96ec
         pop ix
-        jr L_7A97
+        jr l_7a97
 
 
-L_7AED:
+l_7aed:
         ld a, (dados_mapa_4)
         inc a
-        jr z, L_7A97
+        jr z, l_7a97
         push ix
-        ld a, $FF
+        ld a, $ff
         ld (dados_mapa_4), a
-        ld hl, $F605
-        call L_96EC
+        ld hl, data_f605
+        call l_96ec
         pop ix
-        jr L_7A97
+        jr l_7a97
 
 
-L_7B04:
-        ld a, $4D
-        call L_96FA
+l_7b04:
+        ld a, $4d
+        call l_96fa
         _if_not z
-                ld hl, $F41E
-                jp L_96EC ; jp não mexer
+                ld hl, data_f41e
+                jp l_96ec ; jp não mexer
         _end_if
 
-        ld (hl), $4E
+        ld (hl), $4e
         push ix
-        ld a, $FF
+        ld a, $ff
         ld (dados_mapa_77), a
-        ld hl, $F451
-        call L_96EC
+        ld hl, data_f451
+        call l_96ec
         pop ix
-        jr L_7AB9
+        jr l_7ab9
 
 
-L_7B24:
+l_7b24:
         ld a, $42
-        call L_96FA
-        jp nz, L_7A97 ; jp não mexer
-        ld a, $FF
-        ld ($9D32), a
+        call l_96fa
+        jp nz, l_7a97 ; jp não mexer
+        ld a, $ff
+        ld (data_9d32), a
         ret
 
 
-L_7B32:
-        sub $1D
-        ld hl, $7A60
+l_7b32:
+        sub $1d
+        ld hl, data_7a60
         ld c, a
         ld b, $00
         add hl, bc
-        ld a, $FF
-        ld ($9D32), a
+        ld a, $ff
+        ld (data_9d32), a
         ld a, (hl)
         ld (hl), $01
         and a
         ret nz
         xor a
-        ld ($9D32), a
+        ld (data_9d32), a
         ld l, (ix+$05)
         ld h, (ix+$06)
 
-L_7B4F:
+l_7b4f:
         ld a, $01
-        ld ($9D27), a
-        call L_9141
+        ld (data_9d27), a
+        call write_on_screen
 
         _do 
-                call L_73E5
-                call L_924F
+                call l_73e5
+                call l_924f
                 ld hl, (posicao_onde_comeca_o_nome_do_nivel)
                 dec hl
                 ld (posicao_onde_comeca_o_nome_do_nivel), hl
-                cp $FF
-                jp z, L_A287 ; jp não mexer
-                call L_9152
+                cp $ff
+                jp z, l_a287 ; jp não mexer
+                call l_9152
         _while_true
 
 
-function_7B6E:
+function_7b6e:
         inc (ix+$07)
         ld a, (ix+$07)
         cp $15
-        jp nz, function_7A6A
+        jp nz, function_7a6a
         ld (ix+$07), $00
-        ld a, $D6
-        call L_83F9
-        jp function_7A6A
+        ld a, $d6
+        call l_83f9
+        jp function_7a6a
 
 
-function_7B85:
+function_7b85:
         inc (ix+$09)
         ld a, (ix+$09)
         cp $15
-        jp nz, function_7A6A
+        jp nz, function_7a6a
         xor a
         ld (ix+$09), a
-        ld a, $CF
-        call L_83F9
-        jp function_7A6A
+        ld a, $cf
+        call l_83f9
+        jp function_7a6a
 
 
-function_7B9C:
+function_7b9c:
         ld (ix+$04), $73
         ld a, (ix+$03)
         push af
-        sub $0D
+        sub $0d
         ld (ix+$03), a
-        call L_7401
-        call L_89E0
+        call l_7401
+        call l_89e0
         pop af
         ld (ix+$03), a
         ld (ix+$04), $13
-        jp L_7401
+        jp l_7401
 
 
-function_7BBA:
-        call L_8998
+function_7bba:
+        call l_8998
         ret nc
         ld a, $01
-        ld hl, $F9D7
-        jp L_8A30
+        ld hl, data_f9d7
+        jp l_8a30
 
 
-function_7BC6:
-        ld hl, $7848
+function_7bc6:
+        ld hl, $7848; static
         ld de, $3010
-        call L_89B1
+        call l_89b1
         ret nc
         ld a, (ix+$09)
         ld hl, function_index_02
@@ -622,44 +630,44 @@ function_index_02_01:
         inc (ix+$09)
         ld a, $70
         ld (dados_mapa_84), a
-        ld hl, $F0B1
-        jp L_7B4F
+        ld hl, data_f0b1
+        jp l_7b4f
 
 
 function_index_02_02:
-        ld a, ($7974)
+        ld a, (dados_mapa_85+9)
         and a
         _if_not nz
                 ld a, $55
-                call L_96FA
+                call l_96fa
                 ret nz
                 inc (ix+$09)
-                ld hl, $F15B
-                jp L_96EC
+                ld hl, data_f15b
+                jp l_96ec
         _end_if
 
 function_index_02_03:
-        ld a, ($7974)
+        ld a, (dados_mapa_85+9)
         and a
         ret z
         ld (ix+$09), $03
-        ld hl, $F19D
-        jp L_7B4F
+        ld hl, data_f19d
+        jp l_7b4f
 
 
 function_index_02_04:
-        ld a, ($9D2A)
-        cp $1E
+        ld a, (data_9d2a)
+        cp $1e
         ret c
         xor a
-        ld ($9D41), a
-        ld hl, $F1F7
-        jp L_96EC
+        ld (data_9d41), a
+        ld hl, data_f1f7
+        jp l_96ec
 
 
-function_7C23:
-        ld hl, $7C43
-        ld (ix+$04), $DD
+function_7c23:
+        ld hl, data_7c43
+        ld (ix+$04), $dd
         ld b, $05
 
         _do
@@ -671,7 +679,7 @@ function_7C23:
                 inc hl
                 push hl
                 push bc
-                call L_7401
+                call l_7401
                 pop bc
                 pop hl
                 inc (ix+$04)
@@ -679,36 +687,34 @@ function_7C23:
 
         ret
 
-
-        ; Start of unknown area $7C43 to $7C4C
-        defb $30, $56, $2C, $4D, $28, $6A, $30, $81, $2A, $8B
-        ; End of unknown area $7C43 to $7C4C
+data_7c43:
+        db $30, $56, $2c, $4d, $28, $6a, $30, $81, $2a, $8b ; its a list
 
 
-function_7C4D:
+function_7c4d:
         ret
 
 
-function_7C4E:
+function_7c4e:
         ld a, (dados_mapa_2)
         inc a
         ret z
-        jp L_7401
+        jp l_7401
 
 
-function_7C56:
+function_7c56:
         ld a, (dados_mapa_2)
         inc a
         ret z
-        call L_7401
+        call l_7401
         ld a, (ix+$03)
         add a, $04
-        cp $AA
+        cp $aa
         _if_not c
-                ld a, (ix+$0C)
+                ld a, (ix+$0c)
                 ld (ix+$02), a
                 inc (ix+$09)
-                ld a, (ix+$0D)
+                ld a, (ix+$0d)
         _end_if
 
         ld (ix+$03), a
@@ -725,27 +731,27 @@ function_7C56:
                 ld (ix+$05), a
         _end_if
 
-        call L_8998
-        jp nc, L_7401
+        call l_8998
+        jp nc, l_7401
         ld a, $04
-        ld hl, $F919
-        call L_8A30
-        jp L_7401
+        ld hl, data_f919
+        call l_8a30
+        jp l_7401
 
 
-function_7C9B:
-        call L_7401
+function_7c9b:
+        call l_7401
         dec (ix+$09)
-        jp p, L_7CB4
-        ld a, $FF
+        jp p, l_7cb4
+        ld a, $ff
         ld (ix), a
-        ld (ix+$0A), $47
+        ld (ix+$0a), $47
         ld a, (ix+$07)
         ld (ix+$01), a
         ret
 
 
-L_7CB4:
+l_7cb4:
         ld a, (ix+$09)
         srl a
         ld e, a
@@ -754,66 +760,66 @@ L_7CB4:
         add hl, de
         ld a, (hl)
         ld (ix+$04), a
-        jp L_7401
+        jp l_7401
 
 
 index_001:
-        defb $3A, $FC, $FD, $FE, $FF, $FE, $FD, $FC
+        db $3a, $fc, $fd, $fe, $ff, $fe, $fd, $fc
 
-L_7CCF:
+l_7ccf:
         push ix
         push hl
         pop ix
         ld a, (ix+$01)
         ld (ix+$07), a
-        ld (ix+$01), $0A
-        ld (ix+$04), $FC
-        ld (ix+$0A), $5C
+        ld (ix+$01), $0a
+        ld (ix+$04), $fc
+        ld (ix+$0a), $5c
         ld (ix+$09), $10
-        call L_7401
+        call l_7401
         pop ix
         ret
 
 
-function_7CF0:
+function_7cf0:
         ld a, (ix+$09)
         _if_not z
                 dec (ix+$09)
                 _if_not nz
-                        ld (ix+$04), $7D
-                        call L_7401
+                        ld (ix+$04), $7d
+                        call l_7401
                 _end_if
         _end_if
 
         ld a, (dados_mapa_26)
         cp (ix)
         ret z
-        call L_7401
-        ld (ix+$04), $7C
+        call l_7401
+        ld (ix+$04), $7c
         ld (ix+$09), $05
-        call L_7401
+        call l_7401
         ld a, (ix)
         ld (dados_mapa_26), a
-        ld a, $FC
-        ld ($75FC), a
+        ld a, $fc
+        ld (dados_mapa_26+6), a
         ld a, (ix+$07)
         xor $02
         ld (ix+$07), a
         dec a
-        ld ($75FB), a
+        ld (dados_mapa_26+5), a
         ld l, (ix+$02)
         inc l
         ld h, (ix+$03)
-        ld ($75F8), hl
+        ld (dados_mapa_26+2), hl
         push ix
         ld ix, dados_mapa_26
-        call L_7401
+        call l_7401
         pop ix
         ret
 
 
-function_7D43:
-        call L_73F5
+function_7d43:
+        call l_73f5
         ld a, (ix+$05)
         add a, (ix+$02)
         ld (ix+$02), a
@@ -821,34 +827,34 @@ function_7D43:
         ld a, (ix+$03)
         add a, (ix+$06)
         ld (ix+$03), a
-        cp $C0
+        cp $c0
         _if_not nc
-                call L_7401
-                call L_8998
+                call l_7401
+                call l_8998
                 ret nc
                 ld a, $02
-                ld hl, $F93A
-                jp L_8A30
+                ld hl, data_f93a
+                jp l_8a30
         _end_if
 
-        ld a, $FF
+        ld a, $ff
         ld (ix), a
         ret
 
 
-function_7D74:
+function_7d74:
         call prepara_dados_mapa
-        jp L_7401
+        jp l_7401
 
 
-function_7D7A:
-        ld a, ($9D0E)
-        cp $8C
+function_7d7a:
+        ld a, (data_9d0e)
+        cp $8c
         ret nc
-        call L_7FBB
+        call l_7fbb
         push bc
-        call L_7401
-        ld a, $DF
+        call l_7401
+        ld a, $df
         sub (ix+$04)
         ld (ix+$04), a
         pop bc
@@ -862,61 +868,61 @@ function_7D7A:
 
         inc a
         ld (ix+$02), a
-        call L_7401
-        call L_8998
+        call l_7401
+        call l_8998
         ret nc
-        ld a, ($9D2B)
+        ld a, (data_9d2b)
         and a
         ret z
-        ld hl, $F8CC
-        ld a, $FF
-        jp L_8A30
+        ld hl, data_f8cc
+        ld a, $ff
+        jp l_8a30
 
 
-function_7DB1:
-        ld a, ($9D0E)
-        cp $AF
+function_7db1:
+        ld a, (data_9d0e)
+        cp $af
         _if_not nz
-                ld a, $4E
-                call L_96FA
+                ld a, $4e
+                call l_96fa
                 _if_not z
                         ld a, (ix+$02)
                         cp $51
                         _if_not nc
                                 ld b, a
-                                ld a, (posicao_hero_x_em_nibbles_copia_2)
+                                ld a, (data_9d0d)
                                 add a, $20
                                 cp b
                                 _if_not c
-                                        call L_73F5
+                                        call l_73f5
                                         inc (ix+$02)
-                                        call L_7401
+                                        call l_7401
                                 _end_if
                         _end_if
                 _end_if
         _end_if
 
-        call L_8998
+        call l_8998
         ret nc
-        ld a, ($9D2B)
+        ld a, (data_9d2b)
         and a
         ret z
-        ld a, $4E
-        call L_96FA
-        ld hl, $F9B7
-        ld a, $FF
-        jp nz, L_8A30
+        ld a, $4e
+        call l_96fa
+        ld hl, data_f9b7
+        ld a, $ff
+        jp nz, l_8a30
         ld hl, dados_mapa_40
-        call L_7CCF
-        ld hl, $F68B
-        jp L_96EC
+        call l_7ccf
+        ld hl, data_f68b
+        jp l_96ec
 
 
-function_7DFA:
-        call L_7FBB
+function_7dfa:
+        call l_7fbb
         push bc
-        ld a, $4C
-        call L_96FA
+        ld a, $4c
+        call l_96fa
         pop bc
         _if_not nz
                 ld a, c
@@ -944,7 +950,7 @@ function_7DFA:
         and a
         _if_not z
                 push bc
-                call L_7401
+                call l_7401
                 pop bc
                 ld a, (ix+$02)
                 bit 0, c
@@ -957,39 +963,39 @@ function_7DFA:
 
                 inc a
                 ld (ix+$02), a
-                call L_7401
+                call l_7401
 
         _end_if
 
-        call L_8998
+        call l_8998
         ret nc
         ld bc, (nivel)
         ld a, b
         cp c
         ret nz
-        ld a, ($9D2B)
+        ld a, (data_9d2b)
         and a
         ret z
         push ix
-        ld hl, $F7EB
-        call L_96EC
+        ld hl, data_f7eb
+        call l_96ec
         pop ix
-        ld hl, $F9A9
-        ld a, $FF
-        jp L_8A30
+        ld hl, data_f9a9
+        ld a, $ff
+        jp l_8a30
 
 
-function_7E57:
-        call L_73F5
+function_7e57:
+        call l_73f5
         inc (ix+$06)
         ld a, (ix+$03)
         add a, (ix+$06)
         ld (ix+$03), a
-        cp $C0
+        cp $c0
         _if_not c
                 ld a, $32
                 ld (ix+$03), a
-                ld a, (posicao_hero_x_em_nibbles_copia_2)
+                ld a, (data_9d0d)
                 add a, $23
                 add a, (ix+$02)
                 srl a
@@ -998,21 +1004,21 @@ function_7E57:
                 ld (ix+$06), a
         _end_if
 
-        call L_7401
-        call L_8998
+        call l_7401
+        call l_8998
         ret nc
         ld a, $02
-        ld hl, $F94D
-        jp L_8A30
+        ld hl, data_f94d
+        jp l_8a30
 
 
-function_7E8F:
+function_7e8f:
         xor a
         ld (ix+$09), a
         ret
 
 
-function_7E94:
+function_7e94:
         ld a, (dados_mapa_89)
         cp (ix)
         ret z
@@ -1046,12 +1052,12 @@ function_7E94:
                         add a, $20
                         ld e, a
                         ld l, b
-                        call L_9106
+                        call l_9106
                         ld a, (hl)
                         and $07
                         cp $06
                         _if_not nz
-                                call L_7401
+                                call l_7401
                                 inc (ix+$09)
                         _end_if
                 _end_if
@@ -1062,8 +1068,8 @@ function_7E94:
                 inc hl
                 dec (ix+$07)
                 _if_not nz
-                        ld hl, $FFA2
-                        ld (ix+$07), $1E
+                        ld hl, data_ffa2
+                        ld (ix+$07), $1e
                 _end_if
 
                 ld (ix+$05), l
@@ -1072,64 +1078,60 @@ function_7E94:
 
         _end_if
 
-        call L_7401
+        call l_7401
         ld a, (ix+$09)
         and $07
         cp $07
         _if_not z
                 inc (ix+$09)
-                ld hl, $7F1F
+                ld hl, data_7f1f
                 ld e, a
                 ld d, $00
                 add hl, de
                 ld a, (hl)
                 ld (ix+$04), a
-                jp L_7401
+                jp l_7401
         _end_if
 
 
         ld (ix+$09), $00
-        ret
+data_7f1f;
+        ret : db $95, $96, $97, $96, $95, $94
 
 
-        ; Start of unknown area $7F20 to $7F25
-        defb $95, $96, $97, $96, $95, $94
-        ; End of unknown area $7F20 to $7F25
-
-
-function_7F26:
-        call L_7F9A
-        call L_801B
-        call L_8051
-        call L_7FCA
-        call L_7FF5
-        call L_8998
+function_7f26:
+        call l_7f9a
+        call l_801b
+        call l_8051
+        call l_7fca
+        call l_7ff5
+        call l_8998
         _if_not nc
-                ld hl, $F962
-                ld a, (ix+$0E)
+                ld hl, data_f962
+                ld a, (ix+$0e)
                 cp $98
                 _if_not z
-                        ld hl, $F998
+                        ld hl, data_f998
                         cp $64
                         _if_not z
-                                ld hl, $F983
+                                ld hl, data_f983
                         _end_if
                 _end_if
                 
                 ld a, $01
-                call L_8A30
+                call l_8a30
 
         _end_if
 
-        call L_7401
-        ld a, (ix+$0E)
+        call l_7401
+        ld a, (ix+$0e)
         cp $73
 
 
         _if_not nz
-                ld a, (ix+$0A)
+                ld a, (ix+$0a)
                 xor $80
-                ld (ix+$0A), a
+                ld (ix+$0a), a
         _else
 
                 cp $64
@@ -1144,7 +1146,7 @@ function_7F26:
                         _end_if
 
 
-                        add a, (ix+$0E)
+                        add a, (ix+$0e)
                         ld (ix+$04), a
 
                 _end_if
@@ -1162,10 +1164,10 @@ function_7F26:
         ld (ix+$02), a
         ld a, (ix+$06)
         ld (ix+$03), a
-        jp L_7401
+        jp l_7401
 
 
-L_7F9A:
+l_7f9a:
         ld a, (ix+$04)
         ld (next_sprite_index), a
         call function_print_sprite
@@ -1173,7 +1175,7 @@ L_7F9A:
         ret
 
 
-L_7FA6:
+l_7fa6:
         ld hl, list_003
         ld e, a
         ld d, $00
@@ -1183,10 +1185,10 @@ L_7FA6:
 
 
 list_003:
-        defb $00, $00, $00, $00, $05, $0A, $05, $0A, $0A, $0A, $05, $05
+        db $00, $00, $00, $00, $05, $0a, $05, $0a, $0a, $0a, $05, $05
 
-L_7FBB:
-        ld a, (posicao_hero_x_em_nibbles_copia_2)
+l_7fbb:
+        ld a, (data_9d0d)
         ld c, $00
         add a, $20
         cp (ix+$02)
@@ -1197,17 +1199,17 @@ L_7FBB:
         ret
 
 
-L_7FCA:
+l_7fca:
         ld a, (ix+$07)
-        and $0C
+        and $0c
         ld e, a
         ld a, b
-        and $0C
+        and $0c
         srl a
         srl a
         or e
-        call L_7FA6
-        and $0C
+        call l_7fa6
+        and $0c
         ld c, a
         ld a, (ix+$07)
         and $03
@@ -1217,7 +1219,7 @@ L_7FCA:
         ld a, b
         and $03
         or e
-        call L_7FA6
+        call l_7fa6
         and $03
         or c
         ld c, a
@@ -1225,7 +1227,7 @@ L_7FCA:
         ret
 
 
-L_7FF5:
+l_7ff5:
         ld c, (ix+$07)
         ld e, (ix+$02)
         ld a, (ix+$03)
@@ -1258,7 +1260,7 @@ L_7FF5:
         ret
 
 
-L_801B:
+l_801b:
         ld a, (altura_sprite_a_desenhar)
         srl a
         add a, (ix+$03)
@@ -1267,20 +1269,20 @@ L_801B:
         ld c, a
         sub $21
         ld e, a
-        call L_9106
+        call l_9106
         ld de, $0544
         add hl, de
         ld a, c
         cp $28
         _if_not c
                 bit 6, (hl)
-                jr nz, L_803D
+                jr nz, l_803d
         _end_if
         set 1, b
 
-L_803D:
+l_803d:
         ld a, c
-        cp $5A
+        cp $5a
         _if_not nc
                 ld a, (largura_sprite_a_desenhar)
                 srl a
@@ -1288,44 +1290,44 @@ L_803D:
                 ld l, a
                 inc l
                 bit 6, (hl)
-                jr nz, L_8050
+                jr nz, l_8050
 
         _end_if
 
         set 0, b
 
-L_8050:
+l_8050:
         ret
 
 
-L_8051:
+l_8051:
         ld a, (largura_sprite_a_desenhar)
         srl a
         srl a
         add a, (ix+$02)
-        sub $1F
+        sub $1f
         ld e, a
         ld a, (ix+$03)
         ld c, a
         sub $04
         ld l, a
-        call L_9106
+        call l_9106
         ld de, $0544
         add hl, de
         ld a, c
-        cp $3C
+        cp $3c
         _if_not c
                 bit 6, (hl)
-                jr nz, L_8077
+                jr nz, l_8077
         _end_if
         set 3, b
 
-L_8077:
+l_8077:
         ld a, c
-        cp $A0
+        cp $a0
         _if_not nc
                 ld a, (altura_sprite_a_desenhar)
-                and $F8
+                and $f8
                 add a, $04
                 ex de, hl
                 ld l, a
@@ -1334,30 +1336,30 @@ L_8077:
                 add hl, hl
                 add hl, de
                 bit 6, (hl)
-                jr nz, L_8090
+                jr nz, l_8090
 
         _end_if
         set 2, b
 
-L_8090:
+l_8090:
         ret
 
 
 function_8091:
-        ld (ix+$0A), $4F
-        ld (ix+$07), $FF
-        jp L_7401
+        ld (ix+$0a), $4f
+        ld (ix+$07), $ff
+        jp l_7401
 
 
-function_809C:
-        call L_9445
-        call L_7401
+function_809c:
+        call l_9445
+        call l_7401
         ld a, (ix+$02)
         ld b, (ix+$07)
         cp (ix+$06)
 
         _if_not c
-                ld b, $FF
+                ld b, $ff
         _end_if
 
         cp (ix+$05)
@@ -1368,52 +1370,52 @@ function_809C:
         add a, b
         ld (ix+$02), a
         ld (ix+$07), b
-        ld a, $4F
-        call L_96FA
-        ld b, $4F
+        ld a, $4f
+        call l_96fa
+        ld b, $4f
         _if_not nz
                 inc (ix+$09)
                 bit 2, (ix+$09)
                 _if_not z
-                        ld b, $4D
+                        ld b, $4d
                 _end_if
         _end_if
 
-        ld (ix+$0A), b
+        ld (ix+$0a), b
         ld a, (ix+$07)
         and $80
         or b
-        ld (ix+$0A), a
+        ld (ix+$0a), a
         ld a, (ix+$02)
         and $01
-        add a, (ix+$0D)
+        add a, (ix+$0d)
         ld (ix+$03), a
-        call L_7401
-        call L_8998
+        call l_7401
+        call l_8998
         ret nc
-        ld a, $4F
-        call L_96FA
+        ld a, $4f
+        call l_96fa
 
         _if_not z
                 ld a, $04
-                ld hl, $F8E0
-                jp L_8A30
+                ld hl, data_f8e0
+                jp l_8a30
         _end_if
 
-        call L_7401
+        call l_7401
         push ix
         pop hl
-        jp L_7CCF
+        jp l_7ccf
 
 
 function_8107:
-        call L_73F5
+        call l_73f5
         ld a, (ix+$03)
         ld b, (ix+$07)
         cp (ix+$06)
 
         _if_not c
-                ld b, $FE
+                ld b, $fe
         _end_if
 
         cp (ix+$05)
@@ -1425,54 +1427,54 @@ function_8107:
         add a, b
         ld (ix+$03), a
         ld (ix+$07), b
-        call L_7401
-        call L_8998
+        call l_7401
+        call l_8998
         ret nc
         ld a, $04
-        ld hl, $F971
-        jp L_8A30
+        ld hl, data_f971
+        jp l_8a30
 
 
 function_8134:
-        call L_8998
-        ld hl, $F8F3
+        call l_8998
+        ld hl, data_f8f3
         ld a, $03
-        call c, L_8A30
-        ld a, ($781B)
+        call c, l_8a30
+        ld a, (dados_mapa_62+9)
         and a
         ret z
-        cp $8C
+        cp $8c
         ret nc
         ld a, (ix+$09)
         and $03
-        ld a, $D6
-        call z, L_83F9
-        call L_73F5
+        ld a, $d6
+        call z, l_83f9
+        call l_73f5
         ld a, (ix+$02)
-        cp $3C
+        cp $3c
         _if_not nc
                 inc (ix+$09)
                 ld a, (ix+$09)
                 and $03
-                jp nz, L_7401
-                ld a, $D3
+                jp nz, l_7401
+                ld a, $d3
                 sub (ix+$04)
                 ld (ix+$04), a
                 inc (ix+$02)
-                jp L_7401
+                jp l_7401
 
         _end_if
 
         inc (ix+$09)
         inc (ix+$03)
         ld a, (ix+$03)
-        cp $BC
+        cp $bc
 
         _if_not nc
-                jp L_7401
+                jp l_7401
         _end_if
 
-        ld (ix), $FF
+        ld (ix), $ff
         ret
 
 
@@ -1480,7 +1482,7 @@ function_8189:
         ld a, (ix+$09)
         cp $02
         ret nz
-        call L_7401
+        call l_7401
         dec (ix+$02)
         ld a, (ix+$02)
         cp $44
@@ -1489,52 +1491,55 @@ function_8189:
                 ld (ix+$03), $58
         _end_if
 
-        ld a, $C3
+        ld a, $c3
         sub (ix+$04)
         ld (ix+$04), a
-        call L_7401
+        call l_7401
         ld a, (ix+$02)
         cp $32
 
         _if_not nz
-                ld a, $FF
+                ld a, $ff
                 ld (dados_mapa_20), a
-                ld hl, $F5ED
-                jp L_96EC
+                ld hl, data_f5ed
+                jp l_96ec
         _end_if
 
         and a
         ret p
-        ld (ix), $FF
+        ld (ix), $ff
         ret
 
 
-function_81C4:
-        ld hl, $81CA
-        jp L_9926
+function_81c4:
+        ld hl, data_81ca
+        jp l_9926
 
 
-        ; Start of unknown area $81CA to $81F7
-        defb $49, $2C, $4C, $08, $20, $3E
-        defb $14, $32, $0D, $9D, $3E, $F7, $32, $11, $9D, $3E, $05, $32, $16, $9D, $3E, $01
-        defb $32, $15, $9D, $32, $61, $9D, $AF, $32, $60, $9D, $3E, $08, $21, $07, $F9, $CD
-        defb $30, $8A, $21, $0B, $F3, $C3, $EC, $96
-        ; End of unknown area $81CA to $81F7
+data_81ca:
+        db $49, $2c, $4c, $08, $20, $3e, $14
+        
+        db $32, $0d, $9d, $3e, $f7, $32, $11, $9d, $3e, $05, $32, $16, $9d, $3e, $01
+        ;81e0
+        db $32, $15, $9d, $32, $61, $9d, $af, $32, $60, $9d, $3e, $08, $21, $07, $f9, $cd
+        ;81f0
+        db $30, $8a, $21, $0b, $f3, $c3, $ec, $96
+        
 
 
-function_81F8:
-        set 6, (ix+$0A)
-        res 4, (ix+$0A)
-        call L_7401
-        res 6, (ix+$0A)
-        set 4, (ix+$0A)
+function_81f8:
+        set 6, (ix+$0a)
+        res 4, (ix+$0a)
+        call l_7401
+        res 6, (ix+$0a)
+        set 4, (ix+$0a)
         ld a, $10
 
-L_820D:
+l_820d:
         ld h, a
-        ld a, (ix+$0D)
+        ld a, (ix+$0d)
         ld (sprite_top), a
-        ld a, $2E
+        ld a, $2e
         ld (sprite_left), a
         ld l, $28
         ld (largura_sprite_a_desenhar), hl
@@ -1543,31 +1548,31 @@ L_820D:
         ld a, (apenas_brite_and_ink)
         and $07
         ld (apenas_brite_and_ink), a
-        jp L_8DD7
+        jp l_8dd7
 
 
-function_822D:
-        call L_824E
-        call L_9445
-        call L_7401
+function_822d:
+        call l_824e
+        call l_9445
+        call l_7401
         ld a, (ix+$05)
         ld (ix+$02), a
-        ld a, (ix+$0A)
-        and $7F
+        ld a, (ix+$0a)
+        and $7f
         ld b, a
         ld a, (ix+$06)
         and $80
         or b
-        ld (ix+$0A), a
-        jp L_7401
+        ld (ix+$0a), a
+        jp l_7401
 
 
-L_824E:
+l_824e:
         ld a, (ix+$02)
         ld b, (ix+$06)
         cp $50
         _if_not c
-                ld b, $FF
+                ld b, $ff
         _end_if
 
         cp $30
@@ -1583,14 +1588,14 @@ L_824E:
 
 
 function_8268:
-        set 6, (ix+$0A)
-        res 4, (ix+$0A)
-        call L_7401
-        res 6, (ix+$0A)
-        set 4, (ix+$0A)
-        ld a, (ix+$0D)
+        set 6, (ix+$0a)
+        res 4, (ix+$0a)
+        call l_7401
+        res 6, (ix+$0a)
+        set 4, (ix+$0a)
+        ld a, (ix+$0d)
         ld (sprite_top), a
-        ld a, (ix+$0C)
+        ld a, (ix+$0c)
         ld (sprite_left), a
         ld a, $08
         ld (altura_sprite_a_desenhar), a
@@ -1598,81 +1603,81 @@ function_8268:
         ld (background_color), a
         ld a, $04
         ld (apenas_brite_and_ink), a
-        jp L_8DD7
+        jp l_8dd7
 
 
 function_8298:
-        call L_9445
-        call L_7401
+        call l_9445
+        call l_7401
         ld l, (ix+$02)
         ld h, (ix+$03)
         dec h
         dec h
         ld de, $0207
-        call L_89B1
+        call l_89b1
         _if_not c
                 ld a, (ix+$03)
                 dec a
-                cp $A0
+                cp $a0
 
                 _if_not nc
-                        ld a, $A0
+                        ld a, $a0
                 _end_if
 
                 ld (ix+$03), a
                 
         _else
 
-                ld a, ($9D16)
+                ld a, (data_9d16)
                 cp $03
                 _if_not c
                         cp $06
                         _if_not nc
                                 ld a, (frame_movimento_do_hero)
                                 cp $07
-                                jr z, L_82D5
+                                jr z, l_82d5
                                 and a
-                                jr z, L_82D5
+                                jr z, l_82d5
                         _end_if
                 _end_if 
 
                 inc (ix+$03)
 
         _end_if
-L_82D5:
-        jp L_7401
+l_82d5:
+        jp l_7401
 
 
-function_82D8:
-        ld a, ($9D32)
+function_82d8:
+        ld a, (data_9d32)
         and a
         ret z
-        call L_8998
+        call l_8998
         ret nc
         ld a, (ix+$09)
         and a
         ret nz
         xor a
-        ld ($9D32), a
+        ld (data_9d32), a
         ld a, $01
         ld (ix+$09), a
-        set 7, (ix+$0A)
+        set 7, (ix+$0a)
         ld a, $02
-        ld ($74D3), a
-        ld ($74E2), a
+        ld (dados_mapa_6+9), a
+        ld (dados_mapa_7+9), a
         ld a, $50
-        ld ($74CF), a
-        ld hl, $F593
-        jp L_96EC
+        ld (dados_mapa_6+5), a
+        ld hl, data_f593
+        jp l_96ec
 
 
 function_8306:
         ld a, (ix+$09)
         and a
-        ld hl, $832D
+        ld hl, data_832d
 
         _if_not nz
-                ld hl, $8336
+                ld hl, data_8336
         _end_if
 
         ld b, $03
@@ -1689,27 +1694,59 @@ function_8306:
                 inc hl
                 push bc
                 push hl
-                call L_7401
+                call l_7401
                 pop hl
                 pop bc
         _djnz
         ret
 
 
-        ; Start of unknown area $832D to $833E
-        defb $28, $40, $2A
-        defb $2A, $40, $28, $2C, $40, $2B, $2C, $48, $2C, $2C, $50, $29, $2C, $58, $2D
-        ; End of unknown area $832D to $833E
+data_832d:
+        db $28
+data_832e:
+        db $40
+data_832f:
+        db $2a
+data_8330:
+        db $2a
+data_8331:
+        db $40
+data_8332:
+        db $28
+data_8333:
+        db $2c
+data_8334:
+        db $40
+data_8335:
+        db $2b
+data_8336:
+        db $2c
+data_8337:
+        db $48
+data_8338:
+        db $2c
+data_8339:
+        db $2c
+data_833a:
+        db $50
+data_833b:
+        db $29
+data_833c:
+        db $2c
+data_833d:
+        db $58
+data_833e:
+        db $2d
 
 
-function_833F:
+function_833f:
         ld (ix+$02), $50
-        call L_7401
+        call l_7401
         ld a, $02
-        jp L_820D
+        jp l_820d
 
 
-function_834B:
+function_834b:
         ld a, (ix+$09)
         and a
         ret z
@@ -1717,7 +1754,7 @@ function_834B:
         bit 0, (ix+$06)
         ret z
         ld a, (ix+$05)
-        cp $2E
+        cp $2e
 
         _if_not nc
                 ld (ix+$09), $02
@@ -1726,7 +1763,7 @@ function_834B:
         cp $50
 
         _if_not c
-                ld (ix+$09), $FE
+                ld (ix+$09), $fe
         _end_if
 
         ld a, (ix+$05)
@@ -1742,26 +1779,26 @@ function_834B:
                 _if_not c
                         dec (ix+$02)
                         dec (ix+$02)
-                        call L_7401
+                        call l_7401
                         
                         _continue
 
                 _end_if
 
-                call L_7401
+                call l_7401
                 inc (ix+$02)
                 inc (ix+$02)
         _while_true
         
 
 
-        ; Start of unknown area $8393 to $83A5
-        defb $4F, $22, $80, $10, $18, $CD, $39, $98, $3E, $FF, $32, $9D, $74
-        defb $21, $D6, $F4, $C3, $EC, $96
-        ; End of unknown area $8393 to $83A5
+        ; start of unknown area 0x8393 to 0x83a5
+        db $4f, $22, $80, $10, $18, $cd, $39, $98, $3e, $ff, $32, $9d, $74
+        db $21, $d6, $f4, $c3, $ec, $96
+        ; end of unknown area 0x8393 to 0x83a5
 
 
-function_83A6:
+function_83a6:
         ld hl, area_negra
         ld de, $8445
         ld bc, $0027
@@ -1770,9 +1807,9 @@ function_83A6:
         ret
 
 
-function_83B4:
+function_83b4:
         ld iy, area_negra
-        ld b, $0A
+        ld b, $0a
 
         _do
                 push bc
@@ -1782,30 +1819,30 @@ function_83B4:
                         ld (iy+$03), $40
                         rlca
                         _if_not c
-                                call L_842F
+                                call l_842f
                                 dec (iy+$01)
                                 ld a, (iy+$01)
                                 cp $28
-                                jr z, L_83EC
-                                and $0F
+                                jr z, l_83ec
+                                and $0f
                                 _if_not nz
                                         inc (iy+$02)
                                         ld a, (iy+$02)
-                                        cp $D2
-                                        jr z, L_83EC
-                                        cp $D9
-                                        jr z, L_83EC
+                                        cp $d2
+                                        jr z, l_83ec
+                                        cp $d9
+                                        jr z, l_83ec
                                 _end_if
                         _end_if
 
-                        call L_842F
-                        jr L_83F0
+                        call l_842f
+                        jr l_83f0
 
 
-L_83EC:
+l_83ec:
                         ld (iy+$03), $00
                 _end_if
-L_83F0:
+l_83f0:
                 pop bc
                 ld de, $0004
                 add iy, de
@@ -1814,29 +1851,29 @@ L_83F0:
         ret
 
 
-L_83F9:
+l_83f9:
         ld c, a
-        ld b, $0A
+        ld b, $0a
         ld de, $0004
         ld iy, area_negra
 
         _do
                 ld a, (iy+$03)
                 and a
-                jr z, L_840E
+                jr z, l_840e
                 add iy, de
         _djnz
         ret
 
 
-L_840E:
+l_840e:
         ld d, (ix+$02)
         ld e, (ix+$03)
         ld (iy), d
         ld (iy+$01), e
         ld (iy+$02), c
         ld (iy+$03), $80
-        call L_9D64
+        call l_9d64
         and $01
         add a, (iy)
         add a, $02
@@ -1844,184 +1881,232 @@ L_840E:
         ret
 
 
-L_842F:
+l_842f:
         ld h, (iy)
         ld l, (iy+$01)
         ld (ix+$02), h
         ld (ix+$03), l
         ld h, (iy+$02)
         ld (ix+$04), h
-        jp L_7401
+        jp l_7401
 
 
 area_negra:
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
-        ; Start of unknown area $846C to $85FD
-        defb $4B, $44, $9A, $05
-        defb $10, $E1, $21, $E2, $F3, $C3, $EC, $96, $47, $24, $50, $0A, $10, $21, $8C, $84
-        defb $7E, $A7, $C8, $36, $00, $E1, $21, $C0, $F3, $C3, $EC, $96, $FF, $50, $36, $64
-        defb $04, $10, $3E, $FF, $32, $29, $79, $CD, $39, $98, $3E, $68, $32, $32, $79, $3E
-        defb $50, $32, $2F, $79, $21, $74, $F6, $C3, $EC, $96, $67, $22, $30, $3C, $88, $DD
-        defb $7E, $09, $A7, $C2, $33, $98, $DD, $36, $09, $FF, $21, $55, $F5, $C3, $EC, $96
-        defb $FF, $22, $30, $3C, $88, $3A, $BA, $75, $3C, $C2, $33, $98, $2A, $41, $78, $3A
-        defb $0D, $9D, $C6, $20, $95, $F2, $DA, $84, $ED, $44, $FE, $0C, $D2, $33, $98, $7C
-        defb $D6, $28, $67, $22, $BC, $75, $3A, $3F, $78, $32, $BA, $75, $AF, $32, $BF, $75
-        defb $32, $BE, $75, $3E, $0D, $32, $C3, $75, $3A, $0D, $9D, $C6, $20, $BD, $3E, $4C
-        defb $38, $02, $C6, $80, $32, $C4, $75, $21, $BA, $75, $21, $75, $F5, $C3, $EC, $96
-        defb $6F, $40, $8C, $04, $10, $DD, $34, $09, $CD, $39, $98, $21, $31, $F6, $C3, $EC
-        defb $96, $55, $40, $8C, $04, $10, $DD, $7E, $04, $FE, $16, $20, $0C, $DD, $35, $09
-        defb $CD, $39, $98, $21, $14, $EF, $C3, $4F, $7B, $ED, $4B, $75, $78, $0C, $C2, $33
-        defb $98, $DD, $35, $09, $CD, $39, $98, $21, $EE, $77, $34, $21, $38, $F5, $DD, $7E
-        defb $04, $FE, $13, $20, $03, $21, $23, $F5, $3A, $EE, $77, $FE, $03, $C2, $EC, $96
-        defb $3E, $55, $32, $A8, $78, $CD, $E2, $73, $21, $E9, $EF, $C3, $EC, $96, $33, $40
-        defb $50, $04, $10, $CD, $39, $98, $3E, $33, $32, $12, $78, $DD, $E5, $DD, $21, $F4
-        defb $77, $CD, $F5, $73, $21, $F4, $77, $CD, $CF, $7C, $DD, $E1, $21, $6A, $F0, $C3
-        defb $EC, $96, $01, $22, $30, $10, $88, $CD, $39, $98, $3E, $01, $32, $6B, $79, $21
-        defb $8E, $74, $CD, $CF, $7C, $3E, $FF, $32, $70, $74, $21, $3A, $F8, $C3, $EC, $96
-        defb $49, $4A, $68, $0A, $10, $21, $87, $75, $DD, $7E, $04, $FE, $17, $28, $18, $7E
-        defb $A7, $C2, $33, $98, $34, $DD, $CB, $09, $CE, $CD, $E3, $85, $3E, $FF, $32, $8D
-        defb $75, $21, $B8, $F5, $C3, $EC, $96, $7E, $3D, $C2, $33, $98, $34, $21, $DA, $F5
-        defb $C3, $EC, $96, $DD, $7E, $09, $FE, $03, $C0, $C3, $39, $98, $57, $30, $64, $14
-        defb $28, $3E, $51, $CD, $FA, $96, $36, $52, $21, $9F, $F6, $C3, $EC, $96
-        ; End of unknown area $846C to $85FD
+data_846c
+        db $4b, $44, $9a, $05
+        ;8470
+        db $10, $e1, $21, $e2, $f3, $c3, $ec, $96
+
+data_8478
+        db $47, $24, $50, $0a, $10, $21, $8c, $84
+
+        ;8480
+        db $7e, $a7, $c8, $36, $00, $e1, $21, $c0, $f3, $c3, $ec, $96
 
 
-L_85FE:
-        ld ($8627), a
+data_848c:
+        db $ff
+
+        ; start of unknown area 0x848d to 0x84bf
+        db $50, $36, $64
+        db $04, $10, $3e, $ff, $32, $29, $79, $cd, $39, $98, $3e, $68, $32, $32, $79, $3e
+        db $50, $32, $2f, $79, $21, $74, $f6, $c3, $ec, $96, $67, $22, $30, $3c, $88, $dd
+        db $7e, $09, $a7, $c2, $33, $98, $dd, $36, $09, $ff, $21, $55, $f5, $c3, $ec, $96
+        ; end of unknown area 0x848d to 0x84bf
+
+ 
+data_84c0:
+        db $ff, $22, $30, $3c, $88, $3a, $ba, $75, $3c, $c2, $33, $98, $2a, $41, $78, $3a
+        ;84d0
+        db $0d, $9d, $c6, $20, $95, $f2, $da, $84, $ed, $44, $fe, $0c, $d2, $33, $98, $7c
+        ;84e0
+        db $d6, $28, $67, $22, $bc, $75, $3a, $3f, $78, $32, $ba, $75, $af, $32, $bf, $75
+        ;84f0
+        db $32, $be, $75, $3e, $0d, $32, $c3, $75, $3a, $0d, $9d, $c6, $20, $bd, $3e, $4c
+        ;8500
+        db $38, $02, $c6, $80, $32, $c4, $75, $21, $ba, $75, $21, $75, $f5, $c3, $ec, $96
+        ;8510
+        db $6f, $40, $8c, $04, $10, $dd, $34, $09, $cd, $39, $98, $21, $31, $f6, $c3, $ec
+        ;8520
+        db $96, $55, $40, $8c, $04, $10, $dd, $7e, $04, $fe, $16, $20, $0c, $dd, $35, $09
+        ;8530
+        db $cd, $39, $98, $21, $14, $ef, $c3, $4f, $7b, $ed, $4b, $75, $78, $0c, $c2, $33
+        ;8540
+        db $98, $dd, $35, $09, $cd, $39, $98, $21, $ee, $77, $34, $21, $38, $f5, $dd, $7e
+        ;8550
+        db $04, $fe, $13, $20, $03, $21, $23, $f5, $3a, $ee, $77, $fe, $03, $c2, $ec, $96
+        ;8560
+        db $3e, $55, $32, $a8, $78, $cd, $e2, $73, $21, $e9, $ef, $c3, $ec, $96, $33, $40
+        ;8570
+        db $50, $04, $10, $cd, $39, $98, $3e, $33, $32, $12, $78, $dd, $e5, $dd, $21, $f4
+        ;8580
+        db $77, $cd, $f5, $73, $21, $f4, $77, $cd, $cf, $7c, $dd, $e1, $21, $6a, $f0, $c3
+        ;8590
+        db $ec, $96, $01, $22, $30, $10, $88, $cd, $39, $98, $3e, $01, $32, $6b, $79, $21
+        ;85a0
+        db $8e, $74, $cd, $cf, $7c, $3e, $ff, $32, $70, $74, $21, $3a, $f8, $c3, $ec, $96
+data_85b0
+        db $49, $4a, $68, $0a, $10, $21, $87, $75, $dd, $7e, $04, $fe, $17, $28, $18, $7e
+        ;85c0
+        db $a7, $c2, $33, $98, $34, $dd, $cb, $09, $ce, $cd, $e3, $85, $3e, $ff, $32, $8d
+        ;85d0
+        db $75, $21, $b8, $f5, $c3, $ec, $96, $7e, $3d, $c2, $33, $98, $34, $21, $da, $f5
+        ;85e0
+        db $c3, $ec, $96, $dd, $7e, $09, $fe, $03, $c0, $c3, $39, $98, $57, $30, $64, $14
+        ;85f0
+        db $28, $3e, $51, $cd, $fa, $96, $36, $52, $21, $9f, $f6, $c3, $ec, $96
+   
+
+l_85fe:
+        ld (data_8627), a
         ld a, (ix)
         ld l, (ix+$02)
         ld h, (ix+$03)
         push ix
         ld ix, dados_mapa_21
         ld (ix), a
-        ld (ix+$0C), l
-        ld (ix+$0D), h
+        ld (ix+$0c), l
+        ld (ix+$0d), h
         ld (ix+$09), $00
         xor a
-        ld ($8628), a
-        call function_862C
+        ld (data_8628), a
+        call function_862c
         pop ix
         ret
 
 
-        ; Start of unknown area $8627 to $862B
-        defb $00, $00, $00, $00, $00
-        ; End of unknown area $8627 to $862B
+data_8627:
+        db $00
+
+data_8628:
+        db $00
+
+data_8629:
+        db $00
+
+        ; start of unknown area 0x862a to 0x862a
+        db $00
+        ; end of unknown area 0x862a to 0x862a
 
 
-function_862C:
+data_862b:
+        db $00
+
+
+function_862c:
         ld b, $08
 
         _do
                 ld c, (ix+$09)
-                call L_86EB
+                call l_86eb
         _djnz
 
         ret
 
 
 function_8637:
-        ld a, ($8628)
+        ld a, (data_8628)
         and a
         _if_not nz
                 ld b, $08
 
                 _do
                         ld c, (ix+$09)
-                        call L_86EB
+                        call l_86eb
                         ld c, (ix+$09)
                         inc c
-                        call L_86EB
+                        call l_86eb
                 _djnz 
 
                 inc (ix+$09)
                 ld a, (ix+$09)
                 cp $14
                 ret nz
-                ld ($8628), a
+                ld (data_8628), a
                 xor a
-                ld ($862B), a
-                ld hl, ($785F)
+                ld (data_862b), a
+                ld hl, (dados_mapa_67+2)
                 ld a, (dados_mapa_67)
                 cp (ix)
                 _if_not z
-                        ld hl, (posicao_hero_x_em_nibbles_copia_2)
-                        ld de, $F723
+                        ld hl, (data_9d0d)
+                        ld de, $f723
                         add hl, de
-                        ld a, ($8627)
+                        ld a, (data_8627)
                         and a
-                        jr z, L_86D6
+                        jr z, l_86d6
 
                 _end_if
                 
-                ld ($8629), hl
+                ld (data_8629), hl
                 ret
         _end_if
 
         ld b, $08
-        ld hl, ($8629)
-        ld a, (ix+$0C)
+        ld hl, (data_8629)
+        ld a, (ix+$0c)
         ld (ix+$05), a
         add a, l
         rr a
-        ld (ix+$0C), a
-        ld a, (ix+$0D)
+        ld (ix+$0c), a
+        ld a, (ix+$0d)
         ld (ix+$06), a
         add a, h
         rr a
-        ld (ix+$0D), a
+        ld (ix+$0d), a
 
         _do
                 ld c, (ix+$09)
-                call L_86E3
+                call l_86e3
                 ld c, (ix+$09)
                 dec c
-                call L_86EB
+                call l_86eb
         _djnz
 
         dec (ix+$09)
         ret nz
-        call L_86D6
+        call l_86d6
         ld a, (nivel)
-        cp $4A
+        cp $4a
         ret nz
         ld a, (dados_mapa_53)
         inc a
         ret z
-        ld bc, ($75AD)
-        ld hl, ($778D)
+        ld bc, (dados_mapa_21+2)
+        ld hl, (dados_mapa_53+2)
         ld de, $2006
-        call L_89BD
+        call l_89bd
         ret nc
-        ld a, $FF
-        ld ($7794), a
+        ld a, $ff
+        ld (dados_mapa_53+9), a
         ld a, $01
-        ld ($862B), a
+        ld (data_862b), a
         ld hl, dados_mapa_53
-        jp L_7CCF
+        jp l_7ccf
 
 
-L_86D6:
-        call function_862C
+l_86d6:
+        call function_862c
         xor a
-        ld ($8628), a
-        ld a, $FF
+        ld (data_8628), a
+        ld a, $ff
         ld (ix), a
         ret
 
 
-L_86E3:
+l_86e3:
         ld h, (ix+$05)
         ld l, (ix+$06)
-        jr L_86F1
+        jr l_86f1
 
 
-L_86EB:
-        ld h, (ix+$0C)
-        ld l, (ix+$0D)
+l_86eb:
+        ld h, (ix+$0c)
+        ld l, (ix+$0d)
 
-L_86F1:
+l_86f1:
         push bc
         ld a, c
         rr b
@@ -2054,18 +2139,18 @@ L_86F1:
         add a, a
         add a, l
         ld (ix+$03), a
-        call L_73F5
-        call L_8998
+        call l_73f5
+        call l_8998
         _if_not nc
                 ld a, (dados_mapa_67)
-                cp $FF
+                cp $ff
                 _if_not z
                         ld bc, (nivel)
                         cp c
                         _if_not z
                                 ld a, $01
-                                ld hl, $F919
-                                call L_8A30
+                                ld hl, data_f919
+                                call l_8a30
                         _end_if 
                 _end_if
         _end_if
@@ -2086,13 +2171,13 @@ function_index_03:
         defw function_index_03_01, function_index_03_02, function_index_03_03
 
 function_index_03_01:
-        call L_73F5
+        call l_73f5
         ld a, (ix+$09)
         and a
 
         _if_not z
                 dec (ix+$09)
-                jp L_7CB4
+                jp l_7cb4
         _end_if
 
         ld a, $72
@@ -2101,13 +2186,13 @@ function_index_03_01:
         inc (ix+$06)
         ld a, (ix+$06)
         cp $02
-        ld a, $FF
+        ld a, $ff
         _if_not nc
                 xor a
         _end_if
 
-        call L_85FE
-        jp L_7401
+        call l_85fe
+        jp l_7401
 
 
 function_index_03_02:
@@ -2120,93 +2205,93 @@ function_index_03_02:
 
 function_index_03_03:
         ld hl, dados_mapa_22
-        call L_7CCF
-        ld a, ($862B)
+        call l_7ccf
+        ld a, (data_862b)
         and a
         
         _if_not nz
                 ld a, (ix+$06)
                 cp $02
                 _if_not nc
-                        ld hl, $F349
-                        jp L_96EC
+                        ld hl, data_f349
+                        jp l_96ec
                 _end_if
 
-                ld hl, $F388
-                jp L_96EC
+                ld hl, data_f388
+                jp l_96ec
         _end_if
 
-        ld hl, $ED4B
-        call L_7B4F
-        jp L_8890
+        ld hl, data_ed4b
+        call l_7b4f
+        jp l_8890
 
 
-        ; Start of unknown area $87A1 to $880B
-        defb $51, $40, $90, $04, $10, $DD, $7E, $04, $FE, $0D, $28, $19, $DD, $CB, $09
-        defb $46, $C2, $33, $98, $DD, $CB, $09, $C6, $CD, $E3, $85, $3E, $51, $32, $7B, $78
-        defb $21, $06, $F5, $C3, $EC, $96, $21, $A9, $77, $CD, $CF, $7C, $CD, $39, $98, $21
-        defb $B0, $EB, $CD, $EC, $96, $C3, $90, $88, $47, $24, $50, $0A, $10, $3E, $47, $32
-        defb $21, $78, $21, $9A, $77, $CD, $CF, $7C, $CD, $39, $98, $21, $11, $EC, $CD, $4F
-        defb $7B, $C3, $90, $88, $4D, $40, $8C, $04, $10, $CD, $39, $98, $3E, $4D, $32, $E6
-        defb $76, $3E, $0D, $32, $EF, $76, $21, $1E, $EE, $C3, $4F, $7B
-        ; End of unknown area $87A1 to $880B
+        ; start of unknown area 0x87a1 to 0x880b
+        db $51, $40, $90, $04, $10, $dd, $7e, $04, $fe, $0d, $28, $19, $dd, $cb, $09
+        db $46, $c2, $33, $98, $dd, $cb, $09, $c6, $cd, $e3, $85, $3e, $51, $32, $7b, $78
+        db $21, $06, $f5, $c3, $ec, $96, $21, $a9, $77, $cd, $cf, $7c, $cd, $39, $98, $21
+        db $b0, $eb, $cd, $ec, $96, $c3, $90, $88, $47, $24, $50, $0a, $10, $3e, $47, $32
+        db $21, $78, $21, $9a, $77, $cd, $cf, $7c, $cd, $39, $98, $21, $11, $ec, $cd, $4f
+        db $7b, $c3, $90, $88, $4d, $40, $8c, $04, $10, $cd, $39, $98, $3e, $4d, $32, $e6
+        db $76, $3e, $0d, $32, $ef, $76, $21, $1e, $ee, $c3, $4f, $7b
+        ; end of unknown area 0x87a1 to 0x880b
 
 
-function_880C:
+function_880c:
         ld a, (ix+$09)
         and a
         _if_not z
-                call L_73F5
+                call l_73f5
                 dec (ix+$09)
-                jp nz, L_7CB4
-                ld (ix+$0A), $4F
+                jp nz, l_7cb4
+                ld (ix+$0a), $4f
                 ld a, $25
                 ld (ix+$04), a
-                jp L_7401
+                jp l_7401
         _end_if
 
         ld hl, dados_mapa_42
-        call L_7CCF
+        call l_7ccf
         ld hl, dados_mapa_58
-        call L_7CCF
-        ld hl, $EE82
-        call L_96EC
-        jp L_8890
+        call l_7ccf
+        ld hl, data_ee82
+        call l_96ec
+        jp l_8890
 
 
-        ; Start of unknown area $883C to $887C
-        defb $74, $39, $8C, $10
-        defb $23, $21, $B8, $77, $7E, $3C, $CA, $33, $98, $DD, $7E, $04, $FE, $03, $28, $1B
-        defb $CD, $39, $98, $3E, $FF, $21, $C3, $F9, $CD, $30, $8A, $21, $C3, $F6, $3E, $05
-        defb $32, $C1, $99, $3E, $50, $32, $C3, $99, $C3, $EC, $96, $CD, $39, $98, $21, $B8
-        defb $77, $CD, $CF, $7C, $21, $E7, $F6, $CD, $4F, $7B, $C3, $90, $88
-        ; End of unknown area $883C to $887C
+        ; start of unknown area 0x883c to 0x887c
+        db $74, $39, $8c, $10
+        db $23, $21, $b8, $77, $7e, $3c, $ca, $33, $98, $dd, $7e, $04, $fe, $03, $28, $1b
+        db $cd, $39, $98, $3e, $ff, $21, $c3, $f9, $cd, $30, $8a, $21, $c3, $f6, $3e, $05
+        db $32, $c1, $99, $3e, $50, $32, $c3, $99, $c3, $ec, $96, $cd, $39, $98, $21, $b8
+        db $77, $cd, $cf, $7c, $21, $e7, $f6, $cd, $4f, $7b, $c3, $90, $88
+        ; end of unknown area 0x883c to 0x887c
 
 
-function_887D:
-        call L_8998
+function_887d:
+        call l_8998
         ret nc
         ld hl, dados_mapa_57
-        call L_7CCF
-        ld hl, $EC64
-        call L_7B4F
-        jp L_8890
+        call l_7ccf
+        ld hl, data_ec64
+        call l_7b4f
+        jp l_8890
 
 
-L_8890:
-        ld hl, $9D42
+l_8890:
+        ld hl, data_9d42
         dec (hl)
         ret nz
         ld a, $80
-        ld ($FDC6), a
-        ld hl, $F290
-        jp L_7B4F
+        ld (data_fdc6), a
+        ld hl, data_f290
+        jp l_7b4f
 
 
-L_88A0:
-        ld b, $5C
+l_88a0:
+        ld b, $5c
         ld ix, dados_mapa_0
-        ld de, $000F
+        ld de, $000f
 
         _do
 
@@ -2215,29 +2300,29 @@ L_88A0:
         _djnz
 
         ld a, $05
-        ld ($77A4), a
+        ld (dados_mapa_54+10), a
         ld a, $17
-        ld ($77E0), a
-        ld a, $4A
-        ld ($76D2), a
-        ld hl, $74C5
+        ld (dados_mapa_58+10), a
+        ld a, $4a
+        ld (dados_mapa_40+10), a
+        ld hl, dados_mapa_5+10
         res 7, (hl)
-        ld a, $C1
-        ld ($FDC6), a
+        ld a, $c1
+        ld (data_fdc6), a
         xor a
-        ld ($75C0), a
-        ld a, $FF
-        ld ($9D63), a
+        ld (dados_mapa_22+6), a
+        ld a, $ff
+        ld (data_9d63), a
         ld (sound_to_play), a
-        ld ($848C), a
+        ld (data_848c), a
         ld a, $03
-        ld ($99C1), a
+        ld (data_99c1), a
         ld a, $78
-        ld ($99C3), a
+        ld (data_99c3), a
         ld a, $06
-        ld ($9D42), a
-        ld hl, $7A60
-        ld b, $0A
+        ld (data_9d42), a
+        ld hl, data_7a60
+        ld b, $0a
 
  
         _do
@@ -2248,47 +2333,49 @@ L_88A0:
         _djnz
 
 
-function_88F1:
+function_88f1:
         ret
 
 
 prepara_dados_mapa:
-        ld a, (ix+$0B)
+        ld a, (ix+$0b)
         ld (ix), a
-        ld a, (ix+$0C)
+        ld a, (ix+$0c)
         ld (ix+$02), a
-        ld a, (ix+$0D)
+        ld a, (ix+$0d)
         ld (ix+$03), a
-        ld a, (ix+$0E)
+        ld a, (ix+$0e)
         ld (ix+$04), a
         xor a
         ld (ix+$09), a
         ld a, (ix+$01)
-        cp $0A
+        cp $0a
         ret nz
         ld a, (ix+$07)
         ld (ix+$01), a
-        ld (ix+$0A), $47
+        ld (ix+$0a), $47
         ret
 
 
-L_891F:
+l_891f:
         ld a, (nivel)
         ld (dados_mapa_8), a
         ld (dados_mapa_9), a
         ld a, $28
-        call L_892F
+        call l_892f
         ld a, $20
 
-L_892F:
-        ld ($893E), a
-        ld b, $5C
+l_892f:
+        ld (data_893e), a
+        ld b, $5c
         ld ix, dados_mapa_0
 
         _do
                 push bc
                 ld a, (ix+$01)
                 cp $07
+
+data_893e: ;  dinamic                
                 _if_not z
                         ld a, (nivel)
                         cp (ix)
@@ -2300,20 +2387,20 @@ L_892F:
                 _end_if
 
                 pop bc
-                ld de, $000F
+                ld de, $000f
                 add ix, de
         _djnz
         ret
 
 
-L_895C:
-        ld b, $5C
+l_895c:
+        ld b, $5c
         ld ix, dados_mapa_91
 
         _do
                 ld a, b
                 dec a
-                ld ($9D40), a
+                ld (data_9d40), a
                 push bc
                 ld a, (nivel)
                 cp (ix)
@@ -2326,7 +2413,7 @@ L_895C:
 
                 _end_if
                 pop bc
-                ld de, $FFF1
+                ld de, $fff1
                 add ix, de
         _djnz
         ret
@@ -2344,18 +2431,18 @@ function_jump_to_hl_plus_2a:
         jp (hl)
 
 
-L_8990:
+l_8990:
         ld l, (ix)
         ld h, (ix+$01)
-        jr L_89A1
+        jr l_89a1
 
 
-L_8998:
+l_8998:
         ld l, (ix+$02)
         ld h, (ix+$03)
         ld a, (ix+$04)
 
-L_89A1:
+l_89a1:
         ld (next_sprite_index), a
         push hl
         call function_print_sprite
@@ -2365,15 +2452,15 @@ L_89A1:
         ld a, (largura_sprite_a_desenhar)
         ld e, a
 
-L_89B1:
-        ld a, (posicao_hero_x_em_nibbles_copia_2)
+l_89b1:
+        ld a, (data_9d0d)
         add a, $20
         ld c, a
-        ld a, ($9D0E)
+        ld a, (data_9d0e)
         sub $12
         ld b, a
 
-L_89BD:
+l_89bd:
         ld a, l
         sub c
         _if_not c
@@ -2397,27 +2484,27 @@ L_89BD:
         ret
 
 
-L_89D3:
-        ld ix, $8A1A
+l_89d3:
+        ld ix, data_8a1a
         ld (ix+$03), l
         ld (ix+$02), h
-        call L_7401
+        call l_7401
 
-L_89E0:
-        ld hl, $8C75
-        ld de, $9D47
+l_89e0:
+        ld hl, data_8c75
+        ld de, data_9d47
         ld c, $00
-        jr L_89F8
+        jr l_89f8
 
 
-L_89EA:
+l_89ea:
         ld a, (apenas_brite_and_ink)
-        ld ($9D4A), a
+        ld (data_9d4a), a
         ld c, $03
-        ld hl, $8C99
-        ld de, $9D48
+        ld hl, data_8c99
+        ld de, data_9d48
 
-L_89F8:
+l_89f8:
         ld a, (de)
         inc a
         ld (de), a
@@ -2437,23 +2524,33 @@ L_89F8:
         ld (hl), c
         ret
 
+data_8a0f
+        db $00
 
-        ; Start of unknown area $8A0F to $8A2F
-        defb $00
-        defb $00, $3B, $00, $B2, $00, $00, $00, $00, $00, $46, $00, $00, $00, $00, $73, $00
-        defb $00, $00, $00, $00, $42, $FF, $00, $00, $00, $E9, $00, $01, $00, $01, $00, $1F
-        ; End of unknown area $8A0F to $8A2F
+        ;8a10
+        db $00, $3b, $00, $b2, $00, $00, $00, $00, $00, $46
+
+data_8a1a:
+        db $00, $00, $00, $00
+        
+        db $73, $00
+        db $00, $00, $00, $00, $42
+
+        ; end of unknown area 0x8a0f to 0x8a24
+
+data_8a25
+        db $ff, $00, $00, $00, $e9, $00, $01, $00, $01, $00, $1f
 
 
-L_8A30:
+l_8a30:
         ld b, a
         xor a
-        ld ($9D4C), a
-        ld a, ($9D2B)
+        ld (data_9d4c), a
+        ld a, (data_9d2b)
         and a
         ret z
-        ld ($9D28), hl
-        ld hl, $9D2B
+        ld (posicao_texto_a_escrever), hl
+        ld hl, data_9d2b
         ld a, (hl)
         sub b
 
@@ -2465,26 +2562,26 @@ L_8A30:
         ret
 
 
-L_8A47:
-        ld hl, $9D2B
+l_8a47:
+        ld hl, data_9d2b
         ld a, (hl)
         add a, $08
-        cp $1F
+        cp $1f
 
         _if_not c
-                ld a, $1F
+                ld a, $1f
         _end_if
 
         ld (hl), a
         ret
 
 
-L_8A55:
-        ld a, ($9D32)
+l_8a55:
+        ld a, (data_9d32)
         and a
         ret z
-        ld b, $1E
-        ld ix, $FFA2
+        ld b, $1e
+        ld ix, data_ffa2
 
         _do
                 ld a, (nivel)
@@ -2492,17 +2589,17 @@ L_8A55:
                 _if_not nz
                         push bc
                         xor a
-                        call L_8990
+                        call l_8990
                         _if_not nc
                                 set 7, (ix+$02)
                                 push ix
                                 ld a, $03
                                 ld (sound_to_play), a
-                                call L_95EB
+                                call l_95eb
                                 xor a
-                                ld ($9D32), a
-                                ld hl, $F9EB
-                                call L_96EC
+                                ld (data_9d32), a
+                                ld hl, data_f9eb
+                                call l_96ec
                                 pop ix
 
                         _end_if
@@ -2516,12 +2613,12 @@ L_8A55:
         ret
 
 
-L_8A92:
-        ld a, $FF
-        ld ($8B86), a
+l_8a92:
+        ld a, $ff
+        ld (data_8b86), a
         ld b, $00
-        ld iy, $8B55
-        ld ix, $8A25
+        ld iy, data_8b55
+        ld ix, data_8a25
 
 
         _do
@@ -2536,8 +2633,8 @@ L_8A92:
                         ld a, (nivel)
                         cp (iy+$03)
                         _if_not nz
-                                call L_9445
-                                call L_7401
+                                call l_9445
+                                call l_7401
 
                         _end_if
 
@@ -2546,19 +2643,19 @@ L_8A92:
                         cp $28
                         
                         _if_not nc
-                                call L_9D64
-                                and $0F
+                                call l_9d64
+                                and $0f
                                 add a, $38
                                 ld (iy), a
                                 ld (ix+$02), a
-                                ld (iy+$01), $A0
+                                ld (iy+$01), $a0
                         _end_if
 
                         ld a, (iy+$01)
                         ld (ix+$03), a
                         ld a, (nivel)
                         cp (iy+$03)
-                        call z, L_7401
+                        call z, l_7401
                 _end_if
 
                 ld a, (nivel)
@@ -2569,10 +2666,10 @@ L_8A92:
                         ld h, (iy+$01)
                         ld e, (iy+$02)
                         ld d, $01
-                        call L_89B1
+                        call l_89b1
                         _if_not nc
                                 xor a
-                                ld ($8B86), a
+                                ld (data_8b86), a
                         _end_if
                 _end_if
 
@@ -2580,9 +2677,9 @@ L_8A92:
                 ld de, $0004
                 add iy, de
                 inc b
-                ld a, ($FDC6)
+                ld a, (data_fdc6)
                 cp $80
-                ld a, $0C
+                ld a, $0c
                 _if_not z
                         ld a, $08
                 _end_if
@@ -2591,18 +2688,18 @@ L_8A92:
         
         _while nz
 
-        ld a, ($8B86)
-        ld ($8B85), a
+        ld a, (data_8b86)
+        ld (data_8b85), a
         ret
 
 
-L_8B24:
-        ld a, ($FDC6)
+l_8b24:
+        ld a, (data_fdc6)
         cp $80
         ret nz
-        ld ix, $8A25
+        ld ix, data_8a25
         ld b, $04
-        ld iy, $8B75
+        ld iy, data_8b75
 
         _do
                 ld a, (nivel)
@@ -2613,7 +2710,7 @@ L_8B24:
                         ld l, (iy+$01)
                         ld (ix+$02), h
                         ld (ix+$03), l
-                        call L_7401
+                        call l_7401
                         pop bc
 
                 _end_if
@@ -2624,20 +2721,36 @@ L_8B24:
 
         ret
 
+data_8b55
+     
+        db $45, $6c, $0c, $38, $2a, $44, $0b, $39, $4c, $3a, $0b
+        db $39, $3a, $68, $12, $39, $26, $84, $0f, $39, $50, $84, $0f, $39, $3d, $53, $0f
+        db $4f, $4e, $46, $0b, $52
 
-        ; Start of unknown area $8B55 to $8B86
-        defb $45, $6C, $0C, $38, $2A, $44, $0B, $39, $4C, $3A, $0B
-        defb $39, $3A, $68, $12, $39, $26, $84, $0F, $39, $50, $84, $0F, $39, $3D, $53, $0F
-        defb $4F, $4E, $46, $0B, $52, $50, $64, $08, $41, $46, $3C, $08, $41, $3C, $80, $08
-        defb $2A, $5A, $46, $08, $2A, $FF, $FF
-        ; End of unknown area $8B55 to $8B86
+data_8b75
+        db $50, $64, $08, $41, $46, $3c, $08, $41
 
 
-L_8B87:
-        ld a, ($9D4A)
+data_8b7d:
+        db $3c
+
+        ; start of unknown area 0x8b7e to 0x8b84
+        db $80, $08
+        db $2a, $5a, $46, $08, $2a
+        ; end of unknown area 0x8b7e to 0x8b84
+
+
+data_8b85:
+        db $ff
+
+data_8b86:
+        db $ff
+
+l_8b87:
+        ld a, (data_9d4a)
         ld (apenas_brite_and_ink), a
-        ld a, ($9D48)
-        ld ix, $8C99
+        ld a, (data_9d48)
+        ld ix, data_8c99
         and a
         ret z
         ld b, a
@@ -2645,25 +2758,25 @@ L_8B87:
         _do
                 push bc
                 push ix
-                ld a, ($9D4A)
+                ld a, (data_9d4a)
                 ld c, a
                 ld a, (ix+$02)
                 inc a
                 and $03
                 ld (ix+$02), a
-                add a, $5C
+                add a, $5c
                 ld b, $01
                 ld e, (ix)
                 ld l, (ix+$01)
-                call L_8D3E
+                call l_8d3e
                 call desenha_sprite
                 pop ix
                 ld l, (ix)
                 ld h, (ix+$01)
-                ld de, $1408
-                call L_89B1
-                call c, L_8BD1
-                ld de, $0003
+                ld de, $1408 ; static
+                call l_89b1
+                call c, l_8bd1
+                ld de, $0003 ; static
                 add ix, de
                 pop bc
         _djnz
@@ -2671,70 +2784,70 @@ L_8B87:
         ret
 
 
-L_8BD1:
+l_8bd1:
         ld bc, (nivel)
         ld a, b
         cp c
         ret nz
-        ld a, ($9D16)
+        ld a, (data_9d16)
         cp $06
         ret z
         ld a, $06
-        ld ($9D16), a
+        ld (data_9d16), a
         xor a
-        ld ($9D44), a
+        ld (data_9d44), a
         ld a, (ix+$01)
-        add a, $0E
-        ld ($9D0E), a
+        add a, $0e
+        ld (data_9d0e), a
         xor a
-        ld ($9D11), a
-        ld hl, $F88C
+        ld (data_9d11), a
+        ld hl, data_f88c
         ld a, (nivel)
         cp $41
         _if_not z
-                cp $6F
+                cp $6f
                 _if_not z
-                        ld hl, $F8B4
+                        ld hl, data_f8b4
                         cp $57
                         _if_not z
-                                ld hl, $F89F
+                                ld hl, data_f89f
                         _end_if
                 _end_if
         _end_if
 
-        ld a, $FF
-        call L_8A30
+        ld a, $ff
+        call l_8a30
         push ix
-        call L_9D8C
+        call l_9d8c
         pop ix
         ret
 
 
-L_8C18:
-        ld a, ($9D47)
-        ld ix, $8C75
+l_8c18:
+        ld a, (data_9d47)
+        ld ix, data_8c75
         and a
         ret z
         ld b, a
 
         _do
                 push bc
-                call L_8C4A
+                call l_8c4a
                 ld a, (ix+$02)
                 inc a
-                and $0F
+                and $0f
                 ld (ix+$02), a
-                call L_8C4A
+                call l_8c4a
                 ld a, $73
-                call L_8990
+                call l_8990
                 
                 _if_not nc
                         ld a, $01
-                        ld hl, $F878
-                        call L_8A30
+                        ld hl, data_f878
+                        call l_8a30
                 _end_if
 
-                ld de, $0003
+                ld de, $0003 ; static
                 add ix, de
                 pop bc
         _djnz 
@@ -2742,7 +2855,7 @@ L_8C18:
         ret
 
 
-L_8C4A:
+l_8c4a:
         ld a, (ix+$02)
         and $02
         rrca
@@ -2758,48 +2871,126 @@ L_8C4A:
         ld l, (ix+$01)
         ld a, $73
         push ix
-        call L_8D3E
+        call l_8d3e
         call desenha_sprite
         pop ix
         xor a
         ld (background_color), a
-        jp L_8DD7
+        jp l_8dd7
 
 
-        ; Start of unknown area $8C75 to $8CC0
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00
-        ; End of unknown area $8C75 to $8CC0
+
+data_8c75
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+
+        ;8c80 
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        ;8c90
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+data_8c99        
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        ;8ca0
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+        db $00
+data_8cbc        
+        db $00
+        
+data_8cbd        
+        db $00, $00
+data_8cbf:
+        db $00, $00
 
 
-L_8CC1:
-        ld a, $3E
-        call L_96FA
+
+l_8cc1:
+        ld a, $3e
+        call l_96fa
         _if_not z
-                ld a, $3F
-                call L_96FA
-                jr z, L_8CFC
+                ld a, $3f
+                call l_96fa
+                jr z, l_8cfc
                 ld a, (nivel)
                 ld bc, (dados_mapa_63)
                 cp c
                 ret nz
-                ld hl, $8D21
+                ld hl, data_8d21
                 inc (hl)
                 ld a, (hl)
-                cp $3C
+                cp $3c
                 ret c
                 ld (hl), $00
                 ld ix, dados_mapa_63
-                ld a, $CF
-                jp L_83F9
+                ld a, $cf
+                jp l_83f9
 
 
         _end_if
-        ld hl, $781B
+        ld hl, dados_mapa_62+9
         ld a, (hl)
         and a
         _if_not z
@@ -2809,46 +3000,46 @@ L_8CC1:
                         and $07
                         ret nz
                         dec (hl)
-                        jr L_8D06
+                        jr l_8d06
 
                 _end_if
         _end_if
-L_8CFC:
-        ld hl, $8D21
+l_8cfc:
+        ld hl, data_8d21
         inc (hl)
         ld a, (hl)
-        cp $3C
+        cp $3c
         ret c
         ld (hl), $00
 
-L_8D06:
-        ld a, (posicao_hero_x_em_nibbles_copia_2)
+l_8d06:
+        ld a, (data_9d0d)
         add a, $21
-        ld ($8D1F), a
-        ld a, ($9D0E)
+        ld (data_8d1f), a
+        ld a, (data_9d0e)
         sub $12
-        ld ($8D20), a
-        ld ix, $8D1D
-        ld a, $CF
-        jp L_83F9
+        ld (data_8d20), a
+        ld ix, $8d1d
+        ld a, $cf
+        jp l_83f9
 
 
-        ; Start of unknown area $8D1F to $8D21
-        defb $00
-        defb $00, $00
-        ; End of unknown area $8D1F to $8D21
+data_8d1f:
+        db $00
+
+data_8d20:
+        db $00
+data_8d21:
+        db $00
 
 
-
-
-
-coloca_em_de_hl_5E22_B830:
+coloca_em_de_hl_5e22_b830:
         push hl
         push de
-        ld de, $5E22
-        ld hl, $B830
+        ld de, $5e22
+        ld hl, $b830
 
-L_8D2A:
+l_8d2a:
         ld (valor_de), de
         ld (valor_hl), hl
         pop de
@@ -2856,15 +3047,15 @@ L_8D2A:
         ret
 
 
-coloca_em_de_hl_6020_B800:
+coloca_em_de_hl_6020_b800:
         push hl
         push de
         ld de, $6020
-        ld hl, $B800
-        jr L_8D2A
+        ld hl, $b800
+        jr l_8d2a
 
 
-L_8D3E:
+l_8d3e:
         ld h, a
         ld a, c
         ld (apenas_brite_and_ink), a
@@ -2877,7 +3068,7 @@ L_8D3E:
         ld (sprite_espelho), a
         ld a, h
 
-L_8D51:
+l_8d51:
         ld (next_sprite_index), a
         ld a, e
         ld (sprite_left), a
@@ -2886,7 +3077,7 @@ L_8D51:
 
 function_print_sprite:
         xor a
-        ld ($9D26), a
+        ld (data_9d26), a
         ld a, (next_sprite_index)
         ld l, a
         ld h, $00
@@ -2897,9 +3088,9 @@ function_print_sprite:
         inc hl
         ld d, (hl)
         ld a, d
-        cp $FF
+        cp $ff
         _if_not nz
-                ld ($9D26), a
+                ld (data_9d26), a
                 ret
         _end_if
 
@@ -2911,22 +3102,22 @@ function_print_sprite:
         ld a, (hl)
         ld (altura_sprite_a_desenhar), a
         inc hl
-        ld (primeiro_byte_da_sprite_a_desenhar), hl
+        ld (sprit_actual_byte_to_draw), hl
         ret
 
 
-L_8D89:
-        ld bc, $1E11
+l_8d89:
+        ld bc, $1e11
         ld de, $0601
-        ld hl, $8DCC
+        ld hl, dinamic_data_8dcc
         ld (hl), $00
         jp colocar_attributos_de_cor
 
 
-L_8D97:
+l_8d97:
         ld l, a
         xor a
-        ld ($8DCC), a
+        ld (dinamic_data_8dcc), a
         ld a, (background_color)
         cp $01
         ld a, l
@@ -2934,15 +3125,15 @@ L_8D97:
         _if_not nz 
                 xor $47
                 ld l, a
-                ld a, $AE
-                ld ($8DCC), a
+                ld a, $ae
+                ld (dinamic_data_8dcc), a
                 ld a, l
         _end_if
 
 colocar_attributos_de_cor:
-        ld ($8DCB), a
+        ld (dinamic_cor_a_pintar+1), a
         ld a, b
-        ld ($8DC9), a
+        ld (dinamic_largura_cor_em_casas + 1), a
         ld h, $00
         ld a, d
         add a, a
@@ -2953,18 +3144,22 @@ colocar_attributos_de_cor:
         add hl, hl
         add hl, hl
         add hl, de
-        ld de, $5800
+
+dinamic_8dc0: 
+        ld de, screenattributes
         add hl, de
         ld de, $0020
 
         _do
                 push hl
+dinamic_largura_cor_em_casas: 
                 ld b, $01
 
         
                 _do
-
+dinamic_cor_a_pintar:
                         ld a, $01
+dinamic_data_8dcc:
                         xor (hl)
                         ld (hl), a
                         inc hl
@@ -2979,8 +3174,8 @@ colocar_attributos_de_cor:
         ret
 
 
-L_8DD7:
-        ld a, ($9D26)
+l_8dd7:
+        ld a, (data_9d26)
         and a
         ret nz
         ld hl, (valor_de)
@@ -3066,16 +3261,31 @@ L_8DD7:
         srl d
         srl d
         ld a, (apenas_brite_and_ink)
-        jp L_8D97
+        jp l_8d97
 
 
-        ; Start of unknown area $8E49 to $8E49
-        defb $00
-        ; End of unknown area $8E49 to $8E49
+data_8e49:
+        db $00
 
+
+; arguments: 
+;
+; data_9d26
+; valor_de
+; altura_sprite_a_desenhar
+; altura_sprite_a_desenhar_copy
+; largura_sprite_a_desenhar
+; largura_sprite_a_desenhar_copy
+; sprite_left
+; de 
+; valor_hl
+; altura_sprite_a_desenhar
+; sprite_top
+; sprite_top_copy
+; altura_sprite_a_desenhar_copy
 
 desenha_sprite:
-        ld a, ($9D26)
+        ld a, (data_9d26)
         and a
         ret nz
         ld de, (valor_de)
@@ -3113,7 +3323,7 @@ desenha_sprite:
                 ld a, l
                 ld (sprite_top_copy), a
                 push hl
-                ld hl, (primeiro_byte_da_sprite_a_desenhar)
+                ld hl, (sprit_actual_byte_to_draw)
                 ld a, (largura_sprite_a_desenhar)
                 srl a
                 ld c, a
@@ -3125,7 +3335,7 @@ desenha_sprite:
                         inc a
                 _while nz
 
-                ld (primeiro_byte_da_sprite_a_desenhar), hl
+                ld (sprit_actual_byte_to_draw), hl
                 pop hl
 
         _end_if
@@ -3148,15 +3358,15 @@ desenha_sprite:
         ld a, (sprite_left)
         ld (sprite_left_copy), a
         xor a
-        ld ($8FAD), a
-        ld ($9002), a
+        ld (dynamic_8fac+1), a
+        ld (dynamic_9001+1), a
         ld a, (sprite_left)
         sub e
         _if_not nc
                 neg
                 ld b, a
                 and $01
-                ld ($9002), a
+                ld (dynamic_9001+1), a
                 ld a, (largura_sprite_a_desenhar_copy)
                 sub b
                 ld (largura_sprite_a_desenhar_copy), a
@@ -3165,11 +3375,11 @@ desenha_sprite:
                 ld (sprite_left_copy), a
                 ld a, b
                 srl a
-                ld ($8FAD), a
+                ld (dynamic_8fac+1), a
                 ld c, a
                 ld b, $00
                 push hl
-                ld hl, (primeiro_byte_da_sprite_a_desenhar)
+                ld hl, (sprit_actual_byte_to_draw)
                 add hl, bc
                 ld a, (sprite_espelho)
                 and a
@@ -3180,7 +3390,7 @@ desenha_sprite:
 
                 _end_if
 
-                ld (primeiro_byte_da_sprite_a_desenhar), hl
+                ld (sprit_actual_byte_to_draw), hl
                 pop hl
                 ld b, a
 
@@ -3202,36 +3412,36 @@ desenha_sprite:
                 inc a
                 srl a
                 ld b, a
-                ld a, ($8FAD)
+                ld a, (dynamic_8fac+1)
                 add a, b
-                ld ($8FAD), a
+                ld (dynamic_8fac+1), a
         _end_if
 
-        ld hl, $2313
+        ld hl, $2313 ; inc de : inc hl
         ld a, (sprite_espelho)
         and a
         _if_not z
-                ld hl, (primeiro_byte_da_sprite_a_desenhar)
+                ld hl, (sprit_actual_byte_to_draw)
                 ld a, (largura_sprite_a_desenhar)
                 srl a
                 dec a
                 ld c, a
                 ld b, $00
                 add hl, bc
-                ld (primeiro_byte_da_sprite_a_desenhar), hl
+                ld (sprit_actual_byte_to_draw), hl
                 ld a, (largura_sprite_a_desenhar)
                 res 0, a
                 ld b, a
-                ld a, ($8FAD)
+                ld a, (dynamic_8fac+1)
                 neg
                 add a, b
-                ld ($8FAD), a
-                ld hl, $8FBB
-                ld a, $C3
+                ld (dynamic_8fac+1), a
+                ld hl, $8fbb ; static;  cp e : adc a,a
+                ld a, $c3
         _end_if
 
-        ld ($8FA4), a
-        ld ($8FA5), hl
+        ld (dynamic_8fa4), a
+        ld (dynamic_8fa5), hl
         ld a, (sprite_top_copy)
         ld l, a
         ld h, $00
@@ -3240,23 +3450,23 @@ desenha_sprite:
         add hl, bc
         push hl
         pop ix
-        ld de, (primeiro_byte_da_sprite_a_desenhar)
+        ld de, (sprit_actual_byte_to_draw)
         ld a, (sprite_left_copy)
         sub $20
         srl a
-        jp c, L_8FC6
-        ld ($8F9B), a
-        ld a, ($9002)
+        jp c, l_8fc6
+        ld (dynamic_8f9a + 1), a
+        ld a, (dynamic_9001+1)
         and a
-        ld a, ($8F9B)
-        jp nz, L_8FC6
+        ld a, (dynamic_8f9a + 1)
+        jp nz, l_8fc6
         ld a, (background_color)
         and a
         _if_not z
-                ld a, $AE
+                ld a, $ae
         _end_if
 
-        ld ($8FA7), a
+        ld (dynamic_8fa7), a
         ld a, (largura_sprite_a_desenhar_copy)
         srl a
         ld (largura_sprite_a_desenhar_copy), a
@@ -3266,6 +3476,7 @@ desenha_sprite:
                 inc ix
                 ld h, (ix)
                 inc ix
+dynamic_8f9a:
                 ld bc, $0000
                 add hl, bc
                 dec hl
@@ -3273,17 +3484,21 @@ desenha_sprite:
                 ld b, a
 
                 _do
-
                         ld a, (de)
+dynamic_8fa4:
                         nop
-                        inc de
-                        inc hl
+
+dynamic_8fa5:
+                        inc de : inc hl
+
+dynamic_8fa7:
                         and (hl)
                         ld (hl), a
                 
                 _djnz
 
                 ex de, hl
+dynamic_8fac:                
                 ld bc, $0000
                 add hl, bc
                 ex de, hl
@@ -3295,49 +3510,53 @@ desenha_sprite:
         ret
 
 
-        ; Start of unknown area $8FBB to $8FC5
-        defb $C5, $06, $5B, $4F, $0A
-        defb $C1, $23, $1B, $C3, $A7, $8F
-        ; End of unknown area $8FBB to $8FC5
+        ; start of unknown area 0x8fbb to 0x8fc5
+        db $c5, $06, $5b, $4f, $0a
+        db $c1, $23, $1b, $c3, $a7, $8f
+        ; end of unknown area 0x8fbb to 0x8fc5
 
 
-L_8FC6:
-        ld ($8FFE), a
-        ld a, ($8FAD)
-        ld ($900F), a
+l_8fc6:
+        ld (dynamic_8ffd+1), a
+        ld a, (dynamic_8fac+1)
+        ld (dynamic_900e+1), a
         ld hl, function_9041
         ld a, (background_color)
         and a
         ld a, (sprite_espelho)
-        jp z, L_8FE9
+        jp z, l_8fe9
         ld hl, function_901d
         and a
-        jp z, L_8FF0
+        jp z, l_8ff0
         ld hl, function_9074
-        jp L_8FF0
+        jp l_8ff0
 
 
-L_8FE9:
+l_8fe9:
         and a
-        jp z, L_8FF0
+        jp z, l_8ff0
         ld hl, function_90a4
 
-L_8FF0:
-        ld ($900B), hl
+l_8ff0:
+        ld (dynamic_900a+1), hl
 
         _do
                 ld l, (ix)
                 inc ix
                 ld h, (ix)
                 inc ix
+dynamic_8ffd:                
                 ld bc, $0000
                 add hl, bc
+dynamic_9001:                
                 ld a, $00
-                ld ($9B31), a
+                ld (data_9b31), a
                 ld a, (largura_sprite_a_desenhar_copy)
                 ld b, a
+dynamic_900a:                            
                 call function_901d
                 ex de, hl
+dynamic_900e:
                 ld bc, $0000
                 add hl, bc
                 ex de, hl
@@ -3349,7 +3568,7 @@ L_8FF0:
 
 
 function_901d:
-        ld a, ($9B31)
+        ld a, (data_9b31)
         and a
         _if_not z
                 ld a, (de)
@@ -3357,7 +3576,7 @@ function_901d:
                 rlca
                 rlca
                 rlca
-                jp L_9039
+                jp l_9039
 
         _end_if
 
@@ -3368,7 +3587,7 @@ function_901d:
                         rlca
                         rlca
                         ld c, a
-                        and $0F
+                        and $0f
                         xor (hl)
                         ld (hl), a
                         inc hl
@@ -3376,8 +3595,8 @@ function_901d:
                         ret z
                         ld a, c
 
-L_9039:
-                        and $F0
+l_9039:
+                        and $f0
                         xor (hl)
                         ld (hl), a
                         inc de
@@ -3386,7 +3605,7 @@ L_9039:
 
 
 function_9041:
-        ld a, ($9B31)
+        ld a, (data_9b31)
         and a
         _if_not z
                 ld a, (de)
@@ -3394,33 +3613,33 @@ function_9041:
                 rlca
                 rlca
                 rlca
-                ld ($8E49), a
-                jp L_9065
+                ld (data_8e49), a
+                jp l_9065
         _end_if
 
         _do
                 ld a, (hl)
-                and $F0
+                and $f0
                 ld c, a
                 ld a, (de)
                 rlca
                 rlca
                 rlca
                 rlca
-                ld ($8E49), a
-                and $0F
+                ld (data_8e49), a
+                and $0f
                 add a, c
                 ld (hl), a
                 inc hl
                 dec b
                 ret z
 
-L_9065:
+l_9065:
                 ld a, (hl)
-                and $0F
+                and $0f
                 ld c, a
-                ld a, ($8E49)
-                and $F0
+                ld a, (data_8e49)
+                and $f0
                 add a, c
                 ld (hl), a
                 inc de
@@ -3429,12 +3648,12 @@ L_9065:
 
 
 function_9074:
-        ld a, ($9B31)
+        ld a, (data_9b31)
         and a
         _if_not z
                 ld a, (de)
                 push bc
-                ld b, $5B
+                ld b, $5b
                 ld c, a
                 ld a, (bc)
                 pop bc
@@ -3442,14 +3661,14 @@ function_9074:
                 rlca
                 rlca
                 rlca
-                jp L_909C
+                jp l_909c
         _end_if
 
 
         _do
                 ld a, (de)
                 push bc
-                ld b, $5B
+                ld b, $5b
                 ld c, a
                 ld a, (bc)
                 pop bc
@@ -3458,7 +3677,7 @@ function_9074:
                 rlca
                 rlca
                 ld c, a
-                and $0F
+                and $0f
                 xor (hl)
                 ld (hl), a
                 inc hl
@@ -3466,8 +3685,8 @@ function_9074:
                 ret z
                 ld a, c
 
-L_909C:
-                and $F0
+l_909c:
+                and $f0
                 xor (hl)
                 ld (hl), a
                 dec de
@@ -3476,12 +3695,12 @@ L_909C:
 
 
 function_90a4:
-        ld a, ($9B31)
+        ld a, (data_9b31)
         and a
         _if_not z
                 ld a, (de)
                 push bc
-                ld b, $5B
+                ld b, $5b
                 ld c, a
                 ld a, (bc)
                 pop bc
@@ -3489,17 +3708,17 @@ function_90a4:
                 rlca
                 rlca
                 rlca
-                ld ($8E49), a
-                jp L_90D4
+                ld (data_8e49), a
+                jp l_90d4
         _end_if
 
         _do
                 ld a, (hl)
-                and $F0
+                and $f0
                 ld c, a
                 ld a, (de)
                 push bc
-                ld b, $5B
+                ld b, $5b
                 ld c, a
                 ld a, (bc)
                 pop bc
@@ -3507,20 +3726,20 @@ function_90a4:
                 rlca
                 rlca
                 rlca
-                ld ($8E49), a
-                and $0F
+                ld (data_8e49), a
+                and $0f
                 add a, c
                 ld (hl), a
                 inc hl
                 dec b
                 ret z
 
-L_90D4:
+l_90d4:
                 ld a, (hl)
-                and $0F
+                and $0f
                 ld c, a
-                ld a, ($8E49)
-                and $F0
+                ld a, (data_8e49)
+                and $f0
                 add a, c
                 ld (hl), a
                 dec de
@@ -3529,7 +3748,7 @@ L_90D4:
 
 
 limpa_a_area_de_jogo:
-        ld ix, $5CC4
+        ld ix, screen_memory_map + 3*32
         ld a, $88
         ld de, $0001
 
@@ -3539,7 +3758,7 @@ limpa_a_area_de_jogo:
                 inc ix
                 inc ix
                 add hl, de
-                ld b, $1E
+                ld b, $1e
 
                 _do
 
@@ -3552,12 +3771,12 @@ limpa_a_area_de_jogo:
         _while nz
 
         ld a, $47
-        jp L_8D89
+        jp l_8d89
 
 
-L_9106:
+l_9106:
         ld a, l
-        and $F8
+        and $f8
         ld h, $00
         ld d, h
         ld l, a
@@ -3565,39 +3784,42 @@ L_9106:
         add hl, hl
         srl e
         add hl, de
-        ld de, $5D44
+dinamic_9112:
+        ld de, $5d44
         add hl, de
         ret
 
 
-        ; Start of unknown area $9117 to $9121
-        defb $06, $2F, $04, $D6, $64, $30, $FB, $C6, $64
-        defb $70, $23
-        ; End of unknown area $9117 to $9121
+        ; start of unknown area 0x9117 to 0x9121
+        db $06, $2f, $04, $d6, $64, $30, $fb, $c6, $64
+        db $70, $23
+        ; end of unknown area 0x9117 to 0x9121
 
 
-L_9122:
-        ld b, $2F
+l_9122:
+        ld b, $2f
 
         _do
                 inc b
-                sub $0A
+                sub $0a
         _while nc
 
-        add a, $3A
+        add a, $3a
         ld (hl), b
         inc hl
         ld (hl), a
         ret
 
 
-L_912F:
-        call coloca_em_de_hl_6020_B800
+l_912f:
+        call coloca_em_de_hl_6020_b800
 
         _do
                 ld a, (hl)
                 and a
-                jr z, L_913E; break 
+
+                _break_if z 
+                
                 push hl
                 call desenha_uma_letra_no_ecra
                 pop hl
@@ -3605,150 +3827,149 @@ L_912F:
         _while_true
         
 
-L_913E:
-        jp coloca_em_de_hl_5E22_B830
+        jp coloca_em_de_hl_5e22_b830
 
 
-L_9141:
-        call coloca_em_de_hl_6020_B800
-        call L_914A
-        jp coloca_em_de_hl_5E22_B830
+write_on_screen:
+        call coloca_em_de_hl_6020_b800
+        call l_914a
+        jp coloca_em_de_hl_5e22_b830
 
 
-L_914A:
+l_914a:
         ld (posicao_onde_comeca_o_nome_do_nivel), hl
         ld a, $01
         ld (valor_inicia_do_a_21), a
 
-L_9152:
+l_9152:
         call get_first_or_second_nibble
-        cp $0F
+        cp $0f
         _if_not z
-                ld b, $0D
-                cp $0D
+                ld b, $0d
+                cp $0d
                 _if_not z
-                        ld b, $1D
-                        cp $0E
-                        jr nz, L_9169
+                        ld b, $1d
+                        cp $0e
+                        jr nz, l_9169
 
                 _end_if
                 call get_first_or_second_nibble
                 add a, b
 
-L_9169:
+l_9169:
                 ld hl, indice_letras
                 ld c, a
                 ld b, $00
                 add hl, bc
                 ld a, (hl)
                 call desenha_uma_letra_no_ecra
-                jr L_9152
+                jr l_9152
         _end_if
 
         call get_first_or_second_nibble
-        cp $0F
+        cp $0f
         ret z
         cp $08
         _if_not c
-                jr z, L_9193
+                jr z, l_9193
                 cp $09
-                jr z, L_91DA
-                cp $0D
-                jr z, L_91A1
-                jr L_9152
+                jr z, l_91da
+                cp $0d
+                jr z, l_91a1
+                jr l_9152
         _end_if
 
         add a, $40
-        ld ($9B3C), a
-        jr L_9152
+        ld (data_9b3c), a
+        jr l_9152
 
 
-L_9193:
-        call L_924F
-        ld ($9B3D), a
-        call L_924F
-        ld ($9B3E), a
-        jr L_9152
+l_9193:
+        call l_924f
+        ld (data_9b3d), a
+        call l_924f
+        ld (data_9b3e), a
+        jr l_9152
 
 
-L_91A1:
+l_91a1:
         ld hl, (posicao_onde_comeca_o_nome_do_nivel)
         ld a, (valor_inicia_do_a_21)
         push hl
         push af
         ld b, $00
 
-L_91AB:
+l_91ab:
         call get_first_or_second_nibble
-        cp $0F
+        cp $0f
         _if_not z
                 inc b
-                cp $0E
+                cp $0e
                 _if_not z
-                        cp $0D
-                        jr nz, L_91AB
+                        cp $0d
+                        jr nz, l_91ab
                 _end_if
 
                 call get_first_or_second_nibble
-                jr L_91AB
+                jr l_91ab
         _end_if
 
 
         ld a, (valor_inicia_do_a_20)
         sub b
-        ld ($9B3D), a
-        ld a, ($9B3E)
+        ld (data_9b3d), a
+        ld a, (data_9b3e)
         add a, $08
-        ld ($9B3E), a
+        ld (data_9b3e), a
         pop af
         pop hl
         ld (posicao_onde_comeca_o_nome_do_nivel), hl
         ld (valor_inicia_do_a_21), a
-        jp L_9152
+        jp l_9152
 
 
-L_91DA:
-        ld a, $0A
-        ld ($9D31), a
+l_91da:
+        ld a, $0a
+        ld (data_9d31), a
         xor a
-        ld ($9D32), a
+        ld (data_9d32), a
         ld (background_color), a
         ld (sprite_espelho), a
-        ld a, ($9B3C)
+        ld a, (data_9b3c)
         ld (apenas_brite_and_ink), a
-        call L_924F
-        ld ($92CC), a
-        ld ($9363), a
-        ld bc, ($9B3D)
+        call l_924f
+        ld (dynamic_92cb+1), a
+        ld (dynamic_9362+1), a
+        ld bc, (data_9b3d)
         add a, c
         add a, $04
         ld (valor_inicia_do_a_20), a
-        call L_924F
-        ld ($9324), a
+        call l_924f
+        ld (dynamic_9323+1), a
         add a, a
         add a, a
         add a, a
-        ld ($9357), a
-        call L_92A5
-        call L_92FE
-        call L_933A
-        ld a, ($9B3E)
-        add a, $0C
-        ld ($9B3E), a
-        jp L_9152
+        ld (dynamic_9356+1), a
+        call l_92a5
+        call l_92fe
+        call l_933a
+        ld a, (data_9b3e)
+        add a, $0c
+        ld (data_9b3e), a
+        jp l_9152
 
 
 indice_letras:
-        defb $3A
+        db $3a
 
-        ; Start of unknown area $9223 to $924E
-        defb $45, $54, $41, $4F, $49, $4E, $53, $48, $52, $44, $4C, $55, $42
-        defb $43, $46, $47, $4A, $4B, $4D, $50, $51, $56, $57, $58, $59, $5A, $40, $3F, $30
-        defb $31, $32, $33, $34, $35, $36, $37, $38, $39, $3B, $26, $27, $3C, $3E, $3D
-        ; End of unknown area $9223 to $924E
+        ; start of unknown area 0x9223 to 0x924e
+        db $45, $54, $41, $4f, $49, $4e, $53, $48, $52, $44, $4c, $55, $42
+        db $43, $46, $47, $4a, $4b, $4d, $50, $51, $56, $57, $58, $59, $5a, $40, $3f, $30
+        db $31, $32, $33, $34, $35, $36, $37, $38, $39, $3b, $26, $27, $3c, $3e, $3d
+        ; end of unknown area 0x9223 to 0x924e
 
 
-L_924F:
+l_924f:
         call get_first_or_second_nibble
         rlca
         rlca
@@ -3768,7 +3989,7 @@ get_first_or_second_nibble:
         _if_not z
                 ld hl, (posicao_onde_comeca_o_nome_do_nivel)
                 ld a, (hl)
-                and $0F
+                and $0f
                 inc hl
                 ld (posicao_onde_comeca_o_nome_do_nivel), hl
                 ret
@@ -3787,67 +4008,69 @@ posicao_onde_comeca_o_nome_do_nivel:
         defw $0000
 
 valor_inicia_do_a_21:
-        defb $00
+        db $00
 
-        ; Start of unknown area $9280 to $9280
-        defb $00
-        ; End of unknown area $9280 to $9280
+        ; start of unknown area 0x9280 to 0x9280
+        db $00
+        ; end of unknown area 0x9280 to 0x9280
 
 
 desenha_uma_letra_no_ecra:
         ld b, a
-        ld a, ($9B3E)
+        ld a, (data_9b3e)
         ld l, a
-        ld a, ($9B3D)
+        ld a, (data_9b3d)
         add a, $20
         ld e, a
-        ld a, ($9B3C)
+        ld a, (data_9b3c)
         ld c, a
         ld a, b
         ld b, $00
-        call L_8D3E
-        call L_8DD7
+        call l_8d3e
+        call l_8dd7
         call desenha_sprite
-        ld a, ($9B3D)
+        ld a, (data_9b3d)
         add a, $02
-        ld ($9B3D), a
+        ld (data_9b3d), a
         ret
 
 
-L_92A5:
-        ld a, ($9B3D)
+l_92a5:
+        ld a, (data_9b3d)
         add a, $20
         ld e, a
-        ld a, ($9B3E)
+        ld a, (data_9b3e)
         add a, $08
         ld l, a
-        call L_92C1
-        ld a, ($9357)
+        call l_92c1
+        ld a, (dynamic_9356+1)
         add a, l
         add a, $08
         ld l, a
-        ld a, ($9B3D)
+        ld a, (data_9b3d)
         add a, $20
         ld e, a
 
-L_92C1:
-        ld a, $2A
-        call L_92F8
-        ld a, $2E
-        call L_92F8
+l_92c1:
+        ld a, $2a
+        call l_92f8
+        ld a, $2e
+        call l_92f8
+
+dynamic_92cb:
         ld d, $00
 
         _do
                 ld a, $28
-                call L_92F8
+                call l_92f8
                 dec d
         _while nz
 
-        ld a, $2E
-        call L_92F8
-        ld a, $2B
+        ld a, $2e
+        call l_92f8
+        ld a, $2b
 
-L_92DC:
+l_92dc:
         push hl
         push de
         push hl
@@ -3856,56 +4079,58 @@ L_92DC:
         ld a, e
         sub $20
         ld e, a
-        call L_9106
+        call l_9106
         ld a, (apenas_brite_and_ink)
         ld (hl), a
         pop af
         pop de
         pop hl
-        call L_8D51
+        call l_8d51
         call desenha_sprite
         pop de
         pop hl
         ret
 
 
-L_92F8:
-        call L_92DC
+l_92f8:
+        call l_92dc
         inc e
         inc e
         ret
 
 
-L_92FE:
-        ld a, ($9B3D)
+l_92fe:
+        ld a, (data_9b3d)
         add a, $20
         ld e, a
         inc e
         inc e
         push de
-        ld a, ($9B3E)
+        ld a, (data_9b3e)
         ld l, a
-        call L_931A
-        ld a, ($9B3E)
+        call l_931a
+        ld a, (data_9b3e)
         ld l, a
         pop de
-        ld a, ($92CC)
+        ld a, (dynamic_92cb+1)
         inc a
         add a, a
         add a, e
         ld e, a
 
-L_931A:
-        ld a, $2C
-        call L_92DC
+l_931a:
+        ld a, $2c
+        call l_92dc
         ld a, l
         add a, $10
         ld l, a
+
+dynamic_9323:
         ld d, $00
 
         _do
                 ld a, $29
-                call L_92DC
+                call l_92dc
                 ld a, l
                 add a, $08
                 ld l, a
@@ -3915,16 +4140,16 @@ L_931A:
         ld a, l
         add a, $08
         ld l, a
-        ld a, $2D
-        jp L_92DC
+        ld a, $2d
+        jp l_92dc
 
 
-L_933A:
-        ld a, ($9B3D)
+l_933a:
+        ld a, (data_9b3d)
         add a, $04
         srl a
-        ld ($935F), a
-        ld a, ($9B3E)
+        ld (dynamic_935e+1), a
+        ld a, (data_9b3e)
         add a, $10
         ld e, a
         ld d, $00
@@ -3932,13 +4157,16 @@ L_933A:
         rl d
         ld ix, screen_memory_map
         add ix, de
+dynamic_9356:
         ld c, $00
 
         _do 
                 ld l, (ix)
                 ld h, (ix+$01)
+dynamic_935e:
                 ld de, $0000
                 add hl, de
+dynamic_9362:
                 ld b, $00
 
                 _do
@@ -3961,21 +4189,23 @@ verifica_se_clicaram_tecla:
         bit 4, a
         _if_not nz
                 push bc
-                ld bc, $FFFE
-                and $E0
+                ld bc, $fffe
+                and $e0
                 rrca
                 rrca
                 add a, $80
-                ld ($9390), a
+                ld (dynamic_938f+1), a
                 ld a, l
                 rlca
                 rlca
                 rlca
                 and $38
                 add a, $47
-                ld ($9394), a
+                ld (dynamic_9393+1), a
+dynamic_938f:
                 res 0, b
                 in a, (c)
+dynamic_9393:
                 bit 0, a
                 pop bc
                 pop hl
@@ -3988,52 +4218,124 @@ verifica_se_clicaram_tecla:
         rlca
         and $38
         add a, $47
-        ld ($93A8), a
-        in a, ($1F)
-        xor $FF
+        ld (dynamic_93a7+1), a
+        in a, ($1f)
+        xor $ff
+dynamic_93a7:        
         bit 0, a
         pop hl
         ret
 
 
-L_93AB:
-        ld a, ($9409)
-        ld ($9D30), a
+l_93ab:
+        ld a, (data_9409)
+        ld (data_9d30), a
         ret
 
 
-        ; Start of unknown area $93B2 to $940A
-        defb $0E, $00, $21, $4D, $9D, $11, $53, $9D, $DD, $21, $59, $9D, $06, $06
-        defb $7E, $CD, $70, $93, $28, $17, $1A, $CD, $70, $93, $28, $11, $3A, $8F, $72, $A7
-        defb $28, $08, $DD, $7E, $00, $CD, $70, $93, $28, $03, $A7, $18, $01, $37, $CB, $11
-        defb $23, $13, $DD, $23, $10, $DA, $79, $32, $09, $94, $21, $05, $94, $0E, $FF, $06
-        defb $04, $7E, $CD, $70, $93, $20, $03, $A7, $18, $01, $37, $CB, $11, $23, $10, $F1
-        defb $79, $32, $0A, $94, $C9, $C1, $60, $40, $03, $00, $00
-        ; End of unknown area $93B2 to $940A
+function_93b2:
+        ld c, $00
+        ld hl, data_9d4d
+        ld de, data_9d53
+        ld ix, data_9d59
+        ld b, $06
 
+l_93c0:
+        ld a, (hl)
+        call verifica_se_clicaram_tecla
+        jr z, l_93dd
+        ld a, (de)
+        call verifica_se_clicaram_tecla
+        jr z, l_93dd
+        ld a, (data_728f)
+        and a
+        jr z, l_93da
+        ld a, (ix)
+        call verifica_se_clicaram_tecla
+        jr z, l_93dd
+
+l_93da:
+        and a
+        jr l_93de
+
+
+l_93dd:
+        scf
+
+l_93de:
+        rl c
+        inc hl
+        inc de
+        inc ix
+        djnz l_93c0
+        ld a, c
+        ld (data_9409), a
+        ld hl, data_9405
+        ld c, $ff
+        ld b, $04
+
+l_93f1:
+        ld a, (hl)
+        call verifica_se_clicaram_tecla
+        jr nz, l_93fa
+        and a
+        jr l_93fb
+
+
+l_93fa:
+        scf
+
+l_93fb:
+        rl c
+        inc hl
+        djnz l_93f1
+        ld a, c
+        ld (data_940a), a
+        ret
+
+
+data_9405:
+        db $c1
+
+data_9406:
+        db $60
+        
+data_9407:
+        db $40
+data_9408:
+        db $03
+
+
+
+
+data_9409:
+        db $00
+
+data_940a:
+        db $00
 
 janela_do_jogo_preto:
         xor a
         ld (background_color), a
-        ld bc, $1E11
+        ld bc, $1e11
         ld de, $0601
-        call L_8D97
-        ld hl, $5D44
-        ld ($8DC1), hl
-        ld ($9113), hl
+        call l_8d97
+        ld hl, $5d44
+        ld (dinamic_8dc0+1), hl
+        ld (dinamic_9112+1), hl
         ret
 
 
 copia_color_attributes_para_ecra:
-        ld hl, $5800
-        ld ($8DC1), hl
-        ld ($9113), hl
-        ld de, $58C1
-        ld hl, $5E05
+        ld hl, screenattributes
+        ld (dinamic_8dc0+1), hl
+        ld (dinamic_9112+1), hl
+        ld de, screenattributes + 6*32 +1 ;0x58c1
+        ld hl, color_attribute_temp+ 1*32+1
         ld c, $11
 
         _do
-                ld b, $1E
+                ld b, $1e
 
                 _do
 
@@ -4056,15 +4358,15 @@ copia_color_attributes_para_ecra:
         ret
 
 
-L_9445:
+l_9445:
         push af
         push bc
 
         _do
-                ld bc, ($9D2E)
+                ld bc, (data_9d2e)
 
                 _do
-                        ld a, ($9D2F)
+                        ld a, (data_9d2f)
                         cp b
                 _while z
 
@@ -4075,92 +4377,92 @@ L_9445:
         ret
 
 
-L_9458:
+l_9458:
         call janela_do_jogo_preto
         call limpa_a_area_de_jogo
         xor a
-        ld ($9D48), a
-        ld ($9D47), a
+        ld (data_9d48), a
+        ld (data_9d47), a
         call desenha_nivel
-        ld a, ($7929)
+        ld a, (dados_mapa_80+9)
         and a
         _if_not nz
-                ld hl, $68B8
+                ld hl, $68b8 ; static
                 ld a, (nivel)
                 cp $50
                 _if_not z
-                        ld hl, $30B8
+                        ld hl, $30b8; static
                         cp $67
                         _if_not z
                         
-                                ld hl, $3064
-                                cp $7E
-                                jr nz, L_94A0
+                                ld hl, $3064; static
+                                cp $7e
+                                jr nz, l_94a0
                         _end_if
                 _end_if
 
-                ld ix, $8A0F
+                ld ix, data_8a0f
                 ld (ix+$03), h
                 ld (ix+$06), l
 
                 _do
-                        call L_7401
+                        call l_7401
                         ld a, (ix+$03)
                         add a, $08
                         ld (ix+$03), a
                         cp (ix+$06)
                 _while c
         _end_if
-L_94A0:
+l_94a0:
         ld a, (nivel)
         cp $55
         _if_not nz
-                ld a, ($7893)
+                ld a, (dados_mapa_70+9)
                 and a
                 _if_not z
                         ld hl, $3690
-                        call L_89D3
-                        ld hl, $3A90
-                        call L_89D3
+                        call l_89d3
+                        ld hl, $3a90
+                        call l_89d3
                 _end_if
         _end_if
 
         ld a, (nivel)
         cp $70
         _if_not nz
-                ld a, ($7974)
+                ld a, (dados_mapa_85+9)
                 and a
                 _if_not nz
-                        ld hl, $4BA0
-                        call L_89D3
-                        ld hl, $4A94
-                        call L_89D3
-                        ld hl, $4A88
-                        call L_89D3
-                        ld hl, $4B7C
-                        call L_89D3
-                        ld hl, $4C70
-                        call L_89D3
+                        ld hl, $4ba0
+                        call l_89d3
+                        ld hl, $4a94
+                        call l_89d3
+                        ld hl, $4a88
+                        call l_89d3
+                        ld hl, $4b7c
+                        call l_89d3
+                        ld hl, $4c70
+                        call l_89d3
                 _end_if 
         _end_if
 
-        call L_95A6
-        call L_891F
-        call L_8B24
-        call L_9948
+        call l_95a6
+        call l_891f
+        call l_8b24
+        call l_9948
         call copia_color_attributes_para_ecra
         jp function_nome_nivel
 
 
 desenha_nivel:
         ld a, (nivel)
-        cp $7F
+        cp $7f
         ret z
         ld hl, sprites_dos_niveis
         xor a
         ld (sprites_repetidos), a
 
-L_9503:
+l_9503:
 
         ;_do
                 ld (posicao_atual_index_001), a
@@ -4177,7 +4479,7 @@ L_9503:
                 and a
                 
                 ;_if_not z
-                jp z, L_959B
+                jp z, l_959b
                         ld a, (posicao_atual_index_001)
                         ld bc, (nivel)
                         sub c
@@ -4195,7 +4497,7 @@ L_9503:
                                                 ld a, (hl)
                                                 rlca
                                                 rlca
-                                                and $7F
+                                                and $7f
                                                 inc a
                                                 ld (sprites_repetidos), a
                                                 inc hl
@@ -4242,16 +4544,16 @@ L_9503:
                                         push af
                                         xor a
                                         ld (background_color), a
-                                        call L_8DD7
+                                        call l_8dd7
                                         pop af
                                         ld (background_color), a
                                         call desenha_sprite
                                         ld a, (next_sprite_index)
-                                        cp $5B
-                                        call z, L_89EA
+                                        cp $5b
+                                        call z, l_89ea
                                         ld a, (next_sprite_index)
                                         cp $73
-                                        call z, L_89E0
+                                        call z, l_89e0
                                         pop hl
                                         pop bc
                                 _end_if
@@ -4261,28 +4563,28 @@ L_9503:
                                 ld (valor_atual_index_001), a
                         _while nz
                 ;_end_if
-L_959B:
+l_959b:
                 ld a, (posicao_atual_index_001)
                 inc a
 
         ;_while p
-        jp p, L_9503
+        jp p, l_9503
 
         ret
 
 
 valor_atual_index_001:
-        defb $00
+        db $00
 
 posicao_atual_index_001:
-        defb $00
+        db $00
 
 sprites_repetidos:
-        defb $00
+        db $00
 
-L_95A6:
-        ld b, $1E
-        ld ix, $FFA2
+l_95a6:
+        ld b, $1e
+        ld ix, data_ffa2
 
         _do
                 ld a, (nivel)
@@ -4295,9 +4597,9 @@ L_95A6:
                         ld bc, $0046
                         ld e, (ix)
                         ld l, (ix+$01)
-                        call L_8D3E
+                        call l_8d3e
                         call desenha_sprite
-                        call L_8DD7
+                        call l_8dd7
                         pop ix
                         pop bc
                 _end_if
@@ -4308,11 +4610,11 @@ L_95A6:
         ret
 
 
-L_95D5:
-        ld a, $FF
-        ld ($9D2A), a
-        ld b, $1E
-        ld ix, $FFA2
+l_95d5:
+        ld a, $ff
+        ld (data_9d2a), a
+        ld b, $1e
+        ld ix, data_ffa2
         ld de, $0003
 
         _do     
@@ -4320,39 +4622,39 @@ L_95D5:
                 add ix, de
         _djnz 
 
-L_95EB:
-        ld a, ($9D2A)
+l_95eb:
+        ld a, (data_9d2a)
         inc a
-        ld ($9D2A), a
-        ld hl, $FF90
-        call L_9122
-        ld hl, $FF8B
-        call L_9141
-        ld hl, $FF90
-        call L_912F
-        jp L_8A47
+        ld (data_9d2a), a
+        ld hl, $ff90
+        call l_9122
+        ld hl, data_ff8b ; posicao onde comeca o nome do nivel
+        call write_on_screen
+        ld hl, $ff90
+        call l_912f
+        jp l_8a47
 
 
-L_9607:
+l_9607:
         ld b, $03
-        ld a, $3A
-        call L_9624
-        ld bc, ($9D2C)
-        ld a, $2F
-        call L_9624
-        ld hl, $FF93
-        call L_9141
-        ld hl, $FF98
-        jp L_912F
+        ld a, $3a
+        call l_9624
+        ld bc, (data_9d2c)
+        ld a, $2f
+        call l_9624
+        ld hl, data_ff93 ; posicao onde comeca o nome do nivel
+        call write_on_screen
+        ld hl, data_ff98
+        jp l_912f
 
 
-        ; Start of unknown area $9623 to $9623
-        defb $C9
-        ; End of unknown area $9623 to $9623
+        ; start of unknown area 0x9623 to 0x9623
+        db $c9
+        ; end of unknown area 0x9623 to 0x9623
 
 
-L_9624:
-        ld hl, $FF98
+l_9624:
+        ld hl, data_ff98
 
         _do
                 ld (hl), a
@@ -4362,9 +4664,9 @@ L_9624:
         ret
 
 
-L_962C:
-        ld hl, $9D2C
-        ld a, ($9D2B)
+l_962c:
+        ld hl, data_9d2c
+        ld a, (data_9d2b)
         cp (hl)
         ret z
         _if_not c
@@ -4379,11 +4681,11 @@ L_962C:
         add a, a
         add a, a
         add a, a
-        xor $FF
-        ld ($FF3D), a
+        xor $ff
+        ld (data_ff3d), a
         ld a, $04
         ld (sound_to_play), a
-        ld a, ($9D2C)
+        ld a, (data_9d2c)
         add a, a
         and $07
         ld e, a
@@ -4392,33 +4694,33 @@ L_962C:
         add hl, de
         ld c, (hl)
         ld hl, $4134
-        ld de, $00F8
+        ld de, $00f8
         ld b, $06
 
         _do 
                 push bc
-                ld a, ($9D2C)
+                ld a, (data_9d2c)
                 add a, a
                 ld b, $08
 
-L_9668:
+l_9668:
                 sub $08
                 _if_not c
-                        ld (hl), $FF
+                        ld (hl), $ff
                         inc l
-                        djnz L_9668
+                        djnz l_9668
                 _else
 
                         ld (hl), c
                         inc l
-                        jr L_967A ; if b >0
+                        jr l_967a ; if b >0
 
 
                         _do
                                 ld (hl), $00
                                 inc l
 
-L_967A:
+l_967a:
                         _djnz
 
                 _end_if
@@ -4429,86 +4731,86 @@ L_967A:
         ret
 
 
-        ; Start of unknown area $9681 to $9688
-        defb $80, $C0, $E0, $F0, $F8, $FC, $FE, $FF
-        ; End of unknown area $9681 to $9688
+        ; start of unknown area 0x9681 to 0x9688
+        db $80, $c0, $e0, $f0, $f8, $fc, $fe, $ff
+        ; end of unknown area 0x9681 to 0x9688
 
 
 function_nome_nivel:
-        ld hl, $FF77
-        call L_9141
+        ld hl, data_ff77 ; posicao onde comeca o nome do nivel
+        call write_on_screen
 
-        ld hl, $FBB1
+        ld hl, data_fbb1
         ld a, (nivel)
         cp $01
         _if_not z
                 cp $18
-                jr z, L_96D6
-                ld hl, $FC69
-                cp $1E
-                jr z, L_96D6
-                ld hl, $FC92
+                jr z, l_96d6
+                ld hl, data_fc69
+                cp $1e
+                jr z, l_96d6
+                ld hl, data_fc92
                 cp $09
-                jr z, L_96D6
-                ld hl, $FD56
+                jr z, l_96d6
+                ld hl, data_fd56
                 cp $54
-                jr z, L_96D6
+                jr z, l_96d6
                 add a, $80
                 ld b, a
                 ld hl, nomes_niveis
 
-L_96B8:
+l_96b8:
                 ld a, (hl)
-                cp $FF
-                jr z, L_96D6
+                cp $ff
+                jr z, l_96d6
                 cp b
-                jr z, L_96D6
+                jr z, l_96d6
                 inc hl
 
                 _do
                         ld a, (hl)
                         inc hl
-                        cp $FF
-                        jr z, L_96B8
-                        and $0F
-                        cp $0F
+                        cp $ff
+                        jr z, l_96b8
+                        and $0f
+                        cp $0f
                         
                         _continue_if nz
 
                         ld a, (hl)
-                        cp $F0
+                        cp $f0
                 _while nz
                 inc hl
-                jp L_96B8; jp não mexer
+                jp l_96b8; jp não mexer
         _end_if
 
-L_96D6:
+l_96d6:
         ld a, $20
         ld (valor_inicia_do_a_20), a
         inc a
         ld (valor_inicia_do_a_21), a
         inc hl
         ld (posicao_onde_comeca_o_nome_do_nivel), hl
-        call coloca_em_de_hl_6020_B800
-        call L_91A1
-        jp coloca_em_de_hl_5E22_B830
+        call coloca_em_de_hl_6020_b800
+        call l_91a1
+        jp coloca_em_de_hl_5e22_b830
 
 
-L_96EC:
+l_96ec:
         ld a, $01
-        ld ($9D27), a
-        call L_9141
-        call L_73E5
-        jp L_A287
+        ld (data_9d27), a
+        call write_on_screen
+        call l_73e5
+        jp l_a287
 
 
-L_96FA:
+l_96fa:
         ld b, a
         ld c, $00
 
         _do
                 ld a, c
-                call L_98C7
+                call l_98c7
                 cp $02
                 ret c
                 cp b
@@ -4517,107 +4819,107 @@ L_96FA:
         _while_true
 
 
-L_9709:
-        ld a, ($9D32)
+l_9709:
+        ld a, (data_9d32)
         and a
         ret z
-        ld hl, $846C
-        call L_9926
-        ld hl, $8478
-        call L_9926
+        ld hl, data_846c
+        call l_9926
+        ld hl, data_8478
+        call l_9926
         ld a, (dados_mapa_65)
-        ld ($84C0), a
+        ld (data_84c0), a
         ld a, $01
-        ld ($9D3F), a
+        ld (data_9d3f), a
 
-L_9725:
+l_9725:
         push ix
         ld a, $01
-        ld ($9D27), a
-        ld hl, inicio_qq_usado_em_9725
-        call L_9141
+        ld (data_9d27), a
+        ld hl, data_fa0b ; posicao onde comeca o nome do nivel
+        call write_on_screen
         ld b, $00
 
         _do
                 push bc
-                call L_98D2
+                call l_98d2
                 pop bc
                 inc b
                 ld a, b
                 cp $04
         _while nz
 
-        ld hl, $FA5F
-        ld a, ($8CBD)
+        ld hl, data_fa5f ; posicao onde comeca o nome do nivel
+        ld a, (data_8cbd)
         and a
-        call z, L_9141
-        ld a, ($9D33)
-        ld hl, $FA3D
+        call z, write_on_screen
+        ld a, (data_9d33)
+        ld hl, data_fa3d
         and a
         _if_not nz
-                ld hl, $FA20
+                ld hl, data_fa20 ; posicao onde comeca o nome do nivel
         _end_if
 
-        call L_9141
-        ld bc, $FF02
-        ld a, ($9D3F)
+        call write_on_screen
+        ld bc, $ff02
+        ld a, (data_9d3f)
         and a
         ld a, b
-        jr nz, L_9796
+        jr nz, l_9796
         ld b, $03
 
-L_9764:
-        ld a, ($9D2F)
+l_9764:
+        ld a, (data_9d2f)
         ld c, a
 
         _do
-                ld a, ($9D2F)
+                ld a, (data_9d2f)
                 cp c
         _while z
         
-        ld a, ($9D35)
+        ld a, (data_9d35)
         inc a
         and $07
-        ld ($9D35), a
-        ld hl, $9D36
+        ld (data_9d35), a
+        ld hl, data_9d36
         ld e, a
         ld d, $00
         add hl, de
         ld a, (hl)
-        ld ($9B3C), a
+        ld (data_9b3c), a
         push bc
-        call L_98D2
-        call L_98B5
+        call l_98d2
+        call l_98b5
         pop bc
         ld c, a
         bit 3, c
         _if_not nz
-                ld a, ($8CBD)
+                ld a, (data_8cbd)
                 and a
                 ld a, b
 
                 _if_not z
 
-L_9796:
+l_9796:
                         and a
                         _if_not z
                                 bit 5, c
                                 _if_not nz
                                         bit 2, c
-                                        jr z, L_97A2
+                                        jr z, l_97a2
 
                                 _end_if
                                 dec a
                         _end_if
-L_97A2:
+l_97a2:
                         cp $03
                         _if_not z
                                 bit 4, c
-                                jr nz, L_97AE
+                                jr nz, l_97ae
                                 bit 1, c
                                 _if_not z
 
-L_97AE:
+l_97ae:
                                         inc a
 
                                 _end_if
@@ -4625,88 +4927,86 @@ L_97AE:
 
                 _end_if
                 cp b
-                jr z, L_9764
-                call L_98C7
+                jr z, l_9764
+                call l_98c7
                 ld a, d
-                jr z, L_9796
+                jr z, l_9796
                 push af
                 ld a, $42
-                ld ($9B3C), a
+                ld (data_9b3c), a
                 ld a, b
-                cp $FF
-                call nz, L_98D2
+                cp $ff
+                call nz, l_98d2
                 pop bc
-                jr L_9764
+                jr l_9764
         _end_if
 
 
         ld a, b
-        call L_98C7
-        ld ($9819), a
+        call l_98c7
+        ld (data_9819), a
         cp $01
         _if_not z
-                call L_9826
-                ld a, ($9819)
-                call L_9912
-                ld a, ($9947)
+                call l_9826
+                ld a, (data_9819)
+                call l_9912
+                ld a, (data_9947)
                 and a
                 _if_not z
-                        ld a, ($9819)
+                        ld a, (data_9819)
                         cp $40
-                        jr nz, L_97F6
-                        ld hl, $85B0
-                        call L_9926
-                        ld a, ($9947)
+                        jr nz, l_97f6
+                        ld hl, data_85b0
+                        call l_9926
+                        ld a, (data_9947)
                         and a
-                        jr nz, L_97F6
+                        jr nz, l_97f6
                 _end_if
 
-                jr L_980F
+                jr l_980f
 
 
-L_97F6:
-                ld hl, L_980F
+l_97f6:
+                ld hl, l_980f
                 push hl
-                ld a, ($9819)
+                ld a, (data_9819)
                 cp $01
                 ret z
-                cp $4D
-                jr z, L_981A
-                cp $4E
-                jr z, L_9820
+                cp $4d
+                jr z, l_981a
+                cp $4e
+                jr z, l_9820
                 pop hl
-                call L_9841
+                call l_9841
         _end_if
 
-        call L_A287
+        call l_a287
 
-L_980F:
+l_980f:
         xor a
-        ld ($9D3F), a
-        ld ($9D33), a
+        ld (data_9d3f), a
+        ld (data_9d33), a
         pop ix
         ret
 
 
-        ; Start of unknown area $9819 to $9819
-        defb $00
-        ; End of unknown area $9819 to $9819
+data_9819:
+        db $00
+
+l_981a:
+        ld hl, data_f495
+        jp l_96ec
 
 
-L_981A:
-        ld hl, $F495
-        jp L_96EC
+l_9820:
+        ld hl, data_f4b5
+        jp l_96ec
 
 
-L_9820:
-        ld hl, $F4B5
-        jp L_96EC
-
-
-L_9826:
+l_9826:
         ld b, a
         ld ix, dados_mapa_0
-        ld de, $000F
+        ld de, $000f ; static
         
         _do
                 add ix, de
@@ -4715,22 +5015,22 @@ L_9826:
         ret
 
 
-        ; Start of unknown area $9833 to $9840
-        defb $3E, $FF, $32, $47, $99, $C9, $CD, $47, $98, $DD, $36, $00, $FF
-        defb $C9
-        ; End of unknown area $9833 to $9840
+        ; start of unknown area 0x9833 to 0x9840
+        db $3e, $ff, $32, $47, $99, $c9, $cd, $47, $98, $dd, $36, $00, $ff
+        db $c9
+        ; end of unknown area 0x9833 to 0x9840
 
 
-L_9841:
-        call L_9847
-        jp L_9867
+l_9841:
+        call l_9847
+        jp l_9867
 
 
-L_9847:
-        ld a, ($9819)
-        call L_9826
+l_9847:
+        ld a, (data_9819)
+        call l_9826
         ld c, a
-        ld hl, $8CBC
+        ld hl, data_8cbc
 
         _do
                 inc hl
@@ -4745,22 +5045,22 @@ L_9847:
                 ld a, (hl)
                 dec hl
                 cp $01
-                jr z, L_9864 ; break
+                
+                _break_if z
+
                 ld (hl), a
                 inc hl
         _while_true
 
-
-L_9864:
         ld (hl), $00
         ret
 
 
-L_9867:
+l_9867:
         ld a, (nivel)
         ld (ix), a
-        ld a, (posicao_hero_x_em_nibbles_copia_2)
-        and $FE
+        ld a, (data_9d0d)
+        and $fe
         add a, $22
         ld (ix+$02), a
         cp $38
@@ -4768,7 +5068,7 @@ L_9867:
         _if_not c
                 ld a, (nivel)
                 cp $54
-                jr z, L_9890
+                jr z, l_9890
                 ld a, (ix+$02)
         _end_if
 
@@ -4778,19 +5078,19 @@ L_9867:
                 cp $56
                 _if_not nz
 
-L_9890:
+l_9890:
                         ld a, $90
-                        jr L_989B
+                        jr l_989b
 
                 _end_if
         _end_if
 
 
-        ld a, ($9D0E)
-        and $F8
+        ld a, (data_9d0e)
+        and $f8
         sub $08
 
-L_989B:
+l_989b:
         ld (ix+$03), a
         ld b, a
         ld a, (ix+$04)
@@ -4808,26 +5108,26 @@ L_989B:
         ret
 
 
-L_98B5:
-        call L_93AB
+l_98b5:
+        call l_93ab
         and a
         _if_not z
                 ld c, a
-                ld a, ($9D3E)
+                ld a, (data_9d3e)
                 and a
                 ld a, c
         _end_if
 
-        ld ($9D3E), a
+        ld (data_9d3e), a
         ret z
         xor a
         ret
 
 
-L_98C7:
+l_98c7:
         ld e, a
         ld d, $00
-        ld hl, $8CBD
+        ld hl, data_8cbd
         add hl, de
         ld d, a
         ld a, (hl)
@@ -4835,21 +5135,21 @@ L_98C7:
         ret
 
 
-L_98D2:
+l_98d2:
         ld a, b
         rlca
         rlca
         rlca
         add a, $58
-        ld ($9B3E), a
-        ld a, $0C
-        ld ($9B3D), a
+        ld (data_9b3e), a
+        ld a, $0c
+        ld (data_9b3d), a
         ld a, b
-        call L_98C7
-        ld hl, $FA7A
-        jp z, L_9141
-        ld hl, $7475
-        ld de, $000F
+        call l_98c7
+        ld hl, data_fa7a ; posicao onde comeca o nome do nivel
+        jp z, write_on_screen
+        ld hl, dados_mapa_0 + 5
+        ld de, $000f ; static
         ld b, a
 
         _do
@@ -4861,23 +5161,23 @@ L_98D2:
         ld h, (hl)
         ld l, e
         cp $01
-        jp nz, L_9141
+        jp nz, write_on_screen
         ld a, $74
-        ld ($9B3E), a
-        jp L_9141
+        ld (data_9b3e), a
+        jp write_on_screen
 
 
-L_9905:
+l_9905:
         ld hl, $0000
-        ld ($8CBD), hl
+        ld (data_8cbd), hl
         ld hl, $0100
-        ld ($8CBF), hl
+        ld (data_8cbf), hl
         ret
 
 
-L_9912:
-        ld a, $FF
-        ld ($9947), a
+l_9912:
+        ld a, $ff
+        ld (data_9947), a
         push ix
         pop hl
         ld a, l
@@ -4889,63 +5189,63 @@ L_9912:
         or h
         ret z
 
-L_9926:
-        ld a, $FF
-        ld ($9947), a
+l_9926:
+        ld a, $ff
+        ld (data_9947), a
         ld a, (nivel)
-        cp (hl)
+
+        cp (hl) ;0 
         ret nz
+        inc hl 
+        ld e, (hl) ; 1
         inc hl
-        ld e, (hl)
+        ld d, (hl) ; 2
         inc hl
-        ld d, (hl)
+        ld a, (hl) ; 3
         inc hl
-        ld a, (hl)
-        inc hl
-        ld b, (hl)
-        inc hl
+        ld b, (hl) ; 4
+        inc hl 
         push hl
         ld l, a
         ld h, b
         ex de, hl
-        call L_89B1
+        call l_89b1
         pop hl
         ret nc
         xor a
-        ld ($9947), a
-        jp (hl)
+        ld (data_9947), a
+        jp (hl) ; 5
 
 
-        ; Start of unknown area $9947 to $9947
-        defb $FF
-        ; End of unknown area $9947 to $9947
+data_9947:
+        db $ff
 
 
-L_9948:
+l_9948:
         ld a, (nivel)
         cp $74
         ret nz
         ld a, (dados_mapa_56)
         cp $74
         ret nz
-        ld a, ($77B9)
+        ld a, (dados_mapa_56+1)
         cp $02
         ret nz
         ld a, $23
-        ld hl, ($99C2)
-        ld ($99BD), hl
-        ld ($99BF), hl
+        ld hl, (data_99c2)
+        ld (data_99bd), hl
+        ld (data_99bf), hl
         ld (next_sprite_index), a
         call function_print_sprite
-        ld ix, $99BD
-        ld hl, (primeiro_byte_da_sprite_a_desenhar)
+        ld ix, data_99bd
+        ld hl, (sprit_actual_byte_to_draw)
         ld bc, (altura_sprite_a_desenhar)
 
         _do
-                ld a, ($99C1)
+                ld a, (data_99c1)
                 ld b, a
 
-L_997A:
+l_997a:
                 push hl
                 push bc
                 ld a, (largura_sprite_a_desenhar)
@@ -4959,14 +5259,14 @@ L_997A:
                         _do
                                 rlc c
                                 _if_not nc
-                                        ld a, ($99C1)
+                                        ld a, (data_99c1)
                                         ld b, a
 
                                 
                                         _do
 
                                                 exx
-                                                call L_9AC2
+                                                call l_9ac2
                                                 inc (ix)
                                                 exx
                                         
@@ -4974,7 +5274,7 @@ L_997A:
 
                                 _else
 
-                                        ld a, ($99C1)
+                                        ld a, (data_99c1)
                                         add a, (ix)
                                         ld (ix), a
                                 _end_if
@@ -4993,7 +5293,7 @@ L_997A:
                 dec b
                 _if_not z
                         pop hl
-                        jr L_997A
+                        jr l_997a
 
                 _end_if
 
@@ -5003,23 +5303,42 @@ L_997A:
         ret
 
 
-        ; Start of unknown area $99BD to $99C3
-        defb $00, $00, $00
-        defb $00, $03, $64, $64
-        ; End of unknown area $99BD to $99C3
+data_99bd:
+        db $00
+
+        ; start of unknown area 0x99be to 0x99be
+        db $00
+        ; end of unknown area 0x99be to 0x99be
 
 
-L_99C4:
+data_99bf:
+        db $00
+
+        ; start of unknown area 0x99c0 to 0x99c0
+        db $00
+        ; end of unknown area 0x99c0 to 0x99c0
+
+
+data_99c1:
+        db $03
+
+data_99c2:
+        db $64
+
+data_99c3:
+        db $64
+
+l_99c4:
         ld ix, color_attribute_temp
         ld b, $03
-        ld de, $00C8
+        ld de, $00c8
         ld hl, $1000
 
 
  
         _do
 
-                call L_9A88
+                call l_9a88
                 add ix, de
         
         _djnz
@@ -5029,15 +5348,15 @@ L_99C4:
         _do 
                 push de
                 halt
-                ld a, ($9D2E)
+                ld a, (data_9d2e)
                 ld b, a
-                ld a, ($9D2F)
+                ld a, (data_9d2f)
                 sub b
                 cp $03
 
                 _if_not c
-                        ld a, ($9D2F)
-                        ld ($9D2E), a
+                        ld a, (data_9d2f)
+                        ld (data_9d2e), a
                 _end_if
 
                 ld ix, color_attribute_temp
@@ -5049,9 +5368,9 @@ L_99C4:
 
                         push bc
                         push ix
-                        call L_9A29
+                        call l_9a29
                         pop ix
-                        ld de, $00C8
+                        ld de, $00c8
                         add ix, de
                         pop bc
                 
@@ -5065,9 +5384,9 @@ L_99C4:
         ret
 
 
-L_9A0B:
+l_9a0b:
         ld a, (ix+$01)
-        cp $C0
+        cp $c0
 
         jr nc, label_0002
 
@@ -5078,11 +5397,11 @@ L_9A0B:
         _do
 
                 exx
-                call L_9AC2
+                call l_9ac2
                 exx
-                call L_9AFA
+                call l_9afa
                 exx
-                call L_9AC2
+                call l_9ac2
                 exx
                 add ix, de
                 
@@ -5091,15 +5410,15 @@ L_9A0B:
         ret
 
 
-L_9A29:
+l_9a29:
         bit 0, (ix+$02)
-        jr nz, L_9A0B
-        call L_9AA7
-        call L_9AFA
+        jr nz, l_9a0b
+        call l_9aa7
+        call l_9afa
         ld a, (ix+$03)
         and a
         _if_not z
-                jr L_9AA7
+                jr l_9aa7
         _end_if
 
         push ix
@@ -5114,17 +5433,17 @@ L_9A29:
                 ld (ix+$01), d
                 ld a, (hl)
                 inc l
-                and $3F
+                and $3f
                 sub $20
                 ld (ix+$02), a
                 set 0, (ix+$02)
                 ld a, (hl)
                 inc l
                 and $07
-                sub $0F
+                sub $0f
                 ld (ix+$03), a
                 exx
-                call L_9AC2
+                call l_9ac2
                 exx
                 ld bc, $0004
                 add ix, bc
@@ -5144,7 +5463,7 @@ label_0002:
         _do
 
                 exx
-                call L_9AC2
+                call l_9ac2
                 exx
                 add ix, de
                
@@ -5152,38 +5471,38 @@ label_0002:
 
         pop ix
 
-L_9A88:
+l_9a88:
         ld a, (hl)
         inc l
         ld (ix), a
-        ld (ix+$01), $B8
+        ld (ix+$01), $b8
         ld a, (hl)
         inc l
-        and $3F
+        and $3f
         sub $20
         ld (ix+$02), a
         res 0, (ix+$02)
         ld a, (hl)
         inc l
-        and $0F
+        and $0f
         sub $19
         ld (ix+$03), a
 
-L_9AA7:
+l_9aa7:
         exx
-        call L_9AC2
+        call l_9ac2
         inc (ix)
-        call L_9AC2
+        call l_9ac2
         inc (ix+$01)
-        call L_9AC2
+        call l_9ac2
         dec (ix)
-        call L_9AC2
+        call l_9ac2
         dec (ix+$01)
         exx
         ret
 
 
-L_9AC2:
+l_9ac2:
         ld a, (ix+$01)
         sub $30
         cp $88
@@ -5200,10 +5519,10 @@ L_9AC2:
         ld l, a
         ld a, (ix)
         sub $08
-        cp $F0
+        cp $f0
         ret nc
         add a, $08
-        and $F8
+        and $f8
         rrca
         rrca
         rrca
@@ -5211,7 +5530,7 @@ L_9AC2:
         ld l, a
         ld a, (ix)
         and $07
-        ld bc, $9B19
+        ld bc, $9b19
         add a, c
         ld c, a
 
@@ -5225,7 +5544,7 @@ L_9AC2:
         ret
 
 
-L_9AFA:
+l_9afa:
         ld a, (ix+$02)
         sra a
         sra a
@@ -5241,86 +5560,93 @@ L_9AFA:
         ret
 
 
-        ; Start of unknown area $9B19 to $9B20
-        defb $80, $40, $20, $10, $08, $04, $02
-        defb $01
-        ; End of unknown area $9B19 to $9B20
+        ; start of unknown area 0x9b19 to 0x9b20
+        db $80, $40, $20, $10, $08, $04, $02
+        db $01
+        ; end of unknown area 0x9b19 to 0x9b20
 
 
 next_sprite_index:
-        defb $00
+        db $00
 
 sprite_left:
-        defb $00
+        db $00
 
 sprite_top:
-        defb $00
+        db $00
 
 apenas_brite_and_ink:
-        defb $00
+        db $00
 
 largura_sprite_a_desenhar:
-        defb $00
+        db $00
 
 altura_sprite_a_desenhar:
-        defb $00
+        db $00
 
 background_color:
-        defb $00
+        db $00
 
 sprite_espelho:
-        defb $00
+        db $00
 
-primeiro_byte_da_sprite_a_desenhar:
-        defb $00
+sprit_actual_byte_to_draw:
+        db $00
 
-        ; Start of unknown area $9B2A to $9B2A
-        defb $00
-        ; End of unknown area $9B2A to $9B2A
+        ; start of unknown area 0x9b2a to 0x9b2a
+        db $00
+        ; end of unknown area 0x9b2a to 0x9b2a
 
 
 valor_de:
-        defb $22
+        db $22
 
-        ; Start of unknown area $9B2C to $9B2C
-        defb $5E
-        ; End of unknown area $9B2C to $9B2C
+        ; start of unknown area 0x9b2c to 0x9b2c
+        db $5e
+        ; end of unknown area 0x9b2c to 0x9b2c
 
 
 valor_hl:
-        defb $30
+        db $30
 
-        ; Start of unknown area $9B2E to $9B2E
-        defb $B8
-        ; End of unknown area $9B2E to $9B2E
+        ; start of unknown area 0x9b2e to 0x9b2e
+        db $b8
+        ; end of unknown area 0x9b2e to 0x9b2e
 
 
 altura_sprite_a_desenhar_copy:
-        defb $00
+        db $00
 
 largura_sprite_a_desenhar_copy:
-        defb $00
+        db $00
 
-        ; Start of unknown area $9B31 to $9B31
-        defb $00
-        ; End of unknown area $9B31 to $9B31
-
+data_9b31:
+        db $00
 
 sprite_top_copy:
-        defb $00
+        db $00
 
 sprite_left_copy:
-        defb $00
+        db $00
 
-        ; Start of unknown area $9B34 to $9B3E
-        defb $00, $00, $0F, $0F, $FF, $FF, $F0, $F0, $07, $0A, $0A
-        ; End of unknown area $9B34 to $9B3E
+        ; start of unknown area 0x9b34 to 0x9b3b
+        db $00, $00, $0f, $0f, $ff, $ff, $f0, $f0
+        ; end of unknown area 0x9b34 to 0x9b3b
 
+
+data_9b3c:
+        db $07
+
+data_9b3d:
+        db $0a
+
+data_9b3e:
+        db $0a
 
 valor_inicia_do_a_20:
-        defb $0A
+        db $0a
 
-L_9B40:
+l_9b40:
         ld (altura_do_novo_boneco), a
         push ix
         push hl
@@ -5330,7 +5656,7 @@ L_9B40:
         ld a, e
         ld (hero_left_position_in_nibbles), a
         srl a
-        ld de, $5C00
+        ld de, dizzy_image_xor_background
         ld (de), a
         inc de
         ld a, (altura_do_novo_boneco)
@@ -5340,7 +5666,7 @@ L_9B40:
         push de
         push hl
         exx
-        ld ($9CB3), sp
+        ld (data_9cb3), sp
         ld h, $00
         ld l, a
         add hl, hl
@@ -5354,7 +5680,7 @@ L_9B40:
         ld sp, hl
         pop bc
         ld a, c
-        ld ($9CB1), a
+        ld (data_9cb1), a
         ld (de), a
         inc de
         ld a, (linha_debaixo_onde_se_desenha_o_boneco)
@@ -5374,11 +5700,11 @@ L_9B40:
         ld ix, (screen_memory_hero_top_line)
         ld a, (hero_left_position_in_nibbles)
         ld c, a
-        ld a, ($9CB1)
+        ld a, (data_9cb1)
         srl c
         jr c, rotate_hero_image_4_bits_to_the_right
 
-L_9B9E:
+l_9b9e:
         ld l, (ix)
         inc ix
         ld h, (ix)
@@ -5428,8 +5754,8 @@ L_9B9E:
         inc de
         ex af, af'
         dec a
-        jp nz, L_9B9E
-        ld sp, ($9CB3)
+        jp nz, l_9b9e
+        ld sp, (data_9cb3)
         exx
         pop hl
         pop de
@@ -5452,7 +5778,7 @@ rotate_hero_image_4_bits_to_the_right:
         pop bc
         pop de
         pop hl
-        ld a, $FF
+        ld a, $ff
         scf
         rr c
         rr e
@@ -5470,7 +5796,7 @@ rotate_hero_image_4_bits_to_the_right:
         rr e
         rr l
         rra
-        ld ($9CB8), a
+        ld (data_9cb8), a
         xor a
         srl b
         rr d
@@ -5488,7 +5814,7 @@ rotate_hero_image_4_bits_to_the_right:
         rr d
         rr h
         rra
-        ld ($9CB9), a
+        ld (data_9cb9), a
         exx
         ld a, (hl)
         exx
@@ -5525,7 +5851,7 @@ rotate_hero_image_4_bits_to_the_right:
         inc de
         ld a, (hl)
         exx
-        ld hl, ($9CB8)
+        ld hl, (data_9cb8)
         and l
         xor h
         exx
@@ -5537,7 +5863,7 @@ rotate_hero_image_4_bits_to_the_right:
         ex af, af'
         dec a
         jp nz, rotate_hero_image_4_bits_to_the_right
-        ld sp, ($9CB3)
+        ld sp, (data_9cb3)
         exx
         pop hl
         pop de
@@ -5548,13 +5874,13 @@ rotate_hero_image_4_bits_to_the_right:
         ret
 
 
-L_9C7B:
+l_9c7b:
         di
-        ld ($9CB3), sp
-        ld sp, $5C00
+        ld (data_9cb3), sp
+        ld sp, dizzy_image_xor_background
         pop bc
         ld a, c
-        ld ($9C91), a
+        ld (dynamic_9c90+1), a
         pop hl
         ld a, b
 
@@ -5565,6 +5891,7 @@ L_9C7B:
                 ld d, (hl)
                 inc hl
                 ex de, hl
+dynamic_9c90:
                 ld bc, $0000
                 add hl, bc
                 pop bc
@@ -5589,111 +5916,224 @@ L_9C7B:
                 dec a
         _while nz
 
-        ld sp, ($9CB3)
+        ld sp, (data_9cb3)
         ei
         ret
 
 
 altura_do_novo_boneco:
-        defb $00
+        db $00
 
-        ; Start of unknown area $9CB1 to $9CB1
-        defb $00
-        ; End of unknown area $9CB1 to $9CB1
-
+data_9cb1:
+        db $00
 
 linha_debaixo_onde_se_desenha_o_boneco:
-        defb $00
+        db $00
 
-        ; Start of unknown area $9CB3 to $9CB4
-        defb $00, $00
-        ; End of unknown area $9CB3 to $9CB4
+data_9cb3:
+        db $00
+
+
+        db $00
 
 
 screen_memory_hero_top_line:
         defw $0000
 
 hero_left_position_in_nibbles:
-        defb $00
+        db $00
 
-        ; Start of unknown area $9CB8 to $9D0C
-        defb $00, $00, $F5, $3E, $13, $18, $03, $F5
-        defb $3E, $10, $01, $FD, $7F, $ED, $79, $F1, $C9, $CD, $BA, $9C, $3A, $45, $9D, $A7
-        defb $28, $05, $3D, $28, $10, $18, $1C, $CD, $33, $C0, $3A, $46, $9D, $A7, $28, $24
-        defb $CD, $E3, $C1, $18, $0E, $CD, $33, $D3, $3A, $46, $9D, $3D, $28, $16, $CD, $E3
-        defb $D4, $18, $00, $3A, $46, $9D, $A7, $28, $08, $3D, $20, $08, $CD, $00, $D3, $18
-        defb $03, $CD, $00, $C0, $3A, $46, $9D, $32, $45, $9D, $C3, $BF, $9C
-        ; End of unknown area $9CB8 to $9D0C
+data_9cb8:
+        db $00
+
+data_9cb9:
+        db $00
+
+        ; start of unknown area 0x9cba to 0x9d0c
+        db $f5, $3e, $13, $18, $03, $f5
+
+        ;9cc0
+        db $3e, $10, $01, $fd, $7f, $ed, $79, $f1, $c9
+        
+function_9cc9
+        db $cd, $ba, $9c, $3a, $45, $9d, $a7
+        
+        ;9cd0
+        db $28, $05, $3d, $28, $10, $18, $1c, $cd, $33, $c0, $3a, $46, $9d, $a7, $28, $24
+        ;9ce0
+        db $cd, $e3, $c1, $18, $0e, $cd, $33, $d3, $3a, $46, $9d, $3d, $28, $16, $cd, $e3
+        db $d4, $18, $00, $3a, $46, $9d, $a7, $28, $08, $3d, $20, $08, $cd, $00, $d3, $18
+        db $03, $cd, $00, $c0, $3a, $46, $9d, $32, $45, $9d, $c3, $bf, $9c
+        ; end of unknown area 0x9cba to 0x9d0c
 
 
-posicao_hero_x_em_nibbles_copia_2:
-        defb $19
+data_9d0d:
+        db $19
 
-        ; Start of unknown area $9D0E to $9D0E
-        defb $78
-        ; End of unknown area $9D0E to $9D0E
+data_9d0e:
+        db $78
 
 
 posicao_hero_x_em_nibbles_copia:
-        defb $19
+        db $19
 
-        ; Start of unknown area $9D10 to $9D14
-        defb $78, $00, $00, $00, $00
-        ; End of unknown area $9D10 to $9D14
 
+data_9d10:
+        db $78
+data_9d11:
+        db $00
+data_9d12:
+        db $00
+data_9d13:
+        db $00
+data_9d14:
+        db $00
 
 frame_movimento_do_hero:
-        defb $00
+        db $00
 
-        ; Start of unknown area $9D16 to $9D19
-        defb $00, $00, $00, $00
-        ; End of unknown area $9D16 to $9D19
+data_9d16:
+        db $00
+data_9d17:
+        db $00
+data_9d18:
+        db $00
+data_9d19:
+        db $00
 
 
 posicao_hero_x_em_nibbles:
-        defb $00
-
-        ; Start of unknown area $9D1B to $9D1B
-        defb $00
-        ; End of unknown area $9D1B to $9D1B
+        dw $0000
 
 
 sera_o_nivel_copia_3:
-        defb $00
+        db $00
 
-        ; Start of unknown area $9D1D to $9D22
-        defb $00, $00, $00
-        defb $00, $00, $00
-        ; End of unknown area $9D1D to $9D22
+
+data_9d1d:
+        db $00
+        
+        db $00, $00
+        db $00, $00, $00
+
 
 
 nivel:
-        defb $00
+        db $00
 
 nivel_copy:
-        defb $00
+        db $00
 
-        ; Start of unknown area $9D25 to $9D42
-        defb $00, $00, $01, $00, $00, $00, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $02, $03, $04, $05, $06, $05, $04, $03, $00, $00
-        defb $00, $FF, $00
-        ; End of unknown area $9D25 to $9D42
+        
+data_9d25:        
+        db $00
+data_9d26:
+        db $00
+data_9d27:
+        db $01
+posicao_texto_a_escrever:
+        db $00
+        db $00
+
+data_9d2a:
+        db $00
+data_9d2b:
+        db $00
+data_9d2c:
+        db $00
+data_9d2d:
+        db $00
+data_9d2e:
+        db $00
+data_9d2f:
+        db $00
+data_9d30:
+        db $00
+data_9d31:
+        db $00
+data_9d32:
+        db $00
+data_9d33:
+        db $00
+data_9d34:
+        db $00
+data_9d35:
+        db $00
+
+data_9d36:
+        db $02, $03, $04, $05, $06, $05, $04, $03
+
+data_9d3e:
+        db $00
+data_9d3f:
+        db $00
+data_9d40:
+        db $00
+data_9d41:
+        db $ff
+data_9d42:
+        db $00
 
 
 sound_to_play:
-        defb $FF
+        db $ff
 
-        ; Start of unknown area $9D44 to $9D63
-        defb $FF, $FF, $FF, $04, $00, $00, $00, $FF, $FF, $C2, $E2, $C0
-        defb $01, $02, $E0, $81, $82, $80, $84, $83, $81, $13, $12, $14, $11, $10, $13, $00
-        defb $00, $00, $00, $FF
-        ; End of unknown area $9D44 to $9D63
+        ; start of unknown area data_9d44 to data_9d63
+data_9d44:
+        db $ff
+data_9d45:
+        db $ff
+data_9d46:
+        db $ff
+data_9d47:
+        db $04
+data_9d48:
+        db $00
+        db $00
+data_9d4a:
+        db $00
+data_9d4b:
+        db $ff
+data_9d4c:
+        db $ff
+data_9d4d:
+        db $c2
+        db $e2
+        db $c0
+        db $01
+        db $02
+        db $e0
+data_9d53:
+        db $81
+        db $82
+        db $80
+        db $84
+        db $83
+        db $81
+data_9d59:
+        db $13
+        db $12
+        db $14
+        db $11
+        db $10
+        db $13
+
+data_9d5f:
+        db $00
+data_9d60:
+        db $00
+data_9d61:
+        db $00
+data_9d62:
+        db $00
+data_9d63:
+        db $ff
 
 
-L_9D64:
+l_9d64:
         push ix
-        ld a, ($9D89)
-        ld ix, $9D89
+        ld a, (data_9d89)
+        ld ix, data_9d89
         dec a
         xor (ix+$01)
         rla
@@ -5708,34 +6148,36 @@ L_9D64:
         pop ix
         ret
 
+data_9d89:
+        db $59
+data_9d8a:
+        db $a3
+data_9d8b:
+        db $13
 
-        ; Start of unknown area $9D89 to $9D8B
-        defb $59, $A3, $13
-        ; End of unknown area $9D89 to $9D8B
 
-
-L_9D8C:
+l_9d8c:
         xor a
-        ld ($9D60), a
-        ld ($9D61), a
-        ld ($9D62), a
-        ld ($9D5F), a
-        ld ($9D30), a
-        ld a, ($9D2B)
+        ld (data_9d60), a
+        ld (data_9d61), a
+        ld (data_9d62), a
+        ld (data_9d5f), a
+        ld (data_9d30), a
+        ld a, (data_9d2b)
         and a
         ret z
-        call L_93AB
+        call l_93ab
         ld c, a
-        ld a, ($9D16)
+        ld a, (data_9d16)
         and a
         _if_not nz
-                ld a, ($9D31)
+                ld a, (data_9d31)
                 and a
                 _if_not nz
                         bit 3, c
                         _if_not z
                                 ld a, $01
-                                ld ($9D5F), a
+                                ld (data_9d5f), a
                                 ret
                         _end_if
                 _end_if
@@ -5746,160 +6188,160 @@ L_9D8C:
 
         _if_not z
                 ld a, $01
-                ld ($9D60), a
+                ld (data_9d60), a
         _end_if
 
         bit 1, c
         _if_not z
                 ld a, $01
-                ld ($9D61), a
+                ld (data_9d61), a
         _end_if
 
         bit 0, c
         _if_not z
                 ld a, $01
-                ld ($9D62), a
+                ld (data_9d62), a
         _end_if
 
-        ld a, ($9D63)
+        ld a, (data_9d63)
         and a
         ret nz
-        ld bc, ($9D60)
+        ld bc, (data_9d60)
         ld l, b
         ld h, c
-        ld ($9D60), hl
+        ld (data_9d60), hl
         ret
 
 
-L_9DE5:
-        ld a, (posicao_hero_x_em_nibbles_copia_2)
+l_9de5:
+        ld a, (data_9d0d)
         ld (posicao_hero_x_em_nibbles_copia), a
         ld e, a
-        ld a, ($9D0E)
-        ld ($9D10), a
+        ld a, (data_9d0e)
+        ld (data_9d10), a
         inc a
         ld l, a
         ld d, $00
         ld h, d
-        ld a, ($9D12)
-        ld ($9D13), a
-        jp L_9B40
+        ld a, (data_9d12)
+        ld (data_9d13), a
+        jp l_9b40
 
 
-L_9E00:
+l_9e00:
         ld a, $38
-        ld (posicao_hero_x_em_nibbles_copia_2), a
+        ld (data_9d0d), a
         ld a, (nivel)
         dec a
-        jp L_9E41
+        jp l_9e41
 
 
-L_9E0C:
+l_9e0c:
         ld a, $02
-        ld (posicao_hero_x_em_nibbles_copia_2), a
+        ld (data_9d0d), a
         ld a, (nivel)
         inc a
-        cp $2E
-        jp nz, L_9E41
+        cp $2e
+        jp nz, l_9e41
         ld a, $11
-        ld (posicao_hero_x_em_nibbles_copia_2), a
-        ld a, $2E
-        jp L_9E41
+        ld (data_9d0d), a
+        ld a, $2e
+        jp l_9e41
 
 
-L_9E24:
-        ld a, ($9D0E)
+l_9e24:
+        ld a, (data_9d0e)
         add a, $76
-        ld ($9D0E), a
+        ld (data_9d0e), a
         ld a, (nivel)
         sub $17
-        jp L_9E41
+        jp l_9e41
 
 
-L_9E34:
-        ld a, ($9D0E)
+l_9e34:
+        ld a, (data_9d0e)
         sub $72
-        ld ($9D0E), a
+        ld (data_9d0e), a
         ld a, (nivel)
         add a, $17
 
-L_9E41:
+l_9e41:
         ld (nivel_copy), a
         ld a, $01
-        ld ($9D27), a
+        ld (data_9d27), a
         ret
 
 
 label_0001:       
         ld a, (frame_movimento_do_hero)
         and a
-        jp z, L_9EAE
-        jp L_9F15
+        jp z, l_9eae
+        jp l_9f15
 
 
-function_9254:
-        ld a , ($9d2f)
+function_9e54:
+        ld a , (data_9d2f)
         and $03
         ret nz
         ld hl, $5d44
 
-        ld ($9113), hl
+        ld (dinamic_9112+1), hl
         call function_9e6a
 
-        ld hl, $5800
-        ld ($9113), hl
+        ld hl, screenattributes
+        ld (dinamic_9112+1), hl
         ret
 
 
 function_9e6a:
-        call L_9C7B
+        call l_9c7b
         
-        ld a, ($9D16)
+        ld a, (data_9d16)
         cp $06
-        jp z, L_9F15
-        ld a, ($9D2B)
+        jp z, l_9f15
+        ld a, (data_9d2b)
         and a
 
         _if_not nz
-                ld a, ($9D16)
+                ld a, (data_9d16)
                 cp $07
                 _if_not nz
                         xor a
-                        ld ($9D60), a
-                        ld ($9D61), a
+                        ld (data_9d60), a
+                        ld (data_9d61), a
                         ld a, (frame_movimento_do_hero)
                         cp $07
-                        jp nz, L_9F15
+                        jp nz, l_9f15
                         ld a, $06
                         ld (frame_movimento_do_hero), a
                         xor a
-                        ld ($9D44), a
-                        jr L_9F15
+                        ld (data_9d44), a
+                        jr l_9f15
                 _end_if
 
                 xor a
                 ld (frame_movimento_do_hero), a
                 ld a, $07
-                ld ($9D16), a
-                jr L_9F15
+                ld (data_9d16), a
+                jr l_9f15
         _end_if
 
 
-        ld a, ($9D16)
+        ld a, (data_9d16)
         cp $03
 
         jr nc, label_0001
 
-L_9EAE:
-        ld a, ($8B85)
+l_9eae:
+        ld a, (data_8b85)
         and a
         _if_not z
-                ld a, ($9D14)
+                ld a, (data_9d14)
                 and a
-                jr z, L_9F15
+                jr z, l_9f15
 
         _end_if
-        ld a, ($9D16)
+        ld a, (data_9d16)
         and a
         _if_not z
                 ld a, (frame_movimento_do_hero)
@@ -5910,27 +6352,27 @@ L_9EAE:
         _end_if
 
 
-        ld a, ($9D4B)
+        ld a, (data_9d4b)
         and a
         _if_not z
-                ld a, ($8B85)
+                ld a, (data_8b85)
                 and a
                 _if_not z
-                        ld hl, (posicao_hero_x_em_nibbles_copia_2)
+                        ld hl, (data_9d0d)
                         ld a, (nivel)
                         ld (posicao_hero_x_em_nibbles), hl
                         ld (sera_o_nivel_copia_3), a
                 _end_if
         _end_if
 
-        call L_9D8C
-        ld a, ($9D60)
+        call l_9d8c
+        ld a, (data_9d60)
         cp $01
         _if_not nz
                 ld a, $01
         _else
 
-                ld a, ($9D61)
+                ld a, (data_9d61)
                 cp $01
                 _if_not nz
                         ld a, $02
@@ -5941,29 +6383,29 @@ L_9EAE:
 
 
         ld b, a
-        ld a, ($9D62)
+        ld a, (data_9d62)
         and a
         _if_not z
                 xor a
                 ld (sound_to_play), a
                 xor a
                 ld (frame_movimento_do_hero), a
-                ld a, $F8
-                ld ($9D11), a
+                ld a, $f8
+                ld (data_9d11), a
                 ld a, $03
         _end_if
 
         add a, b
-        ld ($9D16), a
+        ld (data_9d16), a
 
-L_9F15:
+l_9f15:
         ld a, (frame_movimento_do_hero)
         ld e, a
-        ld a, ($9D63)
+        ld a, (data_9d63)
         and a
-        ld a, ($9D16)
+        ld a, (data_9d16)
         _if_not nz
-                ld hl, $A18D
+                ld hl, data_a18d
                 ld c, a
                 ld b, $00
                 add hl, bc
@@ -5976,168 +6418,168 @@ L_9F15:
         add a, e
         ld c, a
         ld b, $00
-        ld hl, $A145
+        ld hl, data_a145
         add hl, bc
         ld a, (hl)
-        ld ($9D12), a
+        ld (data_9d12), a
         ld a, e
         inc a
         and $07
         ld (frame_movimento_do_hero), a
         ld a, (nivel)
-        ld ($9D25), a
-        ld a, (posicao_hero_x_em_nibbles_copia_2)
+        ld (data_9d25), a
+        ld a, (data_9d0d)
         ld b, a
-        ld ix, $9D60
+        ld ix, data_9d60
         sub (ix)
         add a, (ix+$01)
         cp $01
-        jp z, L_9E00
+        jp z, l_9e00
         cp $39
-        jp z, L_9E0C
+        jp z, l_9e0c
         cp $10
-        jp nc, L_9F6E
+        jp nc, l_9f6e
         ld b, a
         ld a, (nivel)
-        cp $2E
-        jp z, L_9E00
+        cp $2e
+        jp z, l_9e00
         ld a, b
 
-L_9F6E:
-        ld (posicao_hero_x_em_nibbles_copia_2), a
+l_9f6e:
+        ld (data_9d0d), a
         ld b, a
         ld a, (posicao_hero_x_em_nibbles_copia)
         cp b
         _if_not z
-                jp c, L_A093
-                jp L_A05A
+                jp c, l_a093
+                jp l_a05a
         _end_if
 
-L_9F7E:
-        ld a, ($8B85)
+l_9f7e:
+        ld a, (data_8b85)
         and a
         _if_not nz
-                ld a, ($9D11)
+                ld a, (data_9d11)
                 and a
                 ld a, $01
-                jp p, L_9F9E
+                jp p, l_9f9e
         _end_if
 
-        ld a, ($9D16)
+        ld a, (data_9d16)
         cp $06
-        jr z, L_9FAC
+        jr z, l_9fac
         cp $08
-        ld a, $FA
+        ld a, $fa
         _if_not z
-                ld a, ($9D11)
+                ld a, (data_9d11)
                 inc a
         _end_if
-L_9F9E:
-        ld ($9D11), a
+l_9f9e:
+        ld (data_9d11), a
         bit 7, a
-        jp nz, L_9FB8
-        jr L_9FED
+        jp nz, l_9fb8
+        jr l_9fed
 
 
-L_9FA8:
+l_9fa8:
         xor a
-        ld ($9D14), a
+        ld (data_9d14), a
 
-L_9FAC:
+l_9fac:
         ld a, (nivel)
         ld b, a
-        ld a, ($9D25)
+        ld a, (data_9d25)
         cp b
         ret nz
-        jp L_9DE5
+        jp l_9de5
 
 
-L_9FB8:
+l_9fb8:
         neg
         ld b, a
-        call L_A0E6
-        ld de, $FFD8
+        call l_a0e6
+        ld de, data_ffd8
         add ix, de
-        ld a, ($9D19)
+        ld a, (data_9d19)
         sub $14
-        ld ($9D19), a
+        ld (data_9d19), a
 
 
  
         _do
 
                 push bc
-                call L_A0F8
+                call l_a0f8
                 pop bc
-                jr nz, L_9FA8  
+                jr nz, l_9fa8  
                 dec ix
                 dec ix
-                ld a, ($9D19)
+                ld a, (data_9d19)
                 dec a
-                ld ($9D19), a
-                ld a, ($9D0E)
+                ld (data_9d19), a
+                ld a, (data_9d0e)
                 dec a
                 cp $42
-                jp c, L_9E24
-                ld ($9D0E), a
+                jp c, l_9e24
+                ld (data_9d0e), a
         
         _djnz
 
-        jr L_9FA8
+        jr l_9fa8
 
 
-L_9FED:
+l_9fed:
         cp $08
         _if_not c
                 ld a, $07
-                ld ($9D11), a
+                ld (data_9d11), a
         _end_if
 
         add a, $04
         ld b, a
-        call L_A0E6
-        ld de, $FFFA
+        call l_a0e6
+        ld de, data_fffa
         add ix, de
-        ld a, ($9D19)
+        ld a, (data_9d19)
         sub $03
-        ld ($9D19), a
-        ld a, ($9D0E)
+        ld (data_9d19), a
+        ld a, (data_9d0e)
         sub $04
-        ld ($9D0E), a
+        ld (data_9d0e), a
 
 
  
         _do
 
                 push bc
-                call L_A0F8
+                call l_a0f8
                 pop bc
-                jr nz, L_A034
+                jr nz, l_a034
                 inc ix
                 inc ix
-                ld a, ($9D19)
+                ld a, (data_9d19)
                 inc a
-                ld ($9D19), a
-                ld a, ($9D0E)
+                ld (data_9d19), a
+                ld a, (data_9d0e)
                 inc a
-                cp $B6
-                jp nc, L_9E34
-                ld ($9D0E), a
+                cp $b6
+                jp nc, l_9e34
+                ld (data_9d0e), a
         
         _djnz
 
-        jp L_9FA8
+        jp l_9fa8
 
 
-L_A034:
-        ld a, ($9D0E)
+l_a034:
+        ld a, (data_9d0e)
         cp $42
-        jp c, L_9E24
-        jp z, L_9FA8
-        ld ($9D0E), a
+        jp c, l_9e24
+        jp z, l_9fa8
+        ld (data_9d0e), a
         ld a, $01
-        ld ($9D14), a
-        ld a, ($9D11)
+        ld (data_9d14), a
+        ld a, (data_9d11)
         cp $02
         
         _if_not c
@@ -6147,84 +6589,84 @@ L_A034:
         _end_if
 
         xor a
-        ld ($9D11), a
-        jp L_9FAC
+        ld (data_9d11), a
+        jp l_9fac
 
 
-L_A05A:
-        call L_A0E6
-        ld de, $FFEC
+l_a05a:
+        call l_a0e6
+        ld de, data_ffec
         add ix, de
-        ld a, ($9D19)
-        sub $0A
-        ld ($9D19), a
+        ld a, (data_9d19)
+        sub $0a
+        ld (data_9d19), a
         ld b, $03
 
         _do
                 push bc
                 ld l, (ix)
                 ld h, (ix+$01)
-                ld a, (posicao_hero_x_em_nibbles_copia_2)
-                ld ($9D18), a
-                call L_A134
+                ld a, (data_9d0d)
+                ld (data_9d18), a
+                call l_a134
                 and a
                 pop bc
-                call nz, L_A0CE
-                ld a, ($9D19)
+                call nz, l_a0ce
+                ld a, (data_9d19)
                 sub $04
-                ld ($9D19), a
-                ld de, $FFF8
+                ld (data_9d19), a
+                ld de, data_fff8
                 add ix, de
         _djnz
-        jp L_9F7E
+        jp l_9f7e
 
 
-L_A093:
-        call L_A0E6
-        ld de, $FFEC
+l_a093:
+        call l_a0e6
+        ld de, data_ffec
         add ix, de
-        ld a, ($9D19)
-        sub $0A
-        ld ($9D19), a
+        ld a, (data_9d19)
+        sub $0a
+        ld (data_9d19), a
         ld b, $03
 
         _do
                 push bc
                 ld l, (ix)
                 ld h, (ix+$01)
-                ld a, (posicao_hero_x_em_nibbles_copia_2)
+                ld a, (data_9d0d)
                 add a, $05
-                ld ($9D18), a
-                call L_A134
+                ld (data_9d18), a
+                call l_a134
                 and a
                 pop bc
-                call nz, L_A0CE
-                ld a, ($9D19)
+                call nz, l_a0ce
+                ld a, (data_9d19)
                 sub $04
-                ld ($9D19), a
-                ld de, $FFF8
+                ld (data_9d19), a
+                ld de, data_fff8
                 add ix, de
         _djnz
-        jp L_9F7E
+        jp l_9f7e
 
 
-L_A0CE:
-        ld a, ($9D18)
+l_a0ce:
+        ld a, (data_9d18)
         ld e, a
-        ld a, ($9D19)
+        ld a, (data_9d19)
         ld l, a
-        call L_9106
+        call l_9106
         bit 6, (hl)
         ret nz
         ld a, (posicao_hero_x_em_nibbles_copia)
-        ld (posicao_hero_x_em_nibbles_copia_2), a
+        ld (data_9d0d), a
         pop af
-        jp L_9F7E
+        jp l_9f7e
 
 
-L_A0E6:
-        ld a, ($9D0E)
-        ld ($9D19), a
+l_a0e6:
+        ld a, (data_9d0e)
+        ld (data_9d19), a
         ld l, a
         ld h, $00
         add hl, hl
@@ -6235,10 +6677,10 @@ L_A0E6:
         ret
 
 
-L_A0F8:
-        ld a, (posicao_hero_x_em_nibbles_copia_2)
+l_a0f8:
+        ld a, (data_9d0d)
         inc a
-        ld ($9D18), a
+        ld (data_9d18), a
         ld b, $05
         dec b
 
@@ -6246,25 +6688,25 @@ L_A0F8:
                 push bc
                 ld l, (ix)
                 ld h, (ix+$01)
-                ld a, ($9D18)
-                call L_A134
+                ld a, (data_9d18)
+                call l_a134
                 and a
                 pop bc
-                call nz, L_A11F
-                ld a, ($9D18)
+                call nz, l_a11f
+                ld a, (data_9d18)
                 inc a
-                ld ($9D18), a
+                ld (data_9d18), a
                 dec b
         _while nz
         ret
 
 
-L_A11F:
-        ld a, ($9D18)
+l_a11f:
+        ld a, (data_9d18)
         ld e, a
-        ld a, ($9D19)
+        ld a, (data_9d19)
         ld l, a
-        call L_9106
+        call l_9106
         ld a, (hl)
         bit 6, a
         ret nz
@@ -6274,189 +6716,197 @@ L_A11F:
         ret
 
 
-L_A134:
+l_a134:
         ld c, a
         ld b, $00
         srl c
         _if_not c
                 add hl, bc
                 ld a, (hl)
-                and $F0
+                and $f0
                 ret
         _end_if
 
         add hl, bc
         ld a, (hl)
-        and $0F
+        and $0f
         ret
 
 
-        ; Start of unknown area $A145 to $A195
-        defb $00, $01, $00, $01, $00, $01, $00, $01, $09, $0A, $0B
-        defb $0C, $0D, $0E, $0F, $10, $11, $12, $13, $14, $15, $16, $17, $18, $02, $03, $04
-        defb $05, $06, $07, $08, $01, $19, $1A, $1B, $1C, $1D, $1E, $1F, $09, $20, $21, $22
-        defb $23, $24, $25, $26, $11, $04, $05, $05, $06, $06, $05, $05, $04, $00, $01, $08
-        defb $08, $07, $06, $07, $07, $08, $07, $06, $05, $04, $03, $02, $01, $00, $02, $01
-        defb $03, $05, $04, $06, $07, $08
-        ; End of unknown area $A145 to $A195
+data_a145:
+        db $00, $01, $00, $01, $00, $01, $00, $01, $09, $0a, $0b
+        db $0c, $0d, $0e, $0f, $10, $11, $12, $13, $14, $15, $16, $17, $18, $02, $03, $04
+        db $05, $06, $07, $08, $01, $19, $1a, $1b, $1c, $1d, $1e, $1f, $09, $20, $21, $22
+        db $23, $24, $25, $26, $11, $04, $05, $05, $06, $06, $05, $05, $04, $00, $01, $08
+        db $08, $07, $06, $07, $07, $08, $07, $06, $05, $04, $03, $02, $01
+        
+        
+data_a18d:
+        db $00, $02, $01, $03, $05, $04, $06, $07, $08
+        
 
 
-L_A196:
+l_a196:
         ld de, (posicao_hero_x_em_nibbles)
         ld a, (sera_o_nivel_copia_3)
         cp $67
 
         _if_not z
-                cp $7E
-                jr nz, L_A1AA
+                cp $7e
+                jr nz, l_a1aa
         _end_if
 
 
  
        
         ld a, $50
-        ld de, $6B16
+        ld de, $6b16 
 
-L_A1AA:
-        ld (posicao_hero_x_em_nibbles_copia_2), de
+l_a1aa:
+        ld (data_9d0d), de
         ld (nivel_copy), a
         ld (nivel), a
         cp $56
 
         _if_not z
                 cp $54
-                jr nz, L_A1DD
+                jr nz, l_a1dd
                 ld a, e
                 cp $18
-                jr c, L_A1DD
+                jr c, l_a1dd
         _else
                 ld a, e
                 cp $30
-                jr nc, L_A1DD
+                jr nc, l_a1dd
         _end_if
 
 
-        ld a, $9F
-        ld ($9D0E), a
-        ld a, $A0
-        ld ($7509), a
-        ld ($7518), a
-        ld ($7527), a
-        ld ($7536), a
-        jr L_A205
+        ld a, $9f
+        ld (data_9d0e), a
+        ld a, $a0
+        ld (dados_mapa_10+3), a
+        ld (dados_mapa_11+3), a
+        ld (dados_mapa_12+3), a
+        ld (dados_mapa_13+3), a
+        jr l_a205
 
 
-L_A1DD:
+l_a1dd:
         ld a, (nivel)
-        cp $4C
+        cp $4c
         _if_not z
-                cp $4F
-                jr nz, L_A1F0
+                cp $4f
+                jr nz, l_a1f0
 
         _end_if
 
         ld a, d
         cp $90
-        jr c, L_A205
-        ld a, (nivel)
+        _if_not c
+                ld a, (nivel)
 
-L_A1F0:
-        ld hl, $A267
-        ld b, $04
+l_a1f0:
+                ld hl, list_a267
+                ld b, $04
 
-        _do
-                cp (hl)
-                _if_not nz
-                        ld de, ($9D1D)
-                        ld (posicao_hero_x_em_nibbles_copia_2), de
-                        jr L_A205
-                _end_if
+                _do
+                        cp (hl)
+                        _if_not nz
+                                ld de, (data_9d1d)
+                                ld (data_9d0d), de
+                                jr l_a205
+                        _end_if
 
-                inc hl
-        _djnz 
-
-L_A205:
+                        inc hl
+                _djnz 
+        _end_if
+l_a205:
         ld hl, $0000
-        ld ($9D5F), hl
-        ld ($9D61), hl
+        ld (data_9d5f), hl
+        ld (data_9d61), hl
         xor a
-        ld ($9D11), a
-        ld ($9D14), a
-        ld ($9D16), a
+        ld (data_9d11), a
+        ld (data_9d14), a
+        ld (data_9d16), a
         ld (frame_movimento_do_hero), a
-        ld ($9D2C), a
-        ld a, $1F
-        ld ($9D2B), a
-        ld a, $0F
-        ld ($9D31), a
+        ld (data_9d2c), a
+        ld a, $1f
+        ld (data_9d2b), a
+        ld a, $0f
+        ld (data_9d31), a
         ld a, $01
-        ld ($9D12), a
-        ld ($9D44), a
+        ld (data_9d12), a
+        ld (data_9d44), a
         ld a, $01
-        ld ($9D27), a
+        ld (data_9d27), a
         ld hl, dados_mapa_52
-        call L_7CCF
-        call L_9458
+        call l_7ccf
+        call l_9458
         
         _do
-                call L_895C
-                call L_962C
+                call l_895c
+                call l_962c
                 call playsound
 
                 _do
-                        ld a, ($9D2E)
+                        ld a, (data_9d2e)
                         ld b, a
-                        ld a, ($9D2F)
+                        ld a, (data_9d2f)
                         sub b
                         cp $03
                 _while c
 
-                ld a, ($9D2F)
-                ld ($9D2E), a
+                ld a, (data_9d2f)
+                ld (data_9d2e), a
                 ld a, (dados_mapa_52)
                 inc a
         _while nz
-        call L_9DE5
+        call l_9de5
 
-        ; Start of unknown area $A262 to $A26A
-        defb $AF, $32, $27, $9D, $C9, $4C, $4F, $5C, $54
-        ; End of unknown area $A262 to $A26A
+        xor a 
+        ld (data_9d27), a
+        ret
+
+        
+list_a267        
+        db $4c, $4f, $5c, $54
+        ; end of unknown area 0xa262 to 0xa26a
 
 
-L_A26B:
+l_a26b:
         ld a, (nivel_copy)
         ld (nivel), a
-        and $FE
-        cp $2C
-        ld a, $FF
+        and $fe
+        cp $2c
+        ld a, $ff
 
         _if_not nz
                 xor a
         _end_if
 
-        ld ($9D63), a
-        ld hl, (posicao_hero_x_em_nibbles_copia_2)
-        ld ($9D1D), hl
+        ld (data_9d63), a
+        ld hl, (data_9d0d)
+        ld (data_9d1d), hl
         xor a
-        ld ($791A), a
+        ld (dados_mapa_79+9), a
 
-L_A287:
+l_a287:
         ld a, $01
-        ld ($9D27), a
-        call L_9458
-        call L_9DE5
+        ld (data_9d27), a
+        call l_9458
+        call l_9de5
 
 after_call_force_disassemle_005:
         xor a
-        ld ($9D27), a
+        ld (data_9d27), a
         ret
 
 
 stack:
-        defb $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A, $2A
+        db $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a
 
 numero_de_sprites_por_nivel:
-        defb $30, $32, $26, $00, $00, $00, $00, $00, $00, $20, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $30, $1E, $00, $00, $00, $00, $00, $21, $00, $2D, $00, $00, $46, $28, $00, $00, $00, $00, $00, $06, $00, $2C, $1E, $24, $32, $00, $00, $00, $48, $3E, $29, $43, $3F, $37, $31, $4F, $3B, $00, $00, $00, $00, $32, $22, $3E, $00, $00, $2B, $36, $3A, $4B, $39, $5B, $42, $23, $38, $42, $22, $3D, $46, $4D, $29, $19, $2D, $1C, $54, $00, $5B, $00, $00, $38, $00, $00, $00, $00, $00, $00, $00, $00, $42, $4C, $36, $00, $00, $00, $00, $00, $00, $00, $48, $3E, $00, $00, $39, $2B, $00, $00, $00, $00, $00, $00, $00, $00, $00, $31, $00
+        db $30, $32, $26, $00, $00, $00, $00, $00, $00, $20, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $30, $1e, $00, $00, $00, $00, $00, $21, $00, $2d, $00, $00, $46, $28, $00, $00, $00, $00, $00, $06, $00, $2c, $1e, $24, $32, $00, $00, $00, $48, $3e, $29, $43, $3f, $37, $31, $4f, $3b, $00, $00, $00, $00, $32, $22, $3e, $00, $00, $2b, $36, $3a, $4b, $39, $5b, $42, $23, $38, $42, $22, $3d, $46, $4d, $29, $19, $2d, $1c, $54, $00, $5b, $00, $00, $38, $00, $00, $00, $00, $00, $00, $00, $00, $42, $4c, $36, $00, $00, $00, $00, $00, $00, $00, $48, $3e, $00, $00, $39, $2b, $00, $00, $00, $00, $00, $00, $00, $00, $00, $31, $00
 
 
         include "sprite_niveis.asm"
@@ -6464,112 +6914,46 @@ numero_de_sprites_por_nivel:
         include "texts.asm"
 
 
-inicio_qq_usado_em_9725:
-        defb $F4
+data_fdc6:
+        db $c1
 
-        ; Start of unknown area $FA0C to $FB96
-        defb $F8, $06, $38, $F9
-        defb $16, $08, $F5, $FD, $DC, $4C, $03, $91, $0D, $13, $99, $DC, $56, $D3, $F2, $FF
-        defb $F7, $F8, $0E, $88, $F9, $0E, $02, $F5, $F8, $12, $98, $D1, $84, $47, $10, $52
-        defb $1D, $60, $24, $F8, $15, $A0, $C7, $10, $49, $0A, $94, $D7, $FF, $F7, $F8, $0C
-        defb $88, $F9, $10, $02, $F5, $F8, $10, $98, $DC, $4C, $03, $91, $0D, $13, $99, $DC
-        defb $56, $D3, $F8, $10, $A0, $24, $40, $D6, $CD, $18, $02, $40, $84, $BA, $FF, $F8
-        defb $16, $60, $F7, $6F, $81, $96, $04, $F8, $1C, $60, $2F, $81, $F6, $08, $F8, $22
-        defb $60, $5F, $82, $56, $06, $F8, $28, $60, $D3, $FF, $FF, $1D, $B5, $20, $36, $A0
-        defb $A4, $6E, $A2, $0A, $94, $D7, $FF, $74, $D6, $10, $D6, $3D, $35, $D1, $0D, $75
-        defb $D7, $17, $FF, $30, $D7, $19, $74, $63, $B0, $72, $19, $14, $FF, $30, $D0, $C9
-        defb $65, $6D, $30, $24, $9D, $18, $FF, $30, $D7, $45, $74, $61, $A0, $3D, $7D, $7B
-        defb $1F, $F0, $30, $A3, $D3, $D3, $19, $FF, $30, $B1, $3D, $2F, $F0, $30, $B5, $D3
-        defb $82, $65, $6D, $30, $94, $AF, $F0, $36, $03, $6D, $15, $16, $20, $B3, $D6, $D7
-        defb $FF, $30, $D1, $B4, $28, $0A, $C7, $21, $9F, $F0, $30, $D0, $B3, $D1, $D5, $0D
-        defb $13, $2F, $F0, $28, $10, $EA, $13, $2D, $61, $EA, $0D, $13, $D5, $1F, $F0, $28
-        defb $10, $EA, $A9, $56, $D5, $D6, $1E, $A0, $D7, $42, $54, $6F, $F0, $28, $10, $83
-        defb $6A, $B1, $FF, $1D, $BD, $13, $B5, $D0, $C9, $FF, $30, $D0, $5D, $30, $72, $5D
-        defb $1D, $5F, $F0, $DA, $5D, $D3, $9A, $7B, $3D, $C1, $90, $29, $5A, $16, $2F, $F0
-        defb $28, $10, $D3, $4B, $A0, $D1, $94, $77, $FF, $30, $D0, $3D, $30, $4D, $20, $9C
-        defb $D0, $D0, $57, $8F, $F0, $74, $D6, $12, $85, $6D, $30, $72, $5D, $1D, $5D, $CF
-        defb $F0, $28, $10, $D7, $4D, $A1, $90, $D7, $5B, $BF, $F0, $30, $D0, $CD, $1D, $51
-        defb $2F, $F0, $30, $D0, $CD, $1D, $51, $20, $4D, $20, $84, $20, $DA, $32, $19, $FF
-        defb $A4, $93, $0D, $29, $4D, $3F, $F0, $DD, $3D, $57, $EA, $09, $56, $D3, $FF, $D0
-        defb $3D, $1D, $5A, $44, $90, $D5, $1D, $CF, $F0, $DA, $11, $AD, $55, $BB, $19, $0D
-        defb $74, $25, $46, $FF, $1D, $6D, $72, $DC, $0D, $65, $BD, $50, $D0, $42, $2B, $1F
-        defb $F0, $30, $93, $5B, $56, $D3, $FF
-        ; End of unknown area $FA0C to $FB96
+        ; start of unknown area 0xfdc7 to 0xfdff
+        db $28, $10, $a4, $9d, $63, $62, $0d, $94, $bd
 
-
-nomes_niveis:
-        defb $80
-
-        ; Start of unknown area $FB98 to $FDFF
-        defb $7D, $7D, $10, $49, $0D, $25, $91, $02
-        defb $40, $72, $39, $2F, $F0, $82, $D1, $46, $D3, $93, $2C, $B3, $25, $46, $7D, $EF
-        defb $F0, $AF, $DD, $3D, $57, $EA, $02, $4D, $A1, $9F, $F0, $97, $DA, $17, $20, $24
-        defb $DA, $19, $FF, $AE, $D6, $59, $94, $9E, $DD, $65, $99, $49, $DF, $FF, $C5, $D6
-        defb $35, $60, $83, $BB, $FF, $C6, $16, $29, $36, $D1, $10, $83, $BB, $FF, $C7, $5D
-        defb $11, $0D, $73, $B3, $D1, $10, $16, $29, $36, $D1, $1F, $F0, $DC, $28, $10, $D1
-        defb $9D, $CD, $72, $FF, $F3, $28, $10, $A1, $1D, $71, $72, $0A, $C6, $D3, $14, $6F
-        defb $F0, $F4, $28, $10, $4C, $D0, $B5, $12, $21, $FF, $AC, $D1, $C9, $54, $C7, $19
-        defb $03, $6A, $0D, $1C, $95, $4C, $71, $9F, $F0, $AD, $28, $10, $D1, $81, $77, $D0
-        defb $43, $9A, $FF, $C8, $3D, $19, $47, $70, $28, $10, $D0, $95, $AD, $31, $FF, $C9
-        defb $28, $10, $29, $4B, $BD, $09, $5A, $D3, $1F, $F0, $CA, $7B, $11, $D7, $DC, $08
-        defb $4B, $B4, $DA, $FF, $CB, $28, $10, $7D, $A4, $9A, $05, $60, $28, $10, $72, $46
-        defb $1F, $F0, $B3, $28, $10, $D0, $39, $AE, $A7, $02, $91, $18, $4C, $71, $FF, $B4
-        defb $4C, $20, $46, $03, $0B, $5D, $6D, $0F, $F0, $B5, $28, $10, $DA, $32, $D1, $8E
-        defb $F2, $4D, $A1, $9F, $F0, $CC, $28, $10, $A9, $3D, $AD, $09, $5A, $D3, $1F, $F0
-        defb $B6, $28, $10, $D1, $83, $D7, $1B, $FF, $CD, $28, $10, $28, $94, $61, $09, $44
-        defb $D6, $FF, $A0, $28, $10, $23, $BB, $17, $20, $24, $DA, $19, $FF, $B7, $28, $10
-        defb $CD, $7D, $71, $90, $D3, $3B, $B1, $9D, $CF, $F0, $CE, $28, $10, $D3, $93, $6A
-        defb $08, $3B, $BF, $F0, $B8, $30, $24, $DA, $19, $0D, $A5, $28, $03, $0D, $95, $1D
-        defb $AF, $F0, $CF, $D1, $37, $2B, $10, $D0, $3D, $1D, $50, $A4, $49, $FF, $B9, $56
-        defb $02, $81, $0D, $1B, $4C, $A7, $FF, $E5, $28, $10, $D2, $49, $D3, $42, $21, $60
-        defb $AC, $6D, $31, $46, $FF, $E6, $28, $10, $71, $D1, $91, $20, $D7, $37, $73, $D3
-        defb $1F, $F0, $D0, $DC, $10, $4B, $A1, $0D, $A1, $BB, $FF, $E7, $A4, $DA, $60, $30
-        defb $DA, $1B, $BF, $F0, $FE, $72, $5D, $1D, $5D, $C0, $16, $AF, $F0, $A3, $28, $10
-        defb $29, $11, $02, $4D, $7F, $F0, $BA, $CD, $70, $30, $29, $11, $FF, $D1, $D0, $C7
-        defb $8D, $C0, $D3, $94, $D9, $1F, $F0, $A4, $24, $D7, $04, $D2, $02, $81, $0D, $64
-        defb $64, $B5, $28, $FF, $BB, $CD, $70, $28, $10, $D6, $46, $4B, $52, $8F, $F0, $D2
-        defb $28, $10, $D6, $DC, $72, $19, $54, $C7, $0D, $64, $64, $B5, $28, $FF, $D3, $DA
-        defb $15, $9A, $81, $6D, $31, $FF, $D6, $28, $10, $83, $C6, $21, $A0, $7D, $A3, $D6
-        defb $D7, $FF, $D5, $D3, $44, $A0, $DA, $52, $D1, $80, $D3, $B1, $6A, $3E, $A7, $05
-        defb $7B, $1F, $F0, $AA, $28, $10, $83, $9D, $7D, $CE, $A7, $01, $DC, $95, $1F, $F0
-        defb $C0, $D1, $B5, $D6, $D0, $56, $D3, $03, $0D, $94, $BD, $13, $64, $FF, $C2, $81
-        defb $BB, $D3, $32, $1F, $F0, $D7, $28, $10, $84, $20, $DA, $32, $19, $0D, $31, $DC
-        defb $71, $9F, $F0, $D9, $A1, $7D, $11, $62, $05, $62, $40, $28, $10, $A1, $D7, $28
-        defb $7F, $F0, $EF, $28, $10, $D1, $93, $D1, $D5, $70, $4D, $20, $D3, $18, $16, $63
-        defb $FF, $F0, $83, $A1, $7F, $F0, $C1, $28, $10, $A4, $9D, $63, $62, $0D, $94, $BD
-        defb $13, $64, $FF, $C1, $28, $10, $3D, $12, $5D, $91, $0D, $94, $BD, $13, $64, $FF
-        defb $FF, $7D, $5D, $CF, $F0, $06, $00, $78, $CD, $70, $93, $C8, $04, $78, $E6, $07
-        defb $FE, $05, $20, $F3, $78, $C6, $1B, $47, $20, $ED, $04, $C9, $00, $C3, $40, $FF
-        ; End of unknown area $FB98 to $FDFF
+        ;fdd0
+        db $13, $64, $ff, $c1, $28, $10, $3d, $12, $5d, $91, $0d, $94, $bd, $13, $64, $ff
+        ;fde0
+        db $ff, $7d, $5d, $cf, $f0, $06, $00, $78, $cd, $70, $93, $c8, $04, $78, $e6, $07
+        ;fdf0
+        db $fe, $05, $20, $f3, $78, $c6, $1b, $47, $20, $ed, $04, $c9, $00
+        
+interrupt:        
+        jp interrupt_handler
 
 
 lista_de_fd:
-        defb $FD
-
-        ; Start of unknown area $FE01 to $FF00
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
-        defb $FD
-        ; End of unknown area $FE01 to $FF00
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
+        db $fd
 
 
 playsound:
         ld a, (sound_to_play)
-        cp $FF
+        cp $ff
         ret z
         add a, a
         add a, a
@@ -6577,7 +6961,7 @@ playsound:
         ld e, a
         ld hl, sons
         add hl, de
-        ld a, $FF
+        ld a, $ff
         ld (sound_to_play), a
         ld b, (hl)
         inc hl
@@ -6597,7 +6981,7 @@ playsound:
                 ld a, e
                 xor $10
                 ld e, a
-                out ($FE), a
+                out ($fe), a
                 ld a, c
                 add a, d
                 ld c, a
@@ -6606,28 +6990,118 @@ playsound:
 
         ret
 
-
 sons:
-        db $64, $96, $FF, $FF
-        db $0A, $FF, $00, $FF
-        db $28, $64, $00, $FF
-        db $64, $3C, $00, $FF
-        db $0A, $FF, $00, $FF
+        db $64, $96, $ff, $ff
+        db $0a, $ff, $00, $ff
+        db $28, $64, $00, $ff
+        db $64, $3c, $00, $ff
+        db $0a
 
+
+data_ff3d:
+        db $ff
+
+        ; start of unknown area 0xff3e to 0xfffb
+        db $00, $ff
+
+interrupt_handler:
+	di  
+	push af
+	push bc
+	push de
+	push hl
+	push ix
+	exx 
+	ex   af,af'
+	push af
+	push bc
+	push de
+	push hl
+	push iy
+	ld   a,(data_728e)
+	and  a
+	call nz,function_9cc9
+	ld   a,(data_9d2f)
+	inc  a
+	ld   (data_9d2f),a
+	ld   a,(data_9d27)
+	and  a
+	call z,function_9e54
+	call function_93b2
+	pop  iy
+	pop  hl
+	pop  de
+	pop  bc
+	pop  af
+	exx 
+	ex   af,af'
+	pop  ix
+	pop  hl
+	pop  de
+	pop  bc
+	pop  af
+	ei  
+	ret 
         
-        defb $F3, $F5, $C5, $D5, $E5, $DD, $E5, $D9, $08, $F5, $C5, $D5, $E5, $FD, $E5, $3A
-        defb $8E, $72, $A7, $C4, $C9, $9C, $3A, $2F, $9D, $3C, $32, $2F, $9D, $3A, $27, $9D
-        defb $A7, $CC, $54, $9E, $CD, $B2, $93, $FD, $E1, $E1, $D1, $C1, $F1, $D9, $08, $DD
-        defb $E1, $E1, $D1, $C1, $F1, $FB, $C9, $F6, $F8, $08, $18, $00, $00, $00, $00, $00
-        defb $00, $00, $00, $00, $00, $00, $00, $F8, $20, $10, $FF, $F6, $F8, $19, $08, $FF
-        defb $30, $30, $00, $F6, $F8, $20, $08, $FF, $20, $20, $20, $00, $F7, $F8, $00, $00
-        defb $11, $FF, $28, $A0, $01, $48, $80, $17, $30, $98, $1E, $4E, $38, $20, $3E, $50
-        defb $2C, $22, $90, $2D, $3C, $60, $33, $3E, $98, $38, $4C, $38, $39, $38, $58, $3A
-        defb $3E, $A0, $42, $3A, $38, $45, $42, $90, $46, $26, $60, $49, $2E, $40, $4B, $38
-        defb $90, $4D, $24, $60, $4F, $3A, $40, $51, $28, $98, $52, $36, $38, $53, $24, $98
-        defb $54, $38, $90, $55, $24, $90, $57, $2E, $78, $5C, $26, $78, $66, $44, $A0, $67
-        defb $26, $88, $6F, $2E, $50, $6F, $26, $A0, $70, $4A, $A0, $74
-        ; End of unknown area $FF30 to $FFFB
+data_ff77:        
+        db $f6, $f8, $08, $18, $00, $00, $00, $00, $00
+        db $00, $00, $00, $00, $00, $00, $00, $f8, $20, $10, $ff
+
+
+data_ff8b:
+        db $f6, $f8, $19, $08, $ff
+        db $30, $30, $00
+        
+data_ff93:        
+        db $f6, $f8, $20, $08, $ff
+
+data_ff98:        
+        db $20, $20, $20, $00
+        
+
+data_ff9c:
+        db $f7, $f8, $00, $00
+
+        ;ffa0        
+        db $11, $ff
+data_ffa2        
+        db $28, $a0, $01
+        db $48, $80, $17
+        db $30, $98, $1e
+        db $4e, $38, $20
+        db $3e, $50, $2c
+        db $22, $90, $2d
+        db $3c, $60, $33
+        db $3e, $98, $38
+        db $4c, $38, $39
+        db $38, $58, $3a
+        db $3e, $a0, $42
+        db $3a, $38, $45
+        db $42, $90, $46
+        db $26, $60, $49
+        db $2e, $40, $4b
+        db $38, $90, $4d
+        db $24, $60, $4f
+        db $3a, $40, $51
+data_ffd8:
+        db $28, $98, $52
+        db $36, $38, $53
+        db $24, $98, $54
+        db $38, $90, $55
+        db $24, $90, $57
+        db $2e, $78, $5c, $26, $78
+data_ffec
+        db $66, $44, $a0, $67
+        
+        ;fff0
+        db $26, $88, $6f, $2e, $50, $6f, $26, $a0
+data_fff8:
+        db $70, $4a
+        
+data_fffa
+        db $a0, $74
+
+
 
 
  

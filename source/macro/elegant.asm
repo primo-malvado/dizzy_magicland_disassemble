@@ -2,14 +2,15 @@ DLOOP_5 = 0
 DLOOP_4 = 0
 DLOOP_3 = 0
 DLOOP_2 = 0
-DLOOP_TOP = 0
+DLOOP_TOP = 100
 
-    MACRO DLOOP_PUSH arg
+
+    MACRO DLOOP_PUSH
 DLOOP_5 = DLOOP_4
 DLOOP_4 = DLOOP_3
 DLOOP_3 = DLOOP_2
 DLOOP_2 = DLOOP_TOP
-DLOOP_TOP = arg
+DLOOP_TOP = DLOOP_2+2
     ENDM
 
     MACRO DLOOP_POP
@@ -18,41 +19,244 @@ DLOOP_TOP = DLOOP_2
 DLOOP_2 = DLOOP_3
 DLOOP_3 = DLOOP_4
 DLOOP_4 = DLOOP_5
-DLOOP_5 =  0
+DLOOP_5 =  100
 
     ENDM
 
     MACRO _do
-        DLOOP_PUSH $
+        DLOOP_PUSH
+
+    IF DLOOP_TOP = 102
+102
+    ENDIF
+    IF DLOOP_TOP = 104
+104
+    ENDIF
+
+    IF DLOOP_TOP = 106
+106
+    ENDIF
+    
+    IF DLOOP_TOP = 108
+108
+    ENDIF
+    
+    IF DLOOP_TOP = 110
+110
+    ENDIF
+    
+
 
     ENDM
 
     MACRO _while flag
 
-        jr flag, DLOOP_TOP
+    IF DLOOP_TOP = 102
+        jr flag, 102B
+103
+    ENDIF
+
+    IF DLOOP_TOP = 104
+        jr flag, 104B
+105
+    ENDIF
+
+    IF DLOOP_TOP = 106
+        jr flag, 106B
+107
+    ENDIF
+
+    IF DLOOP_TOP = 108
+        jr flag, 108B
+109
+    ENDIF
+
+    IF DLOOP_TOP = 110
+        jr flag, 110B
+111
+    ENDIF
+
+ 
+
+
         DLOOP_POP
     ENDM
 
     MACRO _while_true
 
-        jr DLOOP_TOP
+
+    IF DLOOP_TOP = 102
+        jr 102B
+103
+    ENDIF
+
+    IF DLOOP_TOP = 104
+        jr 104B
+105
+    ENDIF
+
+    IF DLOOP_TOP = 106
+        jr 106B
+107
+    ENDIF
+
+    IF DLOOP_TOP = 108
+        jr 108B
+109
+    ENDIF
+
+    IF DLOOP_TOP = 110
+        jr 110B
+111
+    ENDIF
         DLOOP_POP
     ENDM
 
+
+
+
+   MACRO _break_if flag
+
+ 
+
+    IF DLOOP_TOP = 102
+        jr flag, 103F
+    ENDIF
+
+    IF DLOOP_TOP = 104
+        jr flag, 105F
+    ENDIF
+
+    IF DLOOP_TOP = 106
+        jr flag, 107F
+    ENDIF
+
+    IF DLOOP_TOP = 108
+        jr flag, 109F
+    ENDIF
+
+    IF DLOOP_TOP = 110
+        jr flag, 111F
+    ENDIF
+
+
+
+    ENDM
+
+
+
+    MACRO _break
+
+        IF DLOOP_TOP = 102
+            jr 103F
+        ENDIF
+
+        IF DLOOP_TOP = 104
+            jr 105F
+        ENDIF
+
+        IF DLOOP_TOP = 106
+            jr 107F
+        ENDIF
+
+        IF DLOOP_TOP = 108
+            jr 109F
+        ENDIF
+
+        IF DLOOP_TOP = 110
+            jr 111F
+        ENDIF
+
+    ENDM
+
+
+
+
+
+
     MACRO _continue_if flag
 
-        jr flag,  DLOOP_TOP
+ 
+
+    IF DLOOP_TOP = 102
+        jr flag, 102B
+    ENDIF
+
+    IF DLOOP_TOP = 104
+        jr flag, 104B
+    ENDIF
+
+    IF DLOOP_TOP = 106
+        jr flag, 106B
+    ENDIF
+
+    IF DLOOP_TOP = 108
+        jr flag, 108B
+    ENDIF
+
+    IF DLOOP_TOP = 110
+        jr flag, 110B
+    ENDIF
+
+
+
     ENDM
 
     MACRO _continue
 
-        jr DLOOP_TOP
+
+        IF DLOOP_TOP = 102
+            jr 102B
+        ENDIF
+
+        IF DLOOP_TOP = 104
+            jr 104B
+        ENDIF
+
+        IF DLOOP_TOP = 106
+            jr 106B
+        ENDIF
+
+        IF DLOOP_TOP = 108
+            jr 108B
+        ENDIF
+
+        IF DLOOP_TOP = 110
+            jr 110B
+        ENDIF
     ENDM
 
 
     MACRO _djnz
 
-        djnz DLOOP_TOP
+
+        IF DLOOP_TOP = 102
+            djnz 102B
+103            
+        ENDIF
+
+        IF DLOOP_TOP = 104
+            djnz 104B
+105        
+        ENDIF
+
+        IF DLOOP_TOP = 106
+            djnz 106B
+107            
+        ENDIF
+
+        IF DLOOP_TOP = 108
+            djnz 108B
+109            
+        ENDIF
+
+        IF DLOOP_TOP = 110
+            djnz 110B
+111            
+        ENDIF
+
+
+
         DLOOP_POP
     ENDM
 
