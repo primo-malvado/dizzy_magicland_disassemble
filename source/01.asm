@@ -57,7 +57,7 @@ L_5E28:
         call L_0562
 
         ; Start of unknown area $5E32 to $5E3D
-        db $F3, $38, $04, $AF, $32, $FF, $FF, $3E, $00, $D3, $FE, $C9
+        defb $F3, $38, $04, $AF, $32, $FF, $FF, $3E, $00, $D3, $FE, $C9
         ; End of unknown area $5E32 to $5E3D
 
 

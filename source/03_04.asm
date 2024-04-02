@@ -4,6 +4,7 @@ espelho_bytes equ $5b00
 screenpixels equ $4000
 screenattributes equ $5800
 data_ffff equ $ffff
+energy_level_screen_start equ $4134
 
 dizzy_image_xor_background equ $5c00
 
@@ -64,7 +65,7 @@ start:
         im 2
         ld a, $fe
         ld i, a
-        ld bc, $5000 ; static
+        ld bc, $5000 
 
 
         _do
@@ -92,7 +93,7 @@ start:
         jp restart_game
 
 
-        ; start of unknown area 0x5eb3 to 0x6043
+        ; desde 5de4 até 0x6043 color attributes temp
         db $63, $22, $d6, $5e, $7a, $32, $fa, $5d, $f1, $08, $e1, $7c, $ed
         db $47, $7d, $ed, $4f, $f1, $fd, $e1, $dd, $e1, $c1, $d1, $e1, $d9, $c1, $d1, $e1
         db $ed, $7b, $14, $5f, $00, $cd, $00, $50, $c3, $d6, $5d, $db, $3f, $aa, $0f, $38
@@ -119,7 +120,7 @@ start:
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         db $00, $00, $00, $00
-        ; end of unknown area 0x5eb3 to 0x6043
+ 
 
 
 
@@ -144,11 +145,11 @@ restart_game:
         ld a, $01
         ld (data_9d27), a
         xor a
-        ld (nivel), a
+        ld (nivel), a                                   ; nivel = 0
 
         call l_9458
-        ld hl, texts ; posicao onde comeca o nome do nivel
-        call write_on_screen
+        ld hl, texts 
+        call write_on_screen_01
         ld a, $46
         ld (apenas_brite_and_ink), a
         ld a, $1b
@@ -164,7 +165,7 @@ restart_game:
 
         _if_not nz
                 ld hl, data_ff9c 
-                call write_on_screen
+                call write_on_screen_01
         _end_if
 
         _do 
@@ -179,7 +180,7 @@ restart_game:
         call l_9905
         ld a, $03
         ld (data_9d2d), a
-        ld de, $781d ; static value
+        ld de, dados_mapa_62 + 11 
         ld (posicao_hero_x_em_nibbles), de
         ld a, $53
         ld (sera_o_nivel_copia_3), a
@@ -216,8 +217,8 @@ l_730e:
                 _end_if
         ;_end_if
 l_7330:
-        call l_895c
-        call l_962c
+        call run_all_map_data_and_run_the_function_defined
+        call verify_and_handle_energy_level_change
         call l_8a55
         call l_9709
         call l_8b87
@@ -262,18 +263,18 @@ l_7330:
                 jr z, l_73c3
                 ld a, (data_9d4c)
                 ld (data_9d4b), a
-                ld a, (data_9d2c)
+                ld a, (last_energy_level)
                 and a
-                jp nz, l_730e ; jp não mexer
+                jp nz, l_730e 
                 ld a, (data_9d44)
                 and a
                 jp nz, l_730e ; jp não mexer
                 ld a, $01
                 ld (data_9d27), a
-                ld hl, data_f85e ; posicao onde comeca o nome do nivel
-                call write_on_screen
+                ld hl, data_f85e 
+                call write_on_screen_01
                 ld hl, (posicao_texto_a_escrever)
-                call write_on_screen
+                call write_on_screen_01
                 ld a, $ff
                 ld (data_9d46), a
                 call l_73e5
@@ -296,8 +297,8 @@ l_73c3:
         ld a, $02
         ld (nivel), a
         call l_9458
-        ld hl, data_f231 ; posicao onde comeca o nome do nivel
-        call write_on_screen
+        ld hl, data_f231 
+        call write_on_screen_01
         call l_73e5
         call l_9458
         call l_99c4
@@ -395,7 +396,7 @@ function_index_04:
         defw function_88f1, function_88f1, function_7a6a, function_7b6e, function_887d, function_7b85, function_880c, function_7a6a, function_7a6a, function_7bba, function_7c9b, function_83b4, function_8637, function_7c56, function_7d43, function_7e57, function_7f26, function_8107, function_7e94, function_809c, function_822d, function_8134, function_8189, function_81c4, function_8737, function_7bc6, function_7c4d, function_7cf0, function_7dfa, function_7db1, function_7d7a, function_8298, function_82d8, function_834b, function_88f1
 
 data_7a60:        
-        dw $0000, $0000, $0000, $0000, $0000 ; static
+        dw $0000, $0000, $0000, $0000, $0000
 
 function_7a6a:
         ld a, (data_9d32)
@@ -453,7 +454,7 @@ l_7aa8:
         _djnz
 
 
-        ld a, (data_9d40)
+        ld a, (index_dados_mapa_atual)
         ld (data_8cbd), a
 
 l_7ab9:
@@ -554,17 +555,17 @@ l_7b32:
 l_7b4f:
         ld a, $01
         ld (data_9d27), a
-        call write_on_screen
+        call write_on_screen_01
 
         _do 
                 call l_73e5
-                call l_924f
+                call write_on_screen_08
                 ld hl, (posicao_onde_comeca_o_nome_do_nivel)
                 dec hl
                 ld (posicao_onde_comeca_o_nome_do_nivel), hl
                 cp $ff
                 jp z, l_a287 ; jp não mexer
-                call l_9152
+                call write_on_screen_03
         _while_true
 
 
@@ -614,7 +615,7 @@ function_7bba:
 
 
 function_7bc6:
-        ld hl, $7848; static
+        ld hl, dados_mapa_65+9
         ld de, $3010
         call l_89b1
         ret nc
@@ -764,7 +765,7 @@ l_7cb4:
 
 
 index_001:
-        db $3a, $fc, $fd, $fe, $ff, $fe, $fd, $fc
+        dw $fc3a, $fefd, $feff, $fcfd
 
 l_7ccf:
         push ix
@@ -871,7 +872,7 @@ function_7d7a:
         call l_7401
         call l_8998
         ret nc
-        ld a, (data_9d2b)
+        ld a, (energy_level)
         and a
         ret z
         ld hl, data_f8cc
@@ -904,7 +905,7 @@ function_7db1:
 
         call l_8998
         ret nc
-        ld a, (data_9d2b)
+        ld a, (energy_level)
         and a
         ret z
         ld a, $4e
@@ -973,7 +974,7 @@ function_7dfa:
         ld a, b
         cp c
         ret nz
-        ld a, (data_9d2b)
+        ld a, (energy_level)
         and a
         ret z
         push ix
@@ -1517,14 +1518,26 @@ function_81c4:
 
 
 data_81ca:
-        db $49, $2c, $4c, $08, $20, $3e, $14
-        
-        db $32, $0d, $9d, $3e, $f7, $32, $11, $9d, $3e, $05, $32, $16, $9d, $3e, $01
-        ;81e0
-        db $32, $15, $9d, $32, $61, $9d, $af, $32, $60, $9d, $3e, $08, $21, $07, $f9, $cd
-        ;81f0
-        db $30, $8a, $21, $0b, $f3, $c3, $ec, $96
-        
+        db $49, $2c, $4c, $08, $20
+
+
+function_81cf:
+        ld a, $14
+        ld (data_9d0d), a
+        ld a, $f7
+        ld (data_9d11), a
+        ld a, $05
+        ld (data_9d16), a
+        ld a, $01
+        ld (frame_movimento_do_hero), a
+        ld (data_9d61), a
+        xor a
+        ld (data_9d60), a
+        ld a, $08
+        ld hl, data_f907
+        call l_8a30
+        ld hl, data_f30b
+        jp l_96ec
 
 
 function_81f8:
@@ -1791,16 +1804,16 @@ function_834b:
         _while_true
         
 
+data_8393:
+        db $4f, $22, $80, $10, $18
 
-        ; start of unknown area 0x8393 to 0x83a5
-        db $4f, $22, $80, $10, $18, $cd, $39, $98, $3e, $ff, $32, $9d, $74
-        db $21, $d6, $f4, $c3, $ec, $96
-        ; end of unknown area 0x8393 to 0x83a5
 
+        db $cd, $39, $98, $3e, $ff, $32, $9d, $74
+        db $21, $d6, $f4, $c3, $ec, $96 
 
 function_83a6:
         ld hl, area_negra
-        ld de, $8445
+        ld de, area_negra+1
         ld bc, $0027
         ld (hl), $00
         ldir
@@ -1895,28 +1908,42 @@ area_negra:
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
 data_846c
-        db $4b, $44, $9a, $05
-        ;8470
-        db $10, $e1, $21, $e2, $f3, $c3, $ec, $96
+        db $4b, $44, $9a, $05, $10
+
+
+function_8471:
+        pop hl
+        ld hl, data_f3e2
+        jp l_96ec
+
 
 data_8478
-        db $47, $24, $50, $0a, $10, $21, $8c, $84
+        db $47, $24, $50, $0a, $10
 
-        ;8480
-        db $7e, $a7, $c8, $36, $00, $e1, $21, $c0, $f3, $c3, $ec, $96
+
+function_847d:
+        ld hl, data_848c
+        ld a, (hl)
+        and a
+        ret z
+        ld (hl), $00
+        pop hl
+        ld hl, data_f3c0
+        jp l_96ec
 
 
 data_848c:
         db $ff
+data_848d:        
+        db $50, $36, $64, $04, $10, $3e
+        db $ff, $32, $29, $79, $cd, $39, $98, $3e, $68, $32, $32, $79, $3e
+        db $50, $32, $2f, $79, $21, $74, $f6, $c3, $ec, $96
 
-        ; start of unknown area 0x848d to 0x84bf
-        db $50, $36, $64
-        db $04, $10, $3e, $ff, $32, $29, $79, $cd, $39, $98, $3e, $68, $32, $32, $79, $3e
-        db $50, $32, $2f, $79, $21, $74, $f6, $c3, $ec, $96, $67, $22, $30, $3c, $88, $dd
+data_84aa        
+        db $67, $22, $30, $3c, $88, $dd
         db $7e, $09, $a7, $c2, $33, $98, $dd, $36, $09, $ff, $21, $55, $f5, $c3, $ec, $96
-        ; end of unknown area 0x848d to 0x84bf
 
- 
+
 data_84c0:
         db $ff, $22, $30, $3c, $88, $3a, $ba, $75, $3c, $c2, $33, $98, $2a, $41, $78, $3a
         ;84d0
@@ -1927,10 +1954,16 @@ data_84c0:
         db $32, $be, $75, $3e, $0d, $32, $c3, $75, $3a, $0d, $9d, $c6, $20, $bd, $3e, $4c
         ;8500
         db $38, $02, $c6, $80, $32, $c4, $75, $21, $ba, $75, $21, $75, $f5, $c3, $ec, $96
-        ;8510
+
+data_8510:
         db $6f, $40, $8c, $04, $10, $dd, $34, $09, $cd, $39, $98, $21, $31, $f6, $c3, $ec
         ;8520
-        db $96, $55, $40, $8c, $04, $10, $dd, $7e, $04, $fe, $16, $20, $0c, $dd, $35, $09
+        db $96
+        
+data_8521:        
+        db  $55, $40, $8c, $04, $10, $dd, $7e, $04, $fe, $16, $20, $0c, $dd, $35, $09
+
+
         ;8530
         db $cd, $39, $98, $21, $14, $ef, $c3, $4f, $7b, $ed, $4b, $75, $78, $0c, $c2, $33
         ;8540
@@ -1938,23 +1971,56 @@ data_84c0:
         ;8550
         db $04, $fe, $13, $20, $03, $21, $23, $f5, $3a, $ee, $77, $fe, $03, $c2, $ec, $96
         ;8560
-        db $3e, $55, $32, $a8, $78, $cd, $e2, $73, $21, $e9, $ef, $c3, $ec, $96, $33, $40
-        ;8570
-        db $50, $04, $10, $cd, $39, $98, $3e, $33, $32, $12, $78, $dd, $e5, $dd, $21, $f4
+        db $3e, $55, $32, $a8, $78, $cd, $e2, $73, $21, $e9, $ef, $c3, $ec, $96
+        
+data_856e:        
+        db $33, $40, $50, $04, $10, $cd, $39, $98, $3e, $33, $32, $12, $78, $dd, $e5, $dd, $21, $f4
         ;8580
         db $77, $cd, $f5, $73, $21, $f4, $77, $cd, $cf, $7c, $dd, $e1, $21, $6a, $f0, $c3
         ;8590
-        db $ec, $96, $01, $22, $30, $10, $88, $cd, $39, $98, $3e, $01, $32, $6b, $79, $21
+        db $ec, $96
+data_8592:        
+        db $01, $22, $30, $10, $88, $cd, $39, $98, $3e, $01, $32, $6b, $79, $21
         ;85a0
         db $8e, $74, $cd, $cf, $7c, $3e, $ff, $32, $70, $74, $21, $3a, $f8, $c3, $ec, $96
+
 data_85b0
-        db $49, $4a, $68, $0a, $10, $21, $87, $75, $dd, $7e, $04, $fe, $17, $28, $18, $7e
-        ;85c0
-        db $a7, $c2, $33, $98, $34, $dd, $cb, $09, $ce, $cd, $e3, $85, $3e, $ff, $32, $8d
-        ;85d0
-        db $75, $21, $b8, $f5, $c3, $ec, $96, $7e, $3d, $c2, $33, $98, $34, $21, $da, $f5
-        ;85e0
-        db $c3, $ec, $96, $dd, $7e, $09, $fe, $03, $c0, $c3, $39, $98, $57, $30, $64, $14
+        db $49, $4a, $68, $0a, $10
+
+function_85b5:
+        ld hl, dados_mapa_18 + 9
+        ld a, (ix+$04)
+        cp $17
+        jr z, l_85d7
+        ld a, (hl)
+        and a
+        jp nz, l_9833
+        inc (hl)
+        set 1, (ix+$09)
+        call l_85e3
+        ld a, $ff
+        ld (dados_mapa_19), a
+        ld hl, data_f5b8
+        jp l_96ec
+
+
+l_85d7:
+        ld a, (hl)
+        dec a
+        jp nz, l_9833
+        inc (hl)
+        ld hl, data_f5da
+        jp l_96ec
+
+
+l_85e3:
+        ld a, (ix+$09)
+        cp $03
+        ret nz
+        jp l_9839
+
+data_85ec:
+	db $57, $30, $64, $14
         ;85f0
         db $28, $3e, $51, $cd, $fa, $96, $36, $52, $21, $9f, $f6, $c3, $ec, $96
    
@@ -2032,7 +2098,7 @@ function_8637:
                 cp (ix)
                 _if_not z
                         ld hl, (data_9d0d)
-                        ld de, $f723
+                        ld de, data_f723
                         add hl, de
                         ld a, (data_8627)
                         and a
@@ -2225,14 +2291,18 @@ function_index_03_03:
         call l_7b4f
         jp l_8890
 
-
-        ; start of unknown area 0x87a1 to 0x880b
+data_87a1:
         db $51, $40, $90, $04, $10, $dd, $7e, $04, $fe, $0d, $28, $19, $dd, $cb, $09
         db $46, $c2, $33, $98, $dd, $cb, $09, $c6, $cd, $e3, $85, $3e, $51, $32, $7b, $78
         db $21, $06, $f5, $c3, $ec, $96, $21, $a9, $77, $cd, $cf, $7c, $cd, $39, $98, $21
-        db $b0, $eb, $cd, $ec, $96, $c3, $90, $88, $47, $24, $50, $0a, $10, $3e, $47, $32
+        db $b0, $eb, $cd, $ec, $96, $c3, $90, $88
+         
+data_87d8: 
+        db $47, $24, $50, $0a, $10, $3e, $47, $32
         db $21, $78, $21, $9a, $77, $cd, $cf, $7c, $cd, $39, $98, $21, $11, $ec, $cd, $4f
-        db $7b, $c3, $90, $88, $4d, $40, $8c, $04, $10, $cd, $39, $98, $3e, $4d, $32, $e6
+        db $7b, $c3, $90, $88
+data_87f4:
+        db $4d, $40, $8c, $04, $10, $cd, $39, $98, $3e, $4d, $32, $e6
         db $76, $3e, $0d, $32, $ef, $76, $21, $1e, $ee, $c3, $4f, $7b
         ; end of unknown area 0x87a1 to 0x880b
 
@@ -2258,14 +2328,13 @@ function_880c:
         call l_96ec
         jp l_8890
 
-
-        ; start of unknown area 0x883c to 0x887c
+data_883c
         db $74, $39, $8c, $10
         db $23, $21, $b8, $77, $7e, $3c, $ca, $33, $98, $dd, $7e, $04, $fe, $03, $28, $1b
         db $cd, $39, $98, $3e, $ff, $21, $c3, $f9, $cd, $30, $8a, $21, $c3, $f6, $3e, $05
         db $32, $c1, $99, $3e, $50, $32, $c3, $99, $c3, $ec, $96, $cd, $39, $98, $21, $b8
         db $77, $cd, $cf, $7c, $21, $e7, $f6, $cd, $4f, $7b, $c3, $90, $88
-        ; end of unknown area 0x883c to 0x887c
+ 
 
 
 function_887d:
@@ -2393,14 +2462,14 @@ data_893e: ;  dinamic
         ret
 
 
-l_895c:
+run_all_map_data_and_run_the_function_defined:
         ld b, $5c
         ld ix, dados_mapa_91
 
         _do
                 ld a, b
                 dec a
-                ld (data_9d40), a
+                ld (index_dados_mapa_atual), a
                 push bc
                 ld a, (nivel)
                 cp (ix)
@@ -2413,12 +2482,14 @@ l_895c:
 
                 _end_if
                 pop bc
-                ld de, $fff1
+                ld de, $fff1 ; -15
                 add ix, de
         _djnz
         ret
 
-
+; input: hl: function list
+;         a: qual o indice a executar
+; 
 function_jump_to_hl_plus_2a:
         add a, a
         ld c, a
@@ -2546,11 +2617,11 @@ l_8a30:
         ld b, a
         xor a
         ld (data_9d4c), a
-        ld a, (data_9d2b)
+        ld a, (energy_level)
         and a
         ret z
         ld (posicao_texto_a_escrever), hl
-        ld hl, data_9d2b
+        ld hl, energy_level
         ld a, (hl)
         sub b
 
@@ -2563,7 +2634,7 @@ l_8a30:
 
 
 l_8a47:
-        ld hl, data_9d2b
+        ld hl, energy_level
         ld a, (hl)
         add a, $08
         cp $1f
@@ -2847,7 +2918,7 @@ l_8c18:
                         call l_8a30
                 _end_if
 
-                ld de, $0003 ; static
+                ld de, $0003
                 add ix, de
                 pop bc
         _djnz 
@@ -3019,8 +3090,9 @@ l_8d06:
         ld a, (data_9d0e)
         sub $12
         ld (data_8d20), a
-        ld ix, $8d1d
+        ld ix, dinamic_8d1c+1
         ld a, $cf
+dinamic_8d1c
         jp l_83f9
 
 
@@ -3785,7 +3857,7 @@ l_9106:
         srl e
         add hl, de
 dinamic_9112:
-        ld de, $5d44
+        ld de,  screen_memory_map  +224 
         add hl, de
         ret
 
@@ -3830,40 +3902,43 @@ l_912f:
         jp coloca_em_de_hl_5e22_b830
 
 
-write_on_screen:
+write_on_screen_01:
         call coloca_em_de_hl_6020_b800
-        call l_914a
+        call write_on_screen_02
         jp coloca_em_de_hl_5e22_b830
 
 
-l_914a:
+write_on_screen_02:
         ld (posicao_onde_comeca_o_nome_do_nivel), hl
         ld a, $01
         ld (valor_inicia_do_a_21), a
 
-l_9152:
+write_on_screen_03:
         call get_first_or_second_nibble
         cp $0f
+
+
         _if_not z
                 ld b, $0d
                 cp $0d
-                _if_not z
-                        ld b, $1d
-                        cp $0e
-                        jr nz, l_9169
+                jr z, label_0003
+                ld b, $1d
+                cp $0e
 
+                _if_not nz
+
+label_0003:
+                        call get_first_or_second_nibble
+                        add a, b
                 _end_if
-                call get_first_or_second_nibble
-                add a, b
 
-l_9169:
                 ld hl, indice_letras
                 ld c, a
                 ld b, $00
                 add hl, bc
                 ld a, (hl)
                 call desenha_uma_letra_no_ecra
-                jr l_9152
+                jr write_on_screen_03
         _end_if
 
         call get_first_or_second_nibble
@@ -3871,64 +3946,68 @@ l_9169:
         ret z
         cp $08
         _if_not c
-                jr z, l_9193
+                jr z, write_on_screen_09
                 cp $09
-                jr z, l_91da
+                jr z, write_on_screen_04
                 cp $0d
-                jr z, l_91a1
-                jr l_9152
+                jr z, write_level_name_01
+                jr write_on_screen_03
         _end_if
 
         add a, $40
         ld (data_9b3c), a
-        jr l_9152
+        jr write_on_screen_03
 
 
-l_9193:
-        call l_924f
-        ld (data_9b3d), a
-        call l_924f
-        ld (data_9b3e), a
-        jr l_9152
+write_on_screen_09:
+        call write_on_screen_08
+        ld (level_name_spacement), a
+        call write_on_screen_08
+        ld (data_write_level_name_01), a
+        jr write_on_screen_03
 
 
-l_91a1:
+write_level_name_01:
         ld hl, (posicao_onde_comeca_o_nome_do_nivel)
         ld a, (valor_inicia_do_a_21)
         push hl
         push af
         ld b, $00
 
-l_91ab:
-        call get_first_or_second_nibble
-        cp $0f
-        _if_not z
+
+        _do
+                call get_first_or_second_nibble
+                cp $0f
+                _break_if z
+
                 inc b
+                
                 cp $0e
                 _if_not z
+
                         cp $0d
-                        jr nz, l_91ab
+                        _continue_if nz
                 _end_if
 
                 call get_first_or_second_nibble
-                jr l_91ab
-        _end_if
+
+        _while_true
 
 
         ld a, (valor_inicia_do_a_20)
         sub b
-        ld (data_9b3d), a
-        ld a, (data_9b3e)
+        ld (level_name_spacement), a
+        ld a, (data_write_level_name_01)
         add a, $08
-        ld (data_9b3e), a
+        ld (data_write_level_name_01), a
         pop af
         pop hl
         ld (posicao_onde_comeca_o_nome_do_nivel), hl
         ld (valor_inicia_do_a_21), a
-        jp l_9152
+        jp write_on_screen_03
 
 
-l_91da:
+write_on_screen_04:
         ld a, $0a
         ld (data_9d31), a
         xor a
@@ -3937,39 +4016,36 @@ l_91da:
         ld (sprite_espelho), a
         ld a, (data_9b3c)
         ld (apenas_brite_and_ink), a
-        call l_924f
+        call write_on_screen_08
         ld (dynamic_92cb+1), a
         ld (dynamic_9362+1), a
-        ld bc, (data_9b3d)
+        ld bc, (level_name_spacement)
         add a, c
         add a, $04
         ld (valor_inicia_do_a_20), a
-        call l_924f
+        call write_on_screen_08
         ld (dynamic_9323+1), a
         add a, a
         add a, a
         add a, a
         ld (dynamic_9356+1), a
-        call l_92a5
-        call l_92fe
-        call l_933a
-        ld a, (data_9b3e)
+        call write_on_screen_05
+        call write_on_screen_06
+        call write_on_screen_07
+        ld a, (data_write_level_name_01)
         add a, $0c
-        ld (data_9b3e), a
-        jp l_9152
+        ld (data_write_level_name_01), a
+        jp write_on_screen_03
 
 
 indice_letras:
-        db $3a
-
-        ; start of unknown area 0x9223 to 0x924e
-        db $45, $54, $41, $4f, $49, $4e, $53, $48, $52, $44, $4c, $55, $42
+        db $3a, $45, $54, $41, $4f, $49, $4e, $53, $48, $52, $44, $4c, $55, $42
         db $43, $46, $47, $4a, $4b, $4d, $50, $51, $56, $57, $58, $59, $5a, $40, $3f, $30
         db $31, $32, $33, $34, $35, $36, $37, $38, $39, $3b, $26, $27, $3c, $3e, $3d
-        ; end of unknown area 0x9223 to 0x924e
+        
 
 
-l_924f:
+write_on_screen_08:
         call get_first_or_second_nibble
         rlca
         rlca
@@ -3992,7 +4068,7 @@ get_first_or_second_nibble:
                 and $0f
                 inc hl
                 ld (posicao_onde_comeca_o_nome_do_nivel), hl
-                ret
+                ret                                                     ; a = only first 4 bits of actual position
         _end_if
 
         ld hl, (posicao_onde_comeca_o_nome_do_nivel)
@@ -4000,7 +4076,7 @@ get_first_or_second_nibble:
         srl a
         srl a
         srl a
-        srl a
+        srl a                                                           ; a = only last 4 bits of actual position
         ret
 
 
@@ -4017,9 +4093,9 @@ valor_inicia_do_a_21:
 
 desenha_uma_letra_no_ecra:
         ld b, a
-        ld a, (data_9b3e)
+        ld a, (data_write_level_name_01)
         ld l, a
-        ld a, (data_9b3d)
+        ld a, (level_name_spacement)
         add a, $20
         ld e, a
         ld a, (data_9b3c)
@@ -4029,17 +4105,17 @@ desenha_uma_letra_no_ecra:
         call l_8d3e
         call l_8dd7
         call desenha_sprite
-        ld a, (data_9b3d)
+        ld a, (level_name_spacement)
         add a, $02
-        ld (data_9b3d), a
+        ld (level_name_spacement), a
         ret
 
 
-l_92a5:
-        ld a, (data_9b3d)
+write_on_screen_05:
+        ld a, (level_name_spacement)
         add a, $20
         ld e, a
-        ld a, (data_9b3e)
+        ld a, (data_write_level_name_01)
         add a, $08
         ld l, a
         call l_92c1
@@ -4047,7 +4123,7 @@ l_92a5:
         add a, l
         add a, $08
         ld l, a
-        ld a, (data_9b3d)
+        ld a, (level_name_spacement)
         add a, $20
         ld e, a
 
@@ -4099,17 +4175,17 @@ l_92f8:
         ret
 
 
-l_92fe:
-        ld a, (data_9b3d)
+write_on_screen_06:
+        ld a, (level_name_spacement)
         add a, $20
         ld e, a
         inc e
         inc e
         push de
-        ld a, (data_9b3e)
+        ld a, (data_write_level_name_01)
         ld l, a
         call l_931a
-        ld a, (data_9b3e)
+        ld a, (data_write_level_name_01)
         ld l, a
         pop de
         ld a, (dynamic_92cb+1)
@@ -4144,12 +4220,12 @@ dynamic_9323:
         jp l_92dc
 
 
-l_933a:
-        ld a, (data_9b3d)
+write_on_screen_07:
+        ld a, (level_name_spacement)
         add a, $04
         srl a
         ld (dynamic_935e+1), a
-        ld a, (data_9b3e)
+        ld a, (data_write_level_name_01)
         add a, $10
         ld e, a
         ld d, $00
@@ -4240,55 +4316,57 @@ function_93b2:
         ld ix, data_9d59
         ld b, $06
 
-l_93c0:
-        ld a, (hl)
-        call verifica_se_clicaram_tecla
-        jr z, l_93dd
-        ld a, (de)
-        call verifica_se_clicaram_tecla
-        jr z, l_93dd
-        ld a, (data_728f)
-        and a
-        jr z, l_93da
-        ld a, (ix)
-        call verifica_se_clicaram_tecla
-        jr z, l_93dd
+        _do
+                ld a, (hl)
+                call verifica_se_clicaram_tecla
+                _if_not z
+                        ld a, (de)
+                        call verifica_se_clicaram_tecla
+                        _if_not z
+                                ld a, (data_728f)
+                                and a
+                                jr z, l_93da
+                                ld a, (ix)
+                                call verifica_se_clicaram_tecla
+                                _if_not z
 
 l_93da:
-        and a
-        jr l_93de
+                                        and a
+                                        jr l_93de
 
 
-l_93dd:
-        scf
+                                _end_if
+                        _end_if
+                _end_if
+
+                scf
 
 l_93de:
-        rl c
-        inc hl
-        inc de
-        inc ix
-        djnz l_93c0
+                rl c
+                inc hl
+                inc de
+                inc ix
+        _djnz
         ld a, c
         ld (data_9409), a
         ld hl, data_9405
         ld c, $ff
         ld b, $04
 
-l_93f1:
-        ld a, (hl)
-        call verifica_se_clicaram_tecla
-        jr nz, l_93fa
-        and a
-        jr l_93fb
+        _do
+                ld a, (hl)
+                call verifica_se_clicaram_tecla
 
+                _if_not nz
+                        and a
+                _else
+                        scf
+                _end_if
 
-l_93fa:
-        scf
+                rl c
+                inc hl
+        _djnz
 
-l_93fb:
-        rl c
-        inc hl
-        djnz l_93f1
         ld a, c
         ld (data_940a), a
         ret
@@ -4320,7 +4398,7 @@ janela_do_jogo_preto:
         ld bc, $1e11
         ld de, $0601
         call l_8d97
-        ld hl, $5d44
+        ld hl,  screen_memory_map  +224 
         ld (dinamic_8dc0+1), hl
         ld (dinamic_9112+1), hl
         ret
@@ -4451,7 +4529,7 @@ l_94a0:
         call l_8b24
         call l_9948
         call copia_color_attributes_para_ecra
-        jp function_nome_nivel
+        jp search_and_display_level_name
 
 
 desenha_nivel:
@@ -4626,11 +4704,11 @@ l_95eb:
         ld a, (data_9d2a)
         inc a
         ld (data_9d2a), a
-        ld hl, $ff90
+        ld hl, data_ff90
         call l_9122
-        ld hl, data_ff8b ; posicao onde comeca o nome do nivel
-        call write_on_screen
-        ld hl, $ff90
+        ld hl, data_ff8b 
+        call write_on_screen_01
+        ld hl, data_ff90
         call l_912f
         jp l_8a47
 
@@ -4639,11 +4717,11 @@ l_9607:
         ld b, $03
         ld a, $3a
         call l_9624
-        ld bc, (data_9d2c)
+        ld bc, (last_energy_level)
         ld a, $2f
         call l_9624
-        ld hl, data_ff93 ; posicao onde comeca o nome do nivel
-        call write_on_screen
+        ld hl, data_ff93 
+        call write_on_screen_01
         ld hl, data_ff98
         jp l_912f
 
@@ -4664,48 +4742,56 @@ l_9624:
         ret
 
 
-l_962c:
-        ld hl, data_9d2c
-        ld a, (data_9d2b)
+verify_and_handle_energy_level_change:
+        ld hl, last_energy_level
+        ld a, (energy_level)
         cp (hl)
-        ret z
-        _if_not c
-                inc (hl)
-                ld a, (hl)
+        ret z ; return if energy level didnt change  
+
+        _if_not c                                               ; if(energy_level >= last_energy_level)
+                inc (hl)                                        
+                ld a, (hl)                                      ; last_energy_level = last_energy_level+1
         _else
-                add a, (hl)
-                srl a
-                ld (hl), a
+                add a, (hl)                                     
+                srl a                                           
+                ld (hl), a                                      ; last_energy_level = ( energy_level + last_energy_level ) / 2
         _end_if
 
+        
+        add a, a                                                
         add a, a
-        add a, a
-        add a, a
-        xor $ff
-        ld (data_ff3d), a
+        add a, a                                                ; a = 8 * last_energy_level
+        xor $ff                                                 ; mirror bits of a
+        ld (data_ff3d), a                                       ; never used
+        
+        
         ld a, $04
-        ld (sound_to_play), a
-        ld a, (data_9d2c)
+        ld (sound_to_play), a                                   ; define sound to play = 4
+        
+        ld a, (last_energy_level)
         add a, a
         and $07
         ld e, a
         ld d, $00
-        ld hl, $9681
+        ld hl, energy_level_gradient
         add hl, de
         ld c, (hl)
-        ld hl, $4134
-        ld de, $00f8
-        ld b, $06
+
+        ld hl, energy_level_screen_start 
+        ld de, $00f8 ; 248 
+        ld b, $06                                               ; energy level bar height = 6
 
         _do 
                 push bc
-                ld a, (data_9d2c)
+                ld a, (last_energy_level)
                 add a, a
+
                 ld b, $08
 
 l_9668:
-                sub $08
-                _if_not c
+                sub $08                                         ; a = last_energy_level *2 - 8
+
+                _if_not c                                       ; if ( last_energy_level *2 - 8 >= 0) 
                         ld (hl), $ff
                         inc l
                         djnz l_9668
@@ -4713,15 +4799,15 @@ l_9668:
 
                         ld (hl), c
                         inc l
+
+
                         jr l_967a ; if b >0
-
-
                         _do
                                 ld (hl), $00
                                 inc l
-
 l_967a:
                         _djnz
+
 
                 _end_if
 
@@ -4731,58 +4817,78 @@ l_967a:
         ret
 
 
-        ; start of unknown area 0x9681 to 0x9688
+energy_level_gradient
         db $80, $c0, $e0, $f0, $f8, $fc, $fe, $ff
-        ; end of unknown area 0x9681 to 0x9688
 
 
-function_nome_nivel:
-        ld hl, data_ff77 ; posicao onde comeca o nome do nivel
-        call write_on_screen
+search_and_display_level_name:
+        ld hl, data_ff77                        ; 
+        call write_on_screen_01                    ; clean level name box
 
-        ld hl, data_fbb1
+        ld hl, data_fbb1                        
         ld a, (nivel)
         cp $01
+
         _if_not z
+                                        ; if level = $01 => hl = data_fbb1
                 cp $18
-                jr z, l_96d6
-                ld hl, data_fc69
-                cp $1e
-                jr z, l_96d6
-                ld hl, data_fc92
-                cp $09
-                jr z, l_96d6
-                ld hl, data_fd56
-                cp $54
-                jr z, l_96d6
-                add a, $80
-                ld b, a
-                ld hl, nomes_niveis
+                _if_not z                    ; if level = $18 => hl = data_fbb1
+                        ld hl, data_fc69                
+                        cp $1e
+                        _if_not z                         ; if level = $1e => hl = data_fc69
+                                
+                                ld hl, data_fc92                
+                                cp $09
+                                
+                                _if_not z                    ; if level = $09 => hl = data_fc92
+
+                                        ld hl, data_fd56                
+                                        cp $54
+                                        
+                                        _if_not z                    ; if level = $54 => hl = data_fd56
+
+
+                                                add a, $80
+                                                ld b, a                         ; b = nivel + $80
+                                                ld hl, nomes_niveis             ; set nomes_niveis_index
 
 l_96b8:
-                ld a, (hl)
-                cp $ff
-                jr z, l_96d6
-                cp b
-                jr z, l_96d6
-                inc hl
+                                                ; _do                           ; 
+                                                        ld a, (hl)              ;       
+                                                        cp $ff                  ; if (nomes_niveis_index) == $ff || (nomes_niveis_index) == nivel + $80  => break
+                                                        jr z, l_96d6
+                                                        cp b
+                                                        jr z, l_96d6
+                                                        inc hl                  ; nomes_niveis_index ++ 
 
-                _do
-                        ld a, (hl)
-                        inc hl
-                        cp $ff
-                        jr z, l_96b8
-                        and $0f
-                        cp $0f
-                        
-                        _continue_if nz
+                                                        _do
+                                                                ld a, (hl)      ;
+                                                                inc hl          ; nomes_niveis_index ++ 
+                                                                cp $ff                                                                
+                                                                
+                                                                jr z, l_96b8    ; if (nomes_niveis_index) == $ff => _continue(2)
 
-                        ld a, (hl)
-                        cp $f0
-                _while nz
-                inc hl
-                jp l_96b8; jp não mexer
+
+                                                                and $0f
+                                                                cp $0f          
+                                                                
+                                                                _continue_if nz ; if (nomes_niveis_index) == $0f => _continue
+
+                                                                ld a, (hl)
+                                                                cp $f0
+                                                        _while nz
+                                                        inc hl                  ; nomes_niveis_index ++ 
+
+                                                        jp l_96b8; could be replaced with a jr
+                                                ; _while_true
+                                        _end_if
+                                _end_if
+                        _end_if
+                _end_if
         _end_if
+
+
+
 
 l_96d6:
         ld a, $20
@@ -4792,14 +4898,14 @@ l_96d6:
         inc hl
         ld (posicao_onde_comeca_o_nome_do_nivel), hl
         call coloca_em_de_hl_6020_b800
-        call l_91a1
+        call write_level_name_01
         jp coloca_em_de_hl_5e22_b830
 
 
 l_96ec:
         ld a, $01
         ld (data_9d27), a
-        call write_on_screen
+        call write_on_screen_01
         call l_73e5
         jp l_a287
 
@@ -4836,8 +4942,8 @@ l_9725:
         push ix
         ld a, $01
         ld (data_9d27), a
-        ld hl, data_fa0b ; posicao onde comeca o nome do nivel
-        call write_on_screen
+        ld hl, data_fa0b 
+        call write_on_screen_01
         ld b, $00
 
         _do
@@ -4849,18 +4955,18 @@ l_9725:
                 cp $04
         _while nz
 
-        ld hl, data_fa5f ; posicao onde comeca o nome do nivel
+        ld hl, data_fa5f 
         ld a, (data_8cbd)
         and a
-        call z, write_on_screen
+        call z, write_on_screen_01
         ld a, (data_9d33)
         ld hl, data_fa3d
         and a
         _if_not nz
-                ld hl, data_fa20 ; posicao onde comeca o nome do nivel
+                ld hl, data_fa20 
         _end_if
 
-        call write_on_screen
+        call write_on_screen_01
         ld bc, $ff02
         ld a, (data_9d3f)
         and a
@@ -5015,10 +5121,16 @@ l_9826:
         ret
 
 
-        ; start of unknown area 0x9833 to 0x9840
-        db $3e, $ff, $32, $47, $99, $c9, $cd, $47, $98, $dd, $36, $00, $ff
-        db $c9
-        ; end of unknown area 0x9833 to 0x9840
+l_9833:
+        ld a, $ff
+        ld (data_9947), a
+        ret
+
+
+l_9839:
+        call l_9847
+        ld (ix), $ff
+        ret
 
 
 l_9841:
@@ -5141,13 +5253,13 @@ l_98d2:
         rlca
         rlca
         add a, $58
-        ld (data_9b3e), a
+        ld (data_write_level_name_01), a
         ld a, $0c
-        ld (data_9b3d), a
+        ld (level_name_spacement), a
         ld a, b
         call l_98c7
-        ld hl, data_fa7a ; posicao onde comeca o nome do nivel
-        jp z, write_on_screen
+        ld hl, data_fa7a 
+        jp z, write_on_screen_01
         ld hl, dados_mapa_0 + 5
         ld de, $000f ; static
         ld b, a
@@ -5161,10 +5273,10 @@ l_98d2:
         ld h, (hl)
         ld l, e
         cp $01
-        jp nz, write_on_screen
+        jp nz, write_on_screen_01
         ld a, $74
-        ld (data_9b3e), a
-        jp write_on_screen
+        ld (data_write_level_name_01), a
+        jp write_on_screen_01
 
 
 l_9905:
@@ -5388,72 +5500,71 @@ l_9a0b:
         ld a, (ix+$01)
         cp $c0
 
-        jr nc, label_0002
+        _if_not nc
 
-        ld b, $32
-        ld de, $0004
+                ld b, $32
+                ld de, $0004
 
 
-        _do
+                _do
 
-                exx
-                call l_9ac2
-                exx
-                call l_9afa
-                exx
-                call l_9ac2
-                exx
-                add ix, de
-                
-        _djnz
+                        exx
+                        call l_9ac2
+                        exx
+                        call l_9afa
+                        exx
+                        call l_9ac2
+                        exx
+                        add ix, de
+                        
+                _djnz
 
-        ret
+                ret
 
 
 l_9a29:
-        bit 0, (ix+$02)
-        jr nz, l_9a0b
-        call l_9aa7
-        call l_9afa
-        ld a, (ix+$03)
-        and a
-        _if_not z
-                jr l_9aa7
-        _end_if
+                bit 0, (ix+$02)
+                jr nz, l_9a0b
+                call l_9aa7
+                call l_9afa
+                ld a, (ix+$03)
+                and a
+                _if_not z
+                        jr l_9aa7
+                _end_if
 
-        push ix
-        push bc
-        ld e, (ix)
-        ld d, (ix+$01)
-        ld b, $32
-
-        _do
+                push ix
                 push bc
-                ld (ix), e
-                ld (ix+$01), d
-                ld a, (hl)
-                inc l
-                and $3f
-                sub $20
-                ld (ix+$02), a
-                set 0, (ix+$02)
-                ld a, (hl)
-                inc l
-                and $07
-                sub $0f
-                ld (ix+$03), a
-                exx
-                call l_9ac2
-                exx
-                ld bc, $0004
-                add ix, bc
-                pop bc
-        _djnz 
-        pop bc
-        pop ix
-        ret
+                ld e, (ix)
+                ld d, (ix+$01)
+                ld b, $32
 
-label_0002:
+                _do
+                        push bc
+                        ld (ix), e
+                        ld (ix+$01), d
+                        ld a, (hl)
+                        inc l
+                        and $3f
+                        sub $20
+                        ld (ix+$02), a
+                        set 0, (ix+$02)
+                        ld a, (hl)
+                        inc l
+                        and $07
+                        sub $0f
+                        ld (ix+$03), a
+                        exx
+                        call l_9ac2
+                        exx
+                        ld bc, $0004
+                        add ix, bc
+                        pop bc
+                _djnz 
+                pop bc
+                pop ix
+                ret
+        _end_if
 
 
         push ix
@@ -5530,7 +5641,7 @@ l_9ac2:
         ld l, a
         ld a, (ix)
         and $07
-        ld bc, $9b19
+        ld bc, data_9b19
         add a, c
         ld c, a
 
@@ -5559,12 +5670,8 @@ l_9afa:
         ld (ix+$01), a
         ret
 
-
-        ; start of unknown area 0x9b19 to 0x9b20
-        db $80, $40, $20, $10, $08, $04, $02
-        db $01
-        ; end of unknown area 0x9b19 to 0x9b20
-
+data_9b19:
+        db $80, $40, $20, $10, $08, $04, $02, $01
 
 next_sprite_index:
         db $00
@@ -5637,10 +5744,10 @@ sprite_left_copy:
 data_9b3c:
         db $07
 
-data_9b3d:
+level_name_spacement:
         db $0a
 
-data_9b3e:
+data_write_level_name_01:
         db $0a
 
 valor_inicia_do_a_20:
@@ -6037,9 +6144,9 @@ posicao_texto_a_escrever:
 
 data_9d2a:
         db $00
-data_9d2b:
+energy_level:
         db $00
-data_9d2c:
+last_energy_level:
         db $00
 data_9d2d:
         db $00
@@ -6067,7 +6174,7 @@ data_9d3e:
         db $00
 data_9d3f:
         db $00
-data_9d40:
+index_dados_mapa_atual:
         db $00
 data_9d41:
         db $ff
@@ -6163,7 +6270,7 @@ l_9d8c:
         ld (data_9d62), a
         ld (data_9d5f), a
         ld (data_9d30), a
-        ld a, (data_9d2b)
+        ld a, (energy_level)
         and a
         ret z
         call l_93ab
@@ -6283,7 +6390,7 @@ function_9e54:
         ld a , (data_9d2f)
         and $03
         ret nz
-        ld hl, $5d44
+        ld hl,  screen_memory_map  +224 
 
         ld (dinamic_9112+1), hl
         call function_9e6a
@@ -6299,7 +6406,7 @@ function_9e6a:
         ld a, (data_9d16)
         cp $06
         jp z, l_9f15
-        ld a, (data_9d2b)
+        ld a, (energy_level)
         and a
 
         _if_not nz
@@ -6418,7 +6525,7 @@ l_9f15:
         add a, e
         ld c, a
         ld b, $00
-        ld hl, data_a145
+        ld hl, rest
         add hl, bc
         ld a, (hl)
         ld (data_9d12), a
@@ -6733,12 +6840,22 @@ l_a134:
         ret
 
 
-data_a145:
-        db $00, $01, $00, $01, $00, $01, $00, $01, $09, $0a, $0b
-        db $0c, $0d, $0e, $0f, $10, $11, $12, $13, $14, $15, $16, $17, $18, $02, $03, $04
-        db $05, $06, $07, $08, $01, $19, $1a, $1b, $1c, $1d, $1e, $1f, $09, $20, $21, $22
-        db $23, $24, $25, $26, $11, $04, $05, $05, $06, $06, $05, $05, $04, $00, $01, $08
-        db $08, $07, $06, $07, $07, $08, $07, $06, $05, $04, $03, $02, $01
+rest:
+        db $00, $01, $00, $01, $00, $01, $00, $01
+walk_left:
+        db $09, $0a, $0b, $0c, $0d, $0e, $0f, $10
+walk_right
+        db $11, $12, $13, $14, $15, $16, $17, $18
+jump:
+        db $02, $03, $04, $05, $06, $07, $08, $01
+jump_left        
+        db $19, $1a, $1b, $1c, $1d, $1e, $1f, $09
+jump_right        
+        db $20, $21, $22, $23, $24, $25, $26, $11
+
+        db $04, $05, $05, $06, $06, $05, $05, $04
+        db $00, $01, $08, $08, $07, $06, $07, $07
+        db $08, $07, $06, $05, $04, $03, $02, $01
         
         
 data_a18d:
@@ -6760,7 +6877,7 @@ l_a196:
  
        
         ld a, $50
-        ld de, $6b16 
+        ld de, image_mask_22 + 60
 
 l_a1aa:
         ld (data_9d0d), de
@@ -6829,9 +6946,9 @@ l_a205:
         ld (data_9d14), a
         ld (data_9d16), a
         ld (frame_movimento_do_hero), a
-        ld (data_9d2c), a
+        ld (last_energy_level), a
         ld a, $1f
-        ld (data_9d2b), a
+        ld (energy_level), a
         ld a, $0f
         ld (data_9d31), a
         ld a, $01
@@ -6844,8 +6961,8 @@ l_a205:
         call l_9458
         
         _do
-                call l_895c
-                call l_962c
+                call run_all_map_data_and_run_the_function_defined
+                call verify_and_handle_energy_level_change
                 call playsound
 
                 _do
@@ -6914,18 +7031,6 @@ numero_de_sprites_por_nivel:
         include "texts.asm"
 
 
-data_fdc6:
-        db $c1
-
-        ; start of unknown area 0xfdc7 to 0xfdff
-        db $28, $10, $a4, $9d, $63, $62, $0d, $94, $bd
-
-        ;fdd0
-        db $13, $64, $ff, $c1, $28, $10, $3d, $12, $5d, $91, $0d, $94, $bd, $13, $64, $ff
-        ;fde0
-        db $ff, $7d, $5d, $cf, $f0, $06, $00, $78, $cd, $70, $93, $c8, $04, $78, $e6, $07
-        ;fdf0
-        db $fe, $05, $20, $f3, $78, $c6, $1b, $47, $20, $ed, $04, $c9, $00
         
 interrupt:        
         jp interrupt_handler
@@ -7044,16 +7149,20 @@ interrupt_handler:
 	ret 
         
 data_ff77:        
-        db $f6, $f8, $08, $18, $00, $00, $00, $00, $00
-        db $00, $00, $00, $00, $00, $00, $00, $f8, $20, $10, $ff
+        db $f6, $f8, $08, $18, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $f8, $20, $10, $ff
 
 
 data_ff8b:
         db $f6, $f8, $19, $08, $ff
+
+data_ff90:        
         db $30, $30, $00
         
 data_ff93:        
         db $f6, $f8, $20, $08, $ff
+
+
+
 
 data_ff98:        
         db $20, $20, $20, $00

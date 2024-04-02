@@ -173,7 +173,7 @@ $dis->defw(0x9CB5, 1, 'screen_memory_hero_top_line');
 $dis->defb(0x9B2F, 1, 'altura_sprite_a_desenhar_copy');
 $dis->defb(0x9B30, 1, 'largura_sprite_a_desenhar_copy');
 
-$dis->defb(0x9d0d, 1, 'posicao_hero_x_em_nibbles_copia_2');
+$dis->defb(0x9d0d, 1, 'data_9d0d');
 
 $dis->defb(0x9d0f, 1, 'posicao_hero_x_em_nibbles_copia');
 $dis->defb(0x9d24, 1, 'nivel_copy');
@@ -303,8 +303,8 @@ $dis->defb(0x99C2, 1, 'data_99C2');
 $dis->defb(0x99C3, 1, 'data_99C3');
 $dis->defb(0x9B31, 1, 'data_9B31');
 $dis->defb(0x9B3C, 1, 'data_9B3C');
-$dis->defb(0x9B3D, 1, 'data_9B3D');
-$dis->defb(0x9B3E, 1, 'data_9B3E');
+$dis->defb(0x9B3D, 1, 'level_name_spacement');
+$dis->defb(0x9B3E, 1, 'data_write_level_name_01');
 # $dis->defb(0x9C91, 1, 'data_9C91');
 $dis->defb(0x9CB1, 1, 'data_9CB1');
 $dis->defb(0x9CB3, 1, 'data_9CB3');
@@ -386,5 +386,16 @@ $dis->defb(0xFC92, 1, 'data_FC92');
 $dis->defb(0xFD56, 1, 'data_FD56');
 
 $dis->defb(0xfa3d, 1, 'data_fa3d');
+$dis->defb(0xf723, 1, 'data_f723');
+$dis->defb(0x781d, 1, 'data_781d');
+
+$dis->code(0x81cf, "function_81cf");
+$dis->code(0x8471, "function_8471");
+$dis->code(0x847d, "function_847d");
+$dis->code(0x85b5, "function_85b5");
+$dis->code(0x9833, "l_9833");
+$dis->code(0x9839, "l_9839");
+
+
 
 $dis->write_asm;
