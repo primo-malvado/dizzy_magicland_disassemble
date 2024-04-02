@@ -127,7 +127,7 @@ start:
         include "image_mask.asm"
 
 data_728e:
-        db $01
+        db $01 ; when this value changes to 0 ???? 
 
 data_728f:
         db $00
@@ -268,7 +268,7 @@ l_7330:
                 jp nz, l_730e 
                 ld a, (data_9d44)
                 and a
-                jp nz, l_730e ; jp não mexer
+                jp nz, l_730e
                 ld a, $01
                 ld (data_9d27), a
                 ld hl, data_f85e 
@@ -282,13 +282,13 @@ l_7330:
 
                 ld hl, data_9d2d
                 dec (hl)
-                jp nz, l_72fd ; jp não mexer
+                jp nz, l_72fd
 
         _end_if
 
         ld a, $ff
         ld (data_9d46), a
-        jp restart_game  ; jp não mexer
+        jp restart_game 
 
 
 l_73c3:
@@ -302,13 +302,11 @@ l_73c3:
         call l_73e5
         call l_9458
         call l_99c4
-        jp restart_game ; jp não mexer
+        jp restart_game
 
 
-        ; start of unknown area 0x73e2 to 0x73e4
-        db $cd, $41, $91
-        ; end of unknown area 0x73e2 to 0x73e4
-
+l_73e2:
+        call write_on_screen_01
 
 l_73e5:
         _do
@@ -357,6 +355,8 @@ l_7401:
         call function_print_sprite
         bit 5, (ix+$0a)
         call z, l_7453
+
+
 dynamic_743d:        
         ld a, $01
         ld (background_color), a
@@ -408,17 +408,17 @@ function_7a6a:
         ld (data_9d32), a
         ld a, (ix+$04)
         cp $07
-        jp z, l_7b24 ; jp não mexer
+        jp z, l_7b24
         cp $0b
-        jp z, l_7ae1 ; jp não mexer
+        jp z, l_7ae1
         cp $0f
-        jp z, l_7b04 ; jp não mexer
+        jp z, l_7b04
         cp $13
-        jp z, l_7aed ; jp não mexer
+        jp z, l_7aed
         cp $1d
         _if_not c
                 cp $27
-                jp c, l_7b32 ; jp não mexer
+                jp c, l_7b32
         _end_if
 l_7a97:
         ld hl, data_8cbd
@@ -437,54 +437,54 @@ l_7a97:
         _while_true
 
 
-l_7aa8:
         _do
+                _do
 
-                ld a, b
-                and a
+                        ld a, b
+                        and a
 
-                _break_if z
+                        _break_if z
 
-                dec hl
-                ld a, (hl)
-                inc hl
-                ld (hl), a
-                dec hl
-        
-        _djnz
+                        dec hl
+                        ld a, (hl)
+                        inc hl
+                        ld (hl), a
+                        dec hl
+                
+                _djnz
 
 
-        ld a, (index_dados_mapa_atual)
-        ld (data_8cbd), a
+                ld a, (index_dados_mapa_atual)
+                ld (data_8cbd), a
 
 l_7ab9:
-        ld (ix), $ff
-        jp l_9725 ; jp não mexer
+                ld (ix), $ff
+                jp l_9725
 
 
 l_7ac0:
-        _do
-                dec hl
-                ld a, (hl)
-                cp $4e
-                
-                _continue_if z 
-                
-                cp $4d
-                
-        _while z
+                _do
+                        dec hl
+                        ld a, (hl)
+                        cp $4e
+                        
+                        _continue_if z 
+                        
+                        cp $4d
+                        
+                _while z
 
-        ld (data_9d34), a
-        push ix
-        push bc
-        call l_9826
-        call l_9867
-        pop bc
-        pop ix
-        dec b
-        ld a, $01
-        ld (data_9d33), a
-        jr l_7aa8
+                ld (data_9d34), a
+                push ix
+                push bc
+                call l_9826
+                call l_9867
+                pop bc
+                pop ix
+                dec b
+                ld a, $01
+                ld (data_9d33), a
+        _while_true
 
 
 l_7ae1:
@@ -513,7 +513,7 @@ l_7b04:
         call l_96fa
         _if_not z
                 ld hl, data_f41e
-                jp l_96ec ; jp não mexer
+                jp l_96ec
         _end_if
 
         ld (hl), $4e
@@ -529,7 +529,7 @@ l_7b04:
 l_7b24:
         ld a, $42
         call l_96fa
-        jp nz, l_7a97 ; jp não mexer
+        jp nz, l_7a97
         ld a, $ff
         ld (data_9d32), a
         ret
@@ -564,7 +564,7 @@ l_7b4f:
                 dec hl
                 ld (posicao_onde_comeca_o_nome_do_nivel), hl
                 cp $ff
-                jp z, l_a287 ; jp não mexer
+                jp z, l_a287
                 call write_on_screen_03
         _while_true
 
@@ -1097,7 +1097,8 @@ function_7e94:
 
         ld (ix+$09), $00
 data_7f1f;
-        ret : db $95, $96, $97, $96, $95, $94
+        ret 
+        db $95, $96, $97, $96, $95, $94
 
 
 function_7f26:
@@ -1716,39 +1717,23 @@ function_8306:
 
 data_832d:
         db $28
-data_832e:
         db $40
-data_832f:
         db $2a
-data_8330:
         db $2a
-data_8331:
         db $40
-data_8332:
         db $28
-data_8333:
         db $2c
-data_8334:
         db $40
-data_8335:
         db $2b
 data_8336:
         db $2c
-data_8337:
         db $48
-data_8338:
         db $2c
-data_8339:
         db $2c
-data_833a:
         db $50
-data_833b:
         db $29
-data_833c:
         db $2c
-data_833d:
         db $58
-data_833e:
         db $2d
 
 
@@ -1807,9 +1792,12 @@ function_834b:
 data_8393:
         db $4f, $22, $80, $10, $18
 
-
-        db $cd, $39, $98, $3e, $ff, $32, $9d, $74
-        db $21, $d6, $f4, $c3, $ec, $96 
+l_8393_5:
+        call l_9839
+        ld a, $ff
+        ld (dados_mapa_3), a
+        ld hl, data_f4d6
+        jp l_96ec
 
 function_83a6:
         ld hl, area_negra
@@ -1934,77 +1922,181 @@ function_847d:
 
 data_848c:
         db $ff
-data_848d:        
-        db $50, $36, $64, $04, $10, $3e
-        db $ff, $32, $29, $79, $cd, $39, $98, $3e, $68, $32, $32, $79, $3e
-        db $50, $32, $2f, $79, $21, $74, $f6, $c3, $ec, $96
+data_848d:
+        db $50, $36, $64, $04, $10
 
-data_84aa        
-        db $67, $22, $30, $3c, $88, $dd
-        db $7e, $09, $a7, $c2, $33, $98, $dd, $36, $09, $ff, $21, $55, $f5, $c3, $ec, $96
+
+l_848d_5:
+        ld a, $ff
+        ld (dados_mapa_80+9), a
+        call l_9839
+        ld a, $68
+        ld (dados_mapa_81+3), a
+        ld a, $50
+        ld (dados_mapa_81), a
+        ld hl, data_f674
+        jp l_96ec
+
+
+
+data_84aa:
+        db $67, $22, $30, $3c, $88
+
+
+l_84aa_5:
+        ld a, (ix+$09)
+        and a
+        jp nz, l_9833
+        ld (ix+$09), $ff
+        ld hl, data_f555
+        jp l_96ec
 
 
 data_84c0:
-        db $ff, $22, $30, $3c, $88, $3a, $ba, $75, $3c, $c2, $33, $98, $2a, $41, $78, $3a
-        ;84d0
-        db $0d, $9d, $c6, $20, $95, $f2, $da, $84, $ed, $44, $fe, $0c, $d2, $33, $98, $7c
-        ;84e0
-        db $d6, $28, $67, $22, $bc, $75, $3a, $3f, $78, $32, $ba, $75, $af, $32, $bf, $75
-        ;84f0
-        db $32, $be, $75, $3e, $0d, $32, $c3, $75, $3a, $0d, $9d, $c6, $20, $bd, $3e, $4c
-        ;8500
-        db $38, $02, $c6, $80, $32, $c4, $75, $21, $ba, $75, $21, $75, $f5, $c3, $ec, $96
+        db $ff, $22, $30, $3c, $88
+
+l_84c0_5:
+        ld a, (dados_mapa_22)
+        inc a
+        jp nz, l_9833
+        ld hl, ($7841)
+        ld a, (data_9d0d)
+        add a, $20
+        sub l
+        jp p, l_84da
+        neg
+
+l_84da:
+        cp $0c
+        jp nc, l_9833
+        ld a, h
+        sub $28
+        ld h, a
+        ld ($75bc), hl
+        ld a, (dados_mapa_65)
+        ld (dados_mapa_22), a
+        xor a
+        ld ($75bf), a
+        ld ($75be), a
+        ld a, $0d
+        ld ($75c3), a
+        ld a, (data_9d0d)
+        add a, $20
+        cp l
+        ld a, $4c
+
+        _if_not c
+                add a, $80
+        _end_if
+
+        ld ($75c4), a
+        ld hl, dados_mapa_22
+        ld hl, data_f575
+        jp l_96ec
+
 
 data_8510:
-        db $6f, $40, $8c, $04, $10, $dd, $34, $09, $cd, $39, $98, $21, $31, $f6, $c3, $ec
-        ;8520
-        db $96
-        
-data_8521:        
-        db  $55, $40, $8c, $04, $10, $dd, $7e, $04, $fe, $16, $20, $0c, $dd, $35, $09
+        db $6f, $40, $8c, $04, $10
 
 
-        ;8530
-        db $cd, $39, $98, $21, $14, $ef, $c3, $4f, $7b, $ed, $4b, $75, $78, $0c, $c2, $33
-        ;8540
-        db $98, $dd, $35, $09, $cd, $39, $98, $21, $ee, $77, $34, $21, $38, $f5, $dd, $7e
-        ;8550
-        db $04, $fe, $13, $20, $03, $21, $23, $f5, $3a, $ee, $77, $fe, $03, $c2, $ec, $96
-        ;8560
-        db $3e, $55, $32, $a8, $78, $cd, $e2, $73, $21, $e9, $ef, $c3, $ec, $96
-        
-data_856e:        
-        db $33, $40, $50, $04, $10, $cd, $39, $98, $3e, $33, $32, $12, $78, $dd, $e5, $dd, $21, $f4
-        ;8580
-        db $77, $cd, $f5, $73, $21, $f4, $77, $cd, $cf, $7c, $dd, $e1, $21, $6a, $f0, $c3
-        ;8590
-        db $ec, $96
-data_8592:        
-        db $01, $22, $30, $10, $88, $cd, $39, $98, $3e, $01, $32, $6b, $79, $21
-        ;85a0
-        db $8e, $74, $cd, $cf, $7c, $3e, $ff, $32, $70, $74, $21, $3a, $f8, $c3, $ec, $96
+l_8510_5:
+        inc (ix+$09)
+        call l_9839
+        ld hl, data_f631
+        jp l_96ec
 
-data_85b0
+data_8521:
+        db $55, $40, $8c, $04, $10
+
+
+l_8521_5:
+        ld a, (ix+$04)
+        cp $16
+        _if_not nz
+                dec (ix+$09)
+                call l_9839
+                ld hl, $ef14
+                jp l_7b4f
+
+        _end_if
+
+        ld bc, ($7875)
+        inc c
+        jp nz, l_9833
+        dec (ix+$09)
+        call l_9839
+        ld hl, $77ee
+        inc (hl)
+        ld hl, data_f538
+        ld a, (ix+$04)
+        cp $13
+        _if_not nz
+                ld hl, data_f523
+        _end_if
+
+        ld a, ($77ee)
+        cp $03
+        jp nz, l_96ec
+        ld a, $55
+        ld (dados_mapa_72), a
+        call l_73e2
+        ld hl, data_efe9
+        jp l_96ec
+
+
+data_856e:
+        db $33, $40, $50, $04, $10
+
+
+l_856e_5:
+        call l_9839
+        ld a, $33
+        ld (dados_mapa_62), a
+        push ix
+        ld ix, dados_mapa_60
+        call l_73f5
+        ld hl, dados_mapa_60
+        call l_7ccf
+        pop ix
+        ld hl, data_f06a
+        jp l_96ec
+
+
+data_8592:
+        db $01, $22, $30, $10, $88
+
+l_8592_5:
+        call l_9839
+        ld a, $01
+        ld (dados_mapa_85), a
+        ld hl, dados_mapa_2
+        call l_7ccf
+        ld a, $ff
+        ld (dados_mapa_0), a
+        ld hl, data_f83a
+        jp l_96ec
+
+
+data_85b0:
         db $49, $4a, $68, $0a, $10
 
 function_85b5:
         ld hl, dados_mapa_18 + 9
         ld a, (ix+$04)
         cp $17
-        jr z, l_85d7
-        ld a, (hl)
-        and a
-        jp nz, l_9833
-        inc (hl)
-        set 1, (ix+$09)
-        call l_85e3
-        ld a, $ff
-        ld (dados_mapa_19), a
-        ld hl, data_f5b8
-        jp l_96ec
+        _if_not z
+                ld a, (hl)
+                and a
+                jp nz, l_9833
+                inc (hl)
+                set 1, (ix+$09)
+                call l_85e3
+                ld a, $ff
+                ld (dados_mapa_19), a
+                ld hl, data_f5b8
+                jp l_96ec
+        _end_if
 
-
-l_85d7:
         ld a, (hl)
         dec a
         jp nz, l_9833
@@ -2019,11 +2111,18 @@ l_85e3:
         ret nz
         jp l_9839
 
+
 data_85ec:
-	db $57, $30, $64, $14
-        ;85f0
-        db $28, $3e, $51, $cd, $fa, $96, $36, $52, $21, $9f, $f6, $c3, $ec, $96
-   
+        db $57, $30, $64, $14, $28
+
+
+l_85ec_5:
+        ld a, $51
+        call l_96fa
+        ld (hl), $52
+        ld hl, data_f69f
+        jp l_96ec
+
 
 l_85fe:
         ld (data_8627), a
@@ -2051,15 +2150,11 @@ data_8628:
 
 data_8629:
         db $00
-
-        ; start of unknown area 0x862a to 0x862a
         db $00
-        ; end of unknown area 0x862a to 0x862a
 
 
 data_862b:
         db $00
-
 
 function_862c:
         ld b, $08
@@ -2291,20 +2386,57 @@ function_index_03_03:
         call l_7b4f
         jp l_8890
 
+
 data_87a1:
-        db $51, $40, $90, $04, $10, $dd, $7e, $04, $fe, $0d, $28, $19, $dd, $cb, $09
-        db $46, $c2, $33, $98, $dd, $cb, $09, $c6, $cd, $e3, $85, $3e, $51, $32, $7b, $78
-        db $21, $06, $f5, $c3, $ec, $96, $21, $a9, $77, $cd, $cf, $7c, $cd, $39, $98, $21
-        db $b0, $eb, $cd, $ec, $96, $c3, $90, $88
-         
-data_87d8: 
-        db $47, $24, $50, $0a, $10, $3e, $47, $32
-        db $21, $78, $21, $9a, $77, $cd, $cf, $7c, $cd, $39, $98, $21, $11, $ec, $cd, $4f
-        db $7b, $c3, $90, $88
+        db $51, $40, $90, $04, $10
+
+l_87a1_5:
+        ld a, (ix+$04)
+        cp $0d
+        _if_not z
+                bit 0, (ix+$09)
+                jp nz, l_9833
+                set 0, (ix+$09)
+                call l_85e3
+                ld a, $51
+                ld (dados_mapa_69), a
+                ld hl, data_f506
+                jp l_96ec
+        _end_if
+
+        ld hl, dados_mapa_55
+        call l_7ccf
+        call l_9839
+        ld hl, $ebb0
+        call l_96ec
+        jp l_8890
+
+
+data_87d8:
+        db $47, $24, $50, $0a, $10
+
+l_87d8_5:
+        ld a, $47
+        ld (dados_mapa_63), a
+        ld hl, dados_mapa_54
+        call l_7ccf
+        call l_9839
+        ld hl, $ec11
+        call l_7b4f
+        jp l_8890
+
+
 data_87f4:
-        db $4d, $40, $8c, $04, $10, $cd, $39, $98, $3e, $4d, $32, $e6
-        db $76, $3e, $0d, $32, $ef, $76, $21, $1e, $ee, $c3, $4f, $7b
-        ; end of unknown area 0x87a1 to 0x880b
+        db $4d, $40, $8c, $04, $10
+
+l_87f4_5:
+        call l_9839
+        ld a, $4d
+        ld (dados_mapa_42), a
+        ld a, $0d
+        ld ($76ef), a
+        ld hl, $ee1e
+        jp l_7b4f
 
 
 function_880c:
@@ -2328,13 +2460,37 @@ function_880c:
         call l_96ec
         jp l_8890
 
-data_883c
-        db $74, $39, $8c, $10
-        db $23, $21, $b8, $77, $7e, $3c, $ca, $33, $98, $dd, $7e, $04, $fe, $03, $28, $1b
-        db $cd, $39, $98, $3e, $ff, $21, $c3, $f9, $cd, $30, $8a, $21, $c3, $f6, $3e, $05
-        db $32, $c1, $99, $3e, $50, $32, $c3, $99, $c3, $ec, $96, $cd, $39, $98, $21, $b8
-        db $77, $cd, $cf, $7c, $21, $e7, $f6, $cd, $4f, $7b, $c3, $90, $88
- 
+
+data_883c:
+        db $74, $39, $8c, $10, $23
+
+l_883c_5:
+        ld hl, dados_mapa_56
+        ld a, (hl)
+        inc a
+        jp z, l_9833
+        ld a, (ix+$04)
+        cp $03
+        _if_not z
+                call l_9839
+                ld a, $ff
+                ld hl, data_f9c3
+                call l_8a30
+                ld hl, data_f6c3
+                ld a, $05
+                ld (data_99c1), a
+                ld a, $50
+                ld (data_99c3), a
+                jp l_96ec
+
+        _end_if
+
+        call l_9839
+        ld hl, dados_mapa_56
+        call l_7ccf
+        ld hl, data_f6e7
+        call l_7b4f
+        jp l_8890
 
 
 function_887d:
@@ -2430,9 +2586,9 @@ l_891f:
         ld a, (nivel)
         ld (dados_mapa_8), a
         ld (dados_mapa_9), a
-        ld a, $28
+        ld a, $28                               ;  jr z, label_8953
         call l_892f
-        ld a, $20
+        ld a, $20                               ;  jr nz, label_8953
 
 l_892f:
         ld (data_893e), a
@@ -2445,7 +2601,7 @@ l_892f:
                 cp $07
 
 data_893e: ;  dinamic                
-                _if_not z
+                jr z, label_8953
                         ld a, (nivel)
                         cp (ix)
                         push ix
@@ -2453,7 +2609,7 @@ data_893e: ;  dinamic
                         ld hl, function_index
                         call z, function_jump_to_hl_plus_2a
                         pop ix
-                _end_if
+label_8953:
 
                 pop bc
                 ld de, $000f
@@ -2490,6 +2646,7 @@ run_all_map_data_and_run_the_function_defined:
 ; input: hl: function list
 ;         a: qual o indice a executar
 ; 
+
 function_jump_to_hl_plus_2a:
         add a, a
         ld c, a
@@ -2596,18 +2753,13 @@ l_89f8:
         ret
 
 data_8a0f
-        db $00
-
-        ;8a10
-        db $00, $3b, $00, $b2, $00, $00, $00, $00, $00, $46
+        db $00, $00, $3b, $00, $b2, $00, $00, $00, $00, $00, $46
 
 data_8a1a:
         db $00, $00, $00, $00
         
         db $73, $00
         db $00, $00, $00, $00, $42
-
-        ; end of unknown area 0x8a0f to 0x8a24
 
 data_8a25
         db $ff, $00, $00, $00, $e9, $00, $01, $00, $01, $00, $1f
@@ -2803,13 +2955,7 @@ data_8b75
 
 
 data_8b7d:
-        db $3c
-
-        ; start of unknown area 0x8b7e to 0x8b84
-        db $80, $08
-        db $2a, $5a, $46, $08, $2a
-        ; end of unknown area 0x8b7e to 0x8b84
-
+        db $3c, $80, $08, $2a, $5a, $46, $08, $2a
 
 data_8b85:
         db $ff
@@ -3582,10 +3728,8 @@ dynamic_8fac:
         ret
 
 
-        ; start of unknown area 0x8fbb to 0x8fc5
         db $c5, $06, $5b, $4f, $0a
         db $c1, $23, $1b, $c3, $a7, $8f
-        ; end of unknown area 0x8fbb to 0x8fc5
 
 
 l_8fc6:
@@ -3862,11 +4006,7 @@ dinamic_9112:
         ret
 
 
-        ; start of unknown area 0x9117 to 0x9121
-        db $06, $2f, $04, $d6, $64, $30, $fb, $c6, $64
-        db $70, $23
-        ; end of unknown area 0x9117 to 0x9121
-
+        db $06, $2f, $04, $d6, $64, $30, $fb, $c6, $64, $70, $23
 
 l_9122:
         ld b, $2f
@@ -4086,9 +4226,7 @@ posicao_onde_comeca_o_nome_do_nivel:
 valor_inicia_do_a_21:
         db $00
 
-        ; start of unknown area 0x9280 to 0x9280
         db $00
-        ; end of unknown area 0x9280 to 0x9280
 
 
 desenha_uma_letra_no_ecra:
@@ -4726,9 +4864,8 @@ l_9607:
         jp l_912f
 
 
-        ; start of unknown area 0x9623 to 0x9623
+
         db $c9
-        ; end of unknown area 0x9623 to 0x9623
 
 
 l_9624:
@@ -4822,7 +4959,7 @@ energy_level_gradient
 
 
 search_and_display_level_name:
-        ld hl, data_ff77                        ; 
+        ld hl, empty_string_for_level_name                        ; 
         call write_on_screen_01                    ; clean level name box
 
         ld hl, data_fbb1                        
@@ -5261,7 +5398,7 @@ l_98d2:
         ld hl, data_fa7a 
         jp z, write_on_screen_01
         ld hl, dados_mapa_0 + 5
-        ld de, $000f ; static
+        ld de, $000f ; -15
         ld b, a
 
         _do
@@ -5416,19 +5553,12 @@ l_997a:
 
 
 data_99bd:
-        db $00
-
-        ; start of unknown area 0x99be to 0x99be
-        db $00
-        ; end of unknown area 0x99be to 0x99be
+        dw $0000
 
 
 data_99bf:
-        db $00
+        dw $0000
 
-        ; start of unknown area 0x99c0 to 0x99c0
-        db $00
-        ; end of unknown area 0x99c0 to 0x99c0
 
 
 data_99c1:
@@ -5700,25 +5830,17 @@ sprite_espelho:
 sprit_actual_byte_to_draw:
         db $00
 
-        ; start of unknown area 0x9b2a to 0x9b2a
+        
         db $00
-        ; end of unknown area 0x9b2a to 0x9b2a
+        
 
 
 valor_de:
-        db $22
-
-        ; start of unknown area 0x9b2c to 0x9b2c
-        db $5e
-        ; end of unknown area 0x9b2c to 0x9b2c
+        dw $5e22
 
 
 valor_hl:
-        db $30
-
-        ; start of unknown area 0x9b2e to 0x9b2e
-        db $b8
-        ; end of unknown area 0x9b2e to 0x9b2e
+        dw $b830
 
 
 altura_sprite_a_desenhar_copy:
@@ -5736,10 +5858,9 @@ sprite_top_copy:
 sprite_left_copy:
         db $00
 
-        ; start of unknown area 0x9b34 to 0x9b3b
+        
         db $00, $00, $0f, $0f, $ff, $ff, $f0, $f0
-        ; end of unknown area 0x9b34 to 0x9b3b
-
+        
 
 data_9b3c:
         db $07
@@ -6038,10 +6159,7 @@ linha_debaixo_onde_se_desenha_o_boneco:
         db $00
 
 data_9cb3:
-        db $00
-
-
-        db $00
+        dw $0000
 
 
 screen_memory_hero_top_line:
@@ -6056,24 +6174,19 @@ data_9cb8:
 data_9cb9:
         db $00
 
-        ; start of unknown area 0x9cba to 0x9d0c
+        
         db $f5, $3e, $13, $18, $03, $f5
 
-        ;9cc0
         db $3e, $10, $01, $fd, $7f, $ed, $79, $f1, $c9
         
 function_9cc9
         db $cd, $ba, $9c, $3a, $45, $9d, $a7
         
-        ;9cd0
         db $28, $05, $3d, $28, $10, $18, $1c, $cd, $33, $c0, $3a, $46, $9d, $a7, $28, $24
-        ;9ce0
         db $cd, $e3, $c1, $18, $0e, $cd, $33, $d3, $3a, $46, $9d, $3d, $28, $16, $cd, $e3
         db $d4, $18, $00, $3a, $46, $9d, $a7, $28, $08, $3d, $20, $08, $cd, $00, $d3, $18
         db $03, $cd, $00, $c0, $3a, $46, $9d, $32, $45, $9d, $c3, $bf, $9c
-        ; end of unknown area 0x9cba to 0x9d0c
-
-
+        
 data_9d0d:
         db $19
 
@@ -6185,7 +6298,7 @@ data_9d42:
 sound_to_play:
         db $ff
 
-        ; start of unknown area data_9d44 to data_9d63
+        
 data_9d44:
         db $ff
 data_9d45:
@@ -6987,8 +7100,6 @@ l_a205:
         
 list_a267        
         db $4c, $4f, $5c, $54
-        ; end of unknown area 0xa262 to 0xa26a
-
 
 l_a26b:
         ld a, (nivel_copy)
@@ -7106,7 +7217,7 @@ sons:
 data_ff3d:
         db $ff
 
-        ; start of unknown area 0xff3e to 0xfffb
+        
         db $00, $ff
 
 interrupt_handler:
@@ -7148,7 +7259,7 @@ interrupt_handler:
 	ei  
 	ret 
         
-data_ff77:        
+empty_string_for_level_name:        
         db $f6, $f8, $08, $18, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $f8, $20, $10, $ff
 
 

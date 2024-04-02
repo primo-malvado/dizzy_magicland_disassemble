@@ -1,260 +1,260 @@
 index_de_sprites:
-        dw $14c5
-        dw $14e7 
-        dw $1509 
-        dw $152b 
-        dw $154d 
-        dw $156f 
-        dw $1591 
-        dw $15b3 
-        dw $15d5 
-        dw $15f7 
-        dw $1619 
-        dw $163b 
-        dw $165d 
-        dw $167f 
-        dw $16a1
-        dw $16c3
-        dw $16e5
-        dw $1707
-        dw $1729
-        dw $174b
-        dw $176d
-        dw $178f
-        dw $17b1
-        dw $17d3
-        dw $17f5
-        dw $1817
-        dw $1839
-        dw $0000
-        dw $0080
-        dw $1f54
-        dw $1fc2
-        dw $185b
-        dw $00bb
-        dw $00de
-        dw $0128
-        dw $016f
-        dw $01aa
-        dw $01e8
-        dw $0229
-        dw $0233
-        dw $023d
-        dw $0247
-        dw $0251
-        dw $025b
-        dw $0265
-        dw $026f
-        dw $0279
-        dw $0283
-        dw $028d
-        dw $0297
-        dw $02a1
-        dw $02ab
-        dw $02b5
-        dw $02bf
-        dw $02c9
-        dw $02d3
-        dw $02dd
-        dw $02e7
-        dw $02f1
-        dw $02fb
-        dw $0305
-        dw $030f
-        dw $0319
-        dw $0323
-        dw $032d
-        dw $0337
-        dw $0341
-        dw $034b
-        dw $0355
-        dw $035f
-        dw $0369
-        dw $0373
-        dw $037d
-        dw $0387
-        dw $0391
-        dw $039b
-        dw $03a5
-        dw $03af
-        dw $03b9
-        dw $03c3
-        dw $03cd
-        dw $03d7
-        dw $03e1
-        dw $03eb
-        dw $03f5
-        dw $03ff
-        dw $0409
-        dw $0413
-        dw $041d
-        dw $0427
-        dw $0431
-        dw $043b
-        dw $0455
-        dw $046f
-        dw $0489
-        dw $04a3
-        dw $18bd
-        dw $1937
-        dw $1981
-        dw $19cb
-        dw $2033
-        dw $2047
-        dw $2059
-        dw $2071
-        dw $ffff
-        dw $20eb
-        dw $2144
-        dw $ffff
-        dw $219d
-        dw $ffff
-        dw $21f3
-        dw $19e5
-        dw $1a2f
-        dw $ffff
-        dw $1a79
-        dw $04bd
-        dw $ffff
-        dw $22d1
-        dw $1af3
-        dw $ffff
-        dw $04d9
-        dw $0a89
-        dw $04e3
-        dw $2390
-        dw $1b3d
-        dw $1b87
-        dw $04f9
-        dw $1002
-        dw $ffff
-        dw $ffff
-        dw $063c
-        dw $0686
-        dw $06b8
-        dw $06ea
-        dw $070c
-        dw $0726
-        dw $0736
-        dw $0758
-        dw $076a
-        dw $078a
-        dw $07ac
-        dw $07cc
-        dw $07ee
-        dw $0800
-        dw $080a
-        dw $0854
-        dw $089e
-        dw $08e5
-        dw $1bd1
-        dw $1bdb
-        dw $1be5
-        dw $1bef
-        dw $104c
-        dw $105e
-        dw $1bf9
-        dw $1070
-        dw $1092
-        dw $0927
-        dw $10b4
-        dw $10d6
-        dw $1108
-        dw $23c2
-        dw $2404
-        dw $2486
-        dw $24a0
-        dw $24ba
-        dw $0941
-        dw $0963
-        dw $0985
-        dw $09a7
-        dw $09b9
-        dw $ffff
-        dw $112a
-        dw $09f9
-        dw $114c
-        dw $115e
-        dw $1170
-        dw $1178
-        dw $1186
-        dw $1198
-        dw $0aab
-        dw $0ad5
-        dw $0b95
-        dw $0bf1
-        dw $0c1b
-        dw $0c53
-        dw $0c7f
-        dw $0d01
-        dw $251c
-        dw $254e
-        dw $2570
-        dw $2592
-        dw $0a13
-        dw $0a35
-        dw $0a45
-        dw $0a63
-        dw $25b4
-        dw $0d63
-        dw $25d6
-        dw $25f8
-        dw $0d75
-        dw $0dc7
-        dw $0df9
-        dw $0e13
-        dw $0e45
-        dw $0e67
-        dw $0ea8
-        dw $1c43
-        dw $1c49
-        dw $1c53
-        dw $0eca
-        dw $0eec
-        dw $ffff
-        dw $0f0e
-        dw $1c67
-        dw $1c6d
-        dw $1c76
-        dw $ffff
-        dw $0f30
-        dw $0f52
-        dw $ffff
-        dw $11a6
-        dw $1254
-        dw $1290
-        dw $1316
-        dw $1376
-        dw $ffff
-        dw $ffff
-        dw $0f74
-        dw $0f96
-        dw $0fb2
-        dw $0fc8
-        dw $0fe2
-        dw $13e7
-        dw $1c8a
-        dw $1ce3
-        dw $1d2d
-        dw $1d9d
-        dw $1dc9
-        dw $1dfb
-        dw $1e59
-        dw $1e6a
-        dw $1eb4
-        dw $1ec0
-        dw $1ece
-        dw $1ef0
-        dw $1f22
-        dw $051b
-        dw $0556
-        dw $0591
-        dw $05cf
-        dw $060d
-        dw $1415
-        dw $143f
-        dw $1467
-        dw $1495
+        dw sprite_156 -sprite_0
+        dw sprite_157 -sprite_0
+        dw sprite_158 -sprite_0
+        dw sprite_159 -sprite_0
+        dw sprite_160 -sprite_0
+        dw sprite_161 -sprite_0
+        dw sprite_162 -sprite_0
+        dw sprite_163 -sprite_0
+        dw sprite_164 -sprite_0
+        dw sprite_165 -sprite_0
+        dw sprite_166 -sprite_0
+        dw sprite_167 -sprite_0
+        dw sprite_168 -sprite_0
+        dw sprite_169 -sprite_0
+        dw sprite_170 -sprite_0
+        dw sprite_171 -sprite_0
+        dw sprite_172 -sprite_0
+        dw sprite_173 -sprite_0
+        dw sprite_174 -sprite_0
+        dw sprite_175 -sprite_0
+        dw sprite_176 -sprite_0
+        dw sprite_177 -sprite_0
+        dw sprite_178 -sprite_0
+        dw sprite_179 -sprite_0
+        dw sprite_180 -sprite_0
+        dw sprite_181 -sprite_0
+        dw sprite_182 -sprite_0
+        dw sprite_0 -sprite_0
+        dw sprite_1 -sprite_0
+        dw sprite_218 -sprite_0
+        dw sprite_219 -sprite_0
+        dw sprite_183 -sprite_0
+        dw sprite_2 -sprite_0
+        dw sprite_3 -sprite_0
+        dw sprite_4 -sprite_0
+        dw sprite_5 -sprite_0
+        dw sprite_6 -sprite_0
+        dw sprite_7 -sprite_0
+        dw sprite_8 -sprite_0
+        dw sprite_9 -sprite_0
+        dw sprite_10 -sprite_0
+        dw sprite_11 -sprite_0
+        dw sprite_12 -sprite_0
+        dw sprite_13 -sprite_0
+        dw sprite_14 -sprite_0
+        dw sprite_15 -sprite_0
+        dw sprite_16 -sprite_0
+        dw sprite_17 -sprite_0
+        dw sprite_18 -sprite_0
+        dw sprite_19 -sprite_0
+        dw sprite_20 -sprite_0
+        dw sprite_21 -sprite_0
+        dw sprite_22 -sprite_0
+        dw sprite_23 -sprite_0
+        dw sprite_24 -sprite_0
+        dw sprite_25 -sprite_0
+        dw sprite_26 -sprite_0
+        dw sprite_27 -sprite_0
+        dw sprite_28 -sprite_0
+        dw sprite_29 -sprite_0
+        dw sprite_30 -sprite_0
+        dw sprite_31 -sprite_0
+        dw sprite_32 -sprite_0
+        dw sprite_33 -sprite_0
+        dw sprite_34 -sprite_0
+        dw sprite_35 -sprite_0
+        dw sprite_36 -sprite_0
+        dw sprite_37 -sprite_0
+        dw sprite_38 -sprite_0
+        dw sprite_39 -sprite_0
+        dw sprite_40 -sprite_0
+        dw sprite_41 -sprite_0
+        dw sprite_42 -sprite_0
+        dw sprite_43 -sprite_0
+        dw sprite_44 -sprite_0
+        dw sprite_45 -sprite_0
+        dw sprite_46 -sprite_0
+        dw sprite_47 -sprite_0
+        dw sprite_48 -sprite_0
+        dw sprite_49 -sprite_0
+        dw sprite_50 -sprite_0
+        dw sprite_51 -sprite_0
+        dw sprite_52 -sprite_0
+        dw sprite_53 -sprite_0
+        dw sprite_54 -sprite_0
+        dw sprite_55 -sprite_0
+        dw sprite_56 -sprite_0
+        dw sprite_57 -sprite_0
+        dw sprite_58 -sprite_0
+        dw sprite_59 -sprite_0
+        dw sprite_60 -sprite_0
+        dw sprite_61 -sprite_0
+        dw sprite_62 -sprite_0
+        dw sprite_63 -sprite_0
+        dw sprite_64 -sprite_0
+        dw sprite_65 -sprite_0
+        dw sprite_184 -sprite_0
+        dw sprite_185 -sprite_0
+        dw sprite_186 -sprite_0
+        dw sprite_187 -sprite_0
+        dw sprite_220 -sprite_0
+        dw sprite_221 -sprite_0
+        dw sprite_222 -sprite_0
+        dw sprite_223 -sprite_0
+        dw $fffF
+        dw sprite_224 -sprite_0
+        dw sprite_225 -sprite_0
+        dw $fffF
+        dw sprite_226 -sprite_0
+        dw $fffF
+        dw sprite_227 -sprite_0
+        dw sprite_188 -sprite_0
+        dw sprite_189 -sprite_0
+        dw $fffF
+        dw sprite_190 -sprite_0
+        dw sprite_66 -sprite_0
+        dw $fffF
+        dw sprite_228 -sprite_0
+        dw sprite_191 -sprite_0
+        dw $fffF
+        dw sprite_67 -sprite_0
+        dw sprite_104 -sprite_0
+        dw sprite_68 -sprite_0
+        dw sprite_229 -sprite_0
+        dw sprite_192 -sprite_0
+        dw sprite_193 -sprite_0
+        dw sprite_69 -sprite_0
+        dw sprite_131 -sprite_0
+        dw $fffF
+        dw $fffF
+        dw sprite_75 -sprite_0
+        dw sprite_76 -sprite_0
+        dw sprite_77 -sprite_0
+        dw sprite_78 -sprite_0
+        dw sprite_79 -sprite_0
+        dw sprite_80 -sprite_0
+        dw sprite_81 -sprite_0
+        dw sprite_82 -sprite_0
+        dw sprite_83 -sprite_0
+        dw sprite_84 -sprite_0
+        dw sprite_85 -sprite_0
+        dw sprite_86 -sprite_0
+        dw sprite_87 -sprite_0
+        dw sprite_88 -sprite_0
+        dw sprite_89 -sprite_0
+        dw sprite_90 -sprite_0
+        dw sprite_91 -sprite_0
+        dw sprite_92 -sprite_0
+        dw sprite_194 -sprite_0
+        dw sprite_195 -sprite_0
+        dw sprite_196 -sprite_0
+        dw sprite_197 -sprite_0
+        dw sprite_132 -sprite_0
+        dw sprite_133 -sprite_0
+        dw sprite_198 -sprite_0
+        dw sprite_134 -sprite_0
+        dw sprite_135 -sprite_0
+        dw sprite_93 -sprite_0
+        dw sprite_136 -sprite_0
+        dw sprite_137 -sprite_0
+        dw sprite_138 -sprite_0
+        dw sprite_230 -sprite_0
+        dw sprite_231 -sprite_0
+        dw sprite_232 -sprite_0
+        dw sprite_233 -sprite_0
+        dw sprite_234 -sprite_0
+        dw sprite_94 -sprite_0
+        dw sprite_95 -sprite_0
+        dw sprite_96 -sprite_0
+        dw sprite_97 -sprite_0
+        dw sprite_98 -sprite_0
+        dw $fffF
+        dw sprite_139 -sprite_0
+        dw sprite_99 -sprite_0
+        dw sprite_140 -sprite_0
+        dw sprite_141 -sprite_0
+        dw sprite_142 -sprite_0
+        dw sprite_143 -sprite_0
+        dw sprite_144 -sprite_0
+        dw sprite_145 -sprite_0
+        dw sprite_105 -sprite_0
+        dw sprite_106 -sprite_0
+        dw sprite_107 -sprite_0
+        dw sprite_108 -sprite_0
+        dw sprite_109 -sprite_0
+        dw sprite_110 -sprite_0
+        dw sprite_111 -sprite_0
+        dw sprite_112 -sprite_0
+        dw sprite_235 -sprite_0
+        dw sprite_236 -sprite_0
+        dw sprite_237 -sprite_0
+        dw sprite_238 -sprite_0
+        dw sprite_100 -sprite_0
+        dw sprite_101 -sprite_0
+        dw sprite_102 -sprite_0
+        dw sprite_103 -sprite_0
+        dw sprite_239 -sprite_0
+        dw sprite_113 -sprite_0
+        dw sprite_240 -sprite_0
+        dw sprite_241 -sprite_0
+        dw sprite_114 -sprite_0
+        dw sprite_115 -sprite_0
+        dw sprite_116 -sprite_0
+        dw sprite_117 -sprite_0
+        dw sprite_118 -sprite_0
+        dw sprite_119 -sprite_0
+        dw sprite_120 -sprite_0
+        dw sprite_199 -sprite_0
+        dw sprite_200 -sprite_0
+        dw sprite_201 -sprite_0
+        dw sprite_121 -sprite_0
+        dw sprite_122 -sprite_0
+        dw $fffF
+        dw sprite_123 -sprite_0
+        dw sprite_202 -sprite_0
+        dw sprite_203 -sprite_0
+        dw sprite_204 -sprite_0
+        dw $fffF
+        dw sprite_124 -sprite_0
+        dw sprite_125 -sprite_0
+        dw $fffF
+        dw sprite_146 -sprite_0
+        dw sprite_147 -sprite_0
+        dw sprite_148 -sprite_0
+        dw sprite_149 -sprite_0
+        dw sprite_150 -sprite_0
+        dw $fffF
+        dw $fffF
+        dw sprite_126 -sprite_0
+        dw sprite_127 -sprite_0
+        dw sprite_128 -sprite_0
+        dw sprite_129 -sprite_0
+        dw sprite_130 -sprite_0
+        dw sprite_151 -sprite_0
+        dw sprite_205 -sprite_0
+        dw sprite_206 -sprite_0
+        dw sprite_207 -sprite_0
+        dw sprite_208 -sprite_0
+        dw sprite_209 -sprite_0
+        dw sprite_210 -sprite_0
+        dw sprite_211 -sprite_0
+        dw sprite_212 -sprite_0
+        dw sprite_213 -sprite_0
+        dw sprite_214 -sprite_0
+        dw sprite_215 -sprite_0
+        dw sprite_216 -sprite_0
+        dw sprite_217 -sprite_0
+        dw sprite_70 -sprite_0
+        dw sprite_71 -sprite_0
+        dw sprite_72 -sprite_0
+        dw sprite_73 -sprite_0
+        dw sprite_74 -sprite_0
+        dw sprite_152 -sprite_0
+        dw sprite_153 -sprite_0
+        dw sprite_154 -sprite_0
+        dw sprite_155 -sprite_0
 
 
 sprite_0:

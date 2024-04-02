@@ -324,7 +324,7 @@ $dis->defb(0xF85E, 1, 'data_F85E');
 $dis->defb(0xF231, 1, 'data_F231');
 $dis->defb(0xFF8B, 1, 'data_FF8B');
 $dis->defb(0xFF93, 1, 'data_FF93');
-$dis->defb(0xFF77, 1, 'data_FF77');
+$dis->defb(0xFF77, 1, 'empty_string_for_level_name');
 $dis->defb(0xfa0b, 1, 'data_fa0b');
 $dis->defb(0xFA5F, 1, 'data_FA5F');
 $dis->defb(0xFA20, 1, 'data_FA20');
@@ -395,6 +395,59 @@ $dis->code(0x847d, "function_847d");
 $dis->code(0x85b5, "function_85b5");
 $dis->code(0x9833, "l_9833");
 $dis->code(0x9839, "l_9839");
+
+
+
+
+$dis->code(0x8393+5, "l_8393_5");
+$dis->code(0x848d+5, "l_848d_5");
+$dis->code(0x84aa+5, "l_84aa_5");
+$dis->code(0x84c0+5, "l_84c0_5");
+
+
+$dis->code(0x8510+5, "l_8510_5");
+$dis->code(0x8521+5, "l_8521_5");
+$dis->code(0x856e+5, "l_856e_5"); 
+$dis->code(0x8592+5, "l_8592_5");
+$dis->code(0x85ec+5, "l_85ec_5");
+
+$dis->code(0x87a1+5, "l_87a1_5"); 
+
+
+$dis->code(0x87d8+5, "l_87d8_5");
+$dis->code(0x87f4+5, "l_87f4_5");
+
+$dis->code(0x883c+5, "l_883c_5");
+
+
+$dis->defb(0x84aa, 1, "data_84aa");
+$dis->defb(0x856e, 1, "data_856e");
+$dis->defb(0x87a1, 1, "data_87a1");
+# $dis->defb(0x84c0, 1, "data_84c0");
+$dis->defb(0x8521, 1, "data_8521");
+$dis->defb(0x8521, 1, "data_8521");
+$dis->defb(0x8521, 1, "data_8521");
+$dis->defb(0x8521, 1, "data_8521");
+$dis->defb(0x87a1, 1, "data_87a1");
+$dis->defb(0x883c, 1, "data_883c");
+$dis->defb(0x883c, 1, "data_883c");
+$dis->defb(0x85b0, 1, "data_85b0");
+$dis->defb(0x848d, 1, "data_848d");
+$dis->defb(0x85ec, 1, "data_85ec");
+$dis->defb(0x87d8, 1, "data_87d8");
+$dis->defb(0x87f4, 1, "data_87f4");
+$dis->defb(0x8592, 1, "data_8592");
+$dis->defb(0x8510, 1, "data_8510");
+
+
+
+
+$dis->defb(0xf9c3, 1, "data_f9c3");
+$dis->defb(0xf6c3, 1, "data_f6c3");
+$dis->defb(0xf6e7, 1, "data_f6e7");
+
+
+
 
 
 
