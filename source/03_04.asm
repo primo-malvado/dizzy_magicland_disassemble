@@ -9,6 +9,83 @@ energy_level_screen_start equ $4134
 dizzy_image_xor_background equ $5c00
 
 
+
+
+l_0562       equ $0562
+
+
+        org $5dc0
+
+
+load_tape:
+        ld a, $ff
+        ld (data_ffff), a
+        ld sp, load_tape
+        ld ix, $4000
+        ld de, $1b00
+        call l_5e28
+        
+        ld ix, $5e49
+        ld de, $51b7
+        call l_5e28
+        ld ix, $b000
+        ld de, $4ffc
+        call l_5e28
+        ld hl, ($c000)
+        push hl
+        ld a, $55
+        ld ($c000), a
+        ld a, $13
+        call l_5e3e
+        ld a, $aa
+        ld ($c000), a
+        ld a, $10
+        call l_5e3e
+        ld a, ($c000)
+        and $01
+        ld (is_128k), a
+        pop hl
+        ld ($c000), hl
+        ld a, (is_128k)
+        and a
+        jp z, start
+        ld a, $13
+        call l_5e3e
+        ld ix, $c000
+        ld de, $4000
+        call l_5e28
+        ld a, $10
+        call l_5e3e
+        jp start
+
+
+l_5e28:
+        di
+        ld a, $ff
+        scf
+        inc d
+        ex af, af'
+        dec d
+        call l_0562
+
+        
+        defb $f3, $38, $04, $af, $32, $ff, $ff, $3e, $00, $d3, $fe, $c9
+        
+
+
+l_5e3e:
+        di
+        ld bc, $7ffd
+        out (c), a
+        ld ($5b5c), a
+        ei
+        ret
+
+
+
+
+
+
         org $5e49
 
         db $0c, $11, $cd, $3e, $5e, $21, $00, $c0, $11, $00, $40, $01, $00, $1b, $ed, $b0, $3e, $10, $cd, $3e, $5e
@@ -19,7 +96,7 @@ start:
 
         ld hl, espelho_bytes
 
-        _do 
+        _do
                 ld a, l
                 ld b, $08
 
@@ -57,7 +134,7 @@ start:
                                 ld d, a
                         _end_if
                 _end_if
-        
+
         _djnz
 
         xor a
@@ -65,7 +142,7 @@ start:
         im 2
         ld a, $fe
         ld i, a
-        ld bc, $5000 
+        ld bc, $5000
 
 
         _do
@@ -76,7 +153,7 @@ start:
                 ei
                 halt
                 di
-        
+
         _djnz
 
         ld a, c
@@ -120,14 +197,14 @@ start:
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
         db $00, $00, $00, $00
- 
+
 
 
 
         include "image_mask.asm"
 
-data_728e:
-        db $01 ; when this value changes to 0 ???? 
+is_128k:
+        db $01 
 
 data_728f:
         db $00
@@ -148,7 +225,7 @@ restart_game:
         ld (nivel), a                                   ; nivel = 0
 
         call l_9458
-        ld hl, texts 
+        ld hl, texts
         call write_on_screen_01
         ld a, $46
         ld (apenas_brite_and_ink), a
@@ -164,23 +241,23 @@ restart_game:
         and a
 
         _if_not nz
-                ld hl, data_ff9c 
+                ld hl, data_ff9c
                 call write_on_screen_01
         _end_if
 
-        _do 
+        _do
                 call l_93ab
                 and $09
         _while z
 
         ld a, $ff
         ld (data_9d46), a
-        call l_88a0
+        call reset_map_sprites_postions
         call l_95d5
         call l_9905
         ld a, $03
         ld (data_9d2d), a
-        ld de, dados_mapa_62 + 11 
+        ld de, dados_mapa_62 + 11
         ld (posicao_hero_x_em_nibbles), de
         ld a, $53
         ld (sera_o_nivel_copia_3), a
@@ -202,7 +279,7 @@ l_730e:
         ld hl, data_9d31
         dec (hl)
 
-        
+
         jp p, l_7330 ;  _if_not p
                 inc (hl)
                 ld a, (data_9d16)
@@ -265,13 +342,15 @@ l_7330:
                 ld (data_9d4b), a
                 ld a, (last_energy_level)
                 and a
-                jp nz, l_730e 
+                jp nz, l_730e
                 ld a, (data_9d44)
                 and a
                 jp nz, l_730e
+
                 ld a, $01
                 ld (data_9d27), a
-                ld hl, data_f85e 
+                
+                ld hl, data_f85e
                 call write_on_screen_01
                 ld hl, (posicao_texto_a_escrever)
                 call write_on_screen_01
@@ -288,16 +367,18 @@ l_7330:
 
         ld a, $ff
         ld (data_9d46), a
-        jp restart_game 
+        jp restart_game
 
 
 l_73c3:
         ld a, $01
         ld (data_9d27), a
+
         ld a, $02
         ld (nivel), a
+        
         call l_9458
-        ld hl, data_f231 
+        ld hl, data_f231
         call write_on_screen_01
         call l_73e5
         call l_9458
@@ -314,7 +395,7 @@ l_73e5:
                 and a
         _while nz
 
-        _do 
+        _do
                 call playsound
                 call l_93ab
                 and a
@@ -357,7 +438,7 @@ l_7401:
         call z, l_7453
 
 
-dynamic_743d:        
+dynamic_743d:
         ld a, $01
         ld (background_color), a
         call desenha_sprite
@@ -395,8 +476,8 @@ function_index:
 function_index_04:
         defw function_88f1, function_88f1, function_7a6a, function_7b6e, function_887d, function_7b85, function_880c, function_7a6a, function_7a6a, function_7bba, function_7c9b, function_83b4, function_8637, function_7c56, function_7d43, function_7e57, function_7f26, function_8107, function_7e94, function_809c, function_822d, function_8134, function_8189, function_81c4, function_8737, function_7bc6, function_7c4d, function_7cf0, function_7dfa, function_7db1, function_7d7a, function_8298, function_82d8, function_834b, function_88f1
 
-data_7a60:        
-        dw $0000, $0000, $0000, $0000, $0000
+data_7a60:
+        db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
 function_7a6a:
         ld a, (data_9d32)
@@ -429,7 +510,7 @@ l_7a97:
                 cp $01
                 jr z, l_7ac0
                 and a
-                
+
                 _break_if z
 
                 inc hl
@@ -450,7 +531,7 @@ l_7a97:
                         inc hl
                         ld (hl), a
                         dec hl
-                
+
                 _djnz
 
 
@@ -467,11 +548,11 @@ l_7ac0:
                         dec hl
                         ld a, (hl)
                         cp $4e
-                        
-                        _continue_if z 
-                        
+
+                        _continue_if z
+
                         cp $4d
-                        
+
                 _while z
 
                 ld (data_9d34), a
@@ -557,7 +638,7 @@ l_7b4f:
         ld (data_9d27), a
         call write_on_screen_01
 
-        _do 
+        _do
                 call l_73e5
                 call write_on_screen_08
                 ld hl, (posicao_onde_comeca_o_nome_do_nivel)
@@ -684,7 +765,7 @@ function_7c23:
                 pop bc
                 pop hl
                 inc (ix+$04)
-        _djnz 
+        _djnz
 
         ret
 
@@ -754,18 +835,18 @@ function_7c9b:
 
 l_7cb4:
         ld a, (ix+$09)
-        srl a
+        srl a                                           ; a = a / 2 
         ld e, a
         ld d, $00
-        ld hl, index_001
+        ld hl, initial_animation_frames
         add hl, de
         ld a, (hl)
         ld (ix+$04), a
         jp l_7401
 
 
-index_001:
-        dw $fc3a, $fefd, $feff, $fcfd
+initial_animation_frames:
+        db $3a, $fc, $fd, $fe, $ff, $fe, $fd, $fc
 
 l_7ccf:
         push ix
@@ -938,7 +1019,7 @@ function_7dfa:
         cp $26
 
         _if_not nc
-                res 1, c        
+                res 1, c
         _end_if
 
         cp $54
@@ -955,7 +1036,7 @@ function_7dfa:
                 pop bc
                 ld a, (ix+$02)
                 bit 0, c
-                
+
                 _if_not nz
                         dec a
                         dec a
@@ -1097,7 +1178,7 @@ function_7e94:
 
         ld (ix+$09), $00
 data_7f1f;
-        ret 
+        ret
         db $95, $96, $97, $96, $95, $94
 
 
@@ -1119,7 +1200,7 @@ function_7f26:
                                 ld hl, data_f983
                         _end_if
                 _end_if
-                
+
                 ld a, $01
                 call l_8a30
 
@@ -1154,7 +1235,7 @@ function_7f26:
                 _end_if
 
                 cp $98
-                
+
                 _if_not nz
                         ld a, $31
                         sub (ix+$04)
@@ -1240,13 +1321,13 @@ l_7ff5:
         _end_if
 
         rr c
-        
+
         _if_not nc
                 dec e
         _end_if
-        
+
         rr c
-        
+
         _if_not nc
                 add a, $04
         _end_if
@@ -1639,7 +1720,7 @@ function_8298:
                 _end_if
 
                 ld (ix+$03), a
-                
+
         _else
 
                 ld a, (data_9d16)
@@ -1653,7 +1734,7 @@ function_8298:
                                 and a
                                 jr z, l_82d5
                         _end_if
-                _end_if 
+                _end_if
 
                 inc (ix+$03)
 
@@ -1778,7 +1859,7 @@ function_834b:
                         dec (ix+$02)
                         dec (ix+$02)
                         call l_7401
-                        
+
                         _continue
 
                 _end_if
@@ -1787,7 +1868,7 @@ function_834b:
                 inc (ix+$02)
                 inc (ix+$02)
         _while_true
-        
+
 
 data_8393:
         db $4f, $22, $80, $10, $18
@@ -1847,7 +1928,7 @@ l_83f0:
                 pop bc
                 ld de, $0004
                 add iy, de
-        _djnz 
+        _djnz
 
         ret
 
@@ -1959,7 +2040,7 @@ l_84c0_5:
         ld a, (dados_mapa_22)
         inc a
         jp nz, l_9833
-        ld hl, ($7841)
+        ld hl, (dados_mapa_65+2)
         ld a, (data_9d0d)
         add a, $20
         sub l
@@ -1972,14 +2053,14 @@ l_84da:
         ld a, h
         sub $28
         ld h, a
-        ld ($75bc), hl
+        ld (dados_mapa_22+2), hl
         ld a, (dados_mapa_65)
         ld (dados_mapa_22), a
         xor a
-        ld ($75bf), a
-        ld ($75be), a
+        ld (dados_mapa_22+5), a
+        ld (dados_mapa_22+4), a
         ld a, $0d
-        ld ($75c3), a
+        ld (dados_mapa_22+9), a
         ld a, (data_9d0d)
         add a, $20
         cp l
@@ -1989,7 +2070,7 @@ l_84da:
                 add a, $80
         _end_if
 
-        ld ($75c4), a
+        ld (dados_mapa_22+10), a
         ld hl, dados_mapa_22
         ld hl, data_f575
         jp l_96ec
@@ -2015,17 +2096,17 @@ l_8521_5:
         _if_not nz
                 dec (ix+$09)
                 call l_9839
-                ld hl, $ef14
+                ld hl, data_ef14
                 jp l_7b4f
 
         _end_if
 
-        ld bc, ($7875)
+        ld bc, (dados_mapa_68+9)
         inc c
         jp nz, l_9833
         dec (ix+$09)
         call l_9839
-        ld hl, $77ee
+        ld hl, dados_mapa_59+9
         inc (hl)
         ld hl, data_f538
         ld a, (ix+$04)
@@ -2034,7 +2115,7 @@ l_8521_5:
                 ld hl, data_f523
         _end_if
 
-        ld a, ($77ee)
+        ld a, (dados_mapa_59+9)
         cp $03
         jp nz, l_96ec
         ld a, $55
@@ -2179,7 +2260,7 @@ function_8637:
                         ld c, (ix+$09)
                         inc c
                         call l_86eb
-                _djnz 
+                _djnz
 
                 inc (ix+$09)
                 ld a, (ix+$09)
@@ -2200,7 +2281,7 @@ function_8637:
                         jr z, l_86d6
 
                 _end_if
-                
+
                 ld (data_8629), hl
                 ret
         _end_if
@@ -2312,7 +2393,7 @@ l_86f1:
                                 ld a, $01
                                 ld hl, data_f919
                                 call l_8a30
-                        _end_if 
+                        _end_if
                 _end_if
         _end_if
 
@@ -2369,7 +2450,7 @@ function_index_03_03:
         call l_7ccf
         ld a, (data_862b)
         and a
-        
+
         _if_not nz
                 ld a, (ix+$06)
                 cp $02
@@ -2407,7 +2488,7 @@ l_87a1_5:
         ld hl, dados_mapa_55
         call l_7ccf
         call l_9839
-        ld hl, $ebb0
+        ld hl, data_ebb0
         call l_96ec
         jp l_8890
 
@@ -2421,7 +2502,7 @@ l_87d8_5:
         ld hl, dados_mapa_54
         call l_7ccf
         call l_9839
-        ld hl, $ec11
+        ld hl, data_ec11
         call l_7b4f
         jp l_8890
 
@@ -2434,8 +2515,8 @@ l_87f4_5:
         ld a, $4d
         ld (dados_mapa_42), a
         ld a, $0d
-        ld ($76ef), a
-        ld hl, $ee1e
+        ld (dados_mapa_42+9), a
+        ld hl, data_ee1e
         jp l_7b4f
 
 
@@ -2513,13 +2594,12 @@ l_8890:
         jp l_7b4f
 
 
-l_88a0:
-        ld b, $5c
+reset_map_sprites_postions:
+        ld b, $5c                                       ; 92 sprites
         ld ix, dados_mapa_0
         ld de, $000f
 
         _do
-
                 call prepara_dados_mapa
                 add ix, de
         _djnz
@@ -2549,12 +2629,12 @@ l_88a0:
         ld hl, data_7a60
         ld b, $0a
 
- 
+
         _do
 
                 ld (hl), $00
                 inc hl
-                
+
         _djnz
 
 
@@ -2563,19 +2643,28 @@ function_88f1:
 
 
 prepara_dados_mapa:
+        
         ld a, (ix+$0b)
-        ld (ix), a
-        ld a, (ix+$0c)
-        ld (ix+$02), a
+        ld (ix), a                      ; level
+
+        ld a, (ix+$0c)                  
+        ld (ix+$02), a                  
+
+
         ld a, (ix+$0d)
-        ld (ix+$03), a
+        ld (ix+$03), a                  
+
         ld a, (ix+$0e)
-        ld (ix+$04), a
+        ld (ix+$04), a                  
+
         xor a
         ld (ix+$09), a
+
         ld a, (ix+$01)
         cp $0a
+        
         ret nz
+        
         ld a, (ix+$07)
         ld (ix+$01), a
         ld (ix+$0a), $47
@@ -2600,7 +2689,7 @@ l_892f:
                 ld a, (ix+$01)
                 cp $07
 
-data_893e: ;  dinamic                
+data_893e: ;  dinamic
                 jr z, label_8953
                         ld a, (nivel)
                         cp (ix)
@@ -2645,7 +2734,7 @@ run_all_map_data_and_run_the_function_defined:
 
 ; input: hl: function list
 ;         a: qual o indice a executar
-; 
+;
 
 function_jump_to_hl_plus_2a:
         add a, a
@@ -2714,8 +2803,8 @@ l_89bd:
 
 l_89d3:
         ld ix, data_8a1a
-        ld (ix+$03), l
-        ld (ix+$02), h
+        ld (ix+$03), l ; sprite_top
+        ld (ix+$02), h ; sprite_left
         call l_7401
 
 l_89e0:
@@ -2756,10 +2845,7 @@ data_8a0f
         db $00, $00, $3b, $00, $b2, $00, $00, $00, $00, $00, $46
 
 data_8a1a:
-        db $00, $00, $00, $00
-        
-        db $73, $00
-        db $00, $00, $00, $00, $42
+        db $00, $00, $00, $00, $73, $00, $00, $00, $00, $00, $42
 
 data_8a25
         db $ff, $00, $00, $00, $e9, $00, $01, $00, $01, $00, $1f
@@ -2827,12 +2913,12 @@ l_8a55:
 
                         _end_if
 
-                        pop bc  
+                        pop bc
                 _end_if
 
                 ld de, $0003
                 add ix, de
-        _djnz 
+        _djnz
         ret
 
 
@@ -2864,7 +2950,7 @@ l_8a92:
                         dec (iy+$01)
                         ld a, (iy+$01)
                         cp $28
-                        
+
                         _if_not nc
                                 call l_9d64
                                 and $0f
@@ -2908,7 +2994,7 @@ l_8a92:
                 _end_if
 
                 cp b
-        
+
         _while nz
 
         ld a, (data_8b86)
@@ -2945,7 +3031,7 @@ l_8b24:
         ret
 
 data_8b55
-     
+
         db $45, $6c, $0c, $38, $2a, $44, $0b, $39, $4c, $3a, $0b
         db $39, $3a, $68, $12, $39, $26, $84, $0f, $39, $50, $84, $0f, $39, $3d, $53, $0f
         db $4f, $4e, $46, $0b, $52
@@ -3057,7 +3143,7 @@ l_8c18:
                 call l_8c4a
                 ld a, $73
                 call l_8990
-                
+
                 _if_not nc
                         ld a, $01
                         ld hl, data_f878
@@ -3067,7 +3153,7 @@ l_8c18:
                 ld de, $0003
                 add ix, de
                 pop bc
-        _djnz 
+        _djnz
 
         ret
 
@@ -3110,7 +3196,7 @@ data_8c75
         db $00
         db $00
 
-        ;8c80 
+        ;8c80
         db $00
         db $00
         db $00
@@ -3137,7 +3223,7 @@ data_8c75
         db $00
         db $00
         db $00
-data_8c99        
+data_8c99
         db $00
         db $00
         db $00
@@ -3174,10 +3260,10 @@ data_8c99
         db $00
         db $00
         db $00
-data_8cbc        
+data_8cbc
         db $00
-        
-data_8cbd        
+
+data_8cbd
         db $00, $00
 data_8cbf:
         db $00, $00
@@ -3339,8 +3425,8 @@ l_8d97:
         ld a, (background_color)
         cp $01
         ld a, l
-        
-        _if_not nz 
+
+        _if_not nz
                 xor $47
                 ld l, a
                 ld a, $ae
@@ -3363,17 +3449,17 @@ colocar_attributos_de_cor:
         add hl, hl
         add hl, de
 
-dinamic_8dc0: 
+dinamic_8dc0:
         ld de, screenattributes
         add hl, de
         ld de, $0020
 
         _do
                 push hl
-dinamic_largura_cor_em_casas: 
+dinamic_largura_cor_em_casas:
                 ld b, $01
 
-        
+
                 _do
 dinamic_cor_a_pintar:
                         ld a, $01
@@ -3381,7 +3467,7 @@ dinamic_data_8dcc:
                         xor (hl)
                         ld (hl), a
                         inc hl
-                        
+
                 _djnz
 
                 pop hl
@@ -3486,7 +3572,7 @@ data_8e49:
         db $00
 
 
-; arguments: 
+; arguments:
 ;
 ; data_9d26
 ; valor_de
@@ -3495,7 +3581,7 @@ data_8e49:
 ; largura_sprite_a_desenhar
 ; largura_sprite_a_desenhar_copy
 ; sprite_left
-; de 
+; de
 ; valor_hl
 ; altura_sprite_a_desenhar
 ; sprite_top
@@ -3572,7 +3658,7 @@ desenha_sprite:
                 sub b
                 ld (altura_sprite_a_desenhar_copy), a
         _end_if
-        
+
         ld a, (sprite_left)
         ld (sprite_left_copy), a
         xor a
@@ -3712,11 +3798,11 @@ dynamic_8fa5:
 dynamic_8fa7:
                         and (hl)
                         ld (hl), a
-                
+
                 _djnz
 
                 ex de, hl
-dynamic_8fac:                
+dynamic_8fac:
                 ld bc, $0000
                 add hl, bc
                 ex de, hl
@@ -3761,15 +3847,15 @@ l_8ff0:
                 inc ix
                 ld h, (ix)
                 inc ix
-dynamic_8ffd:                
+dynamic_8ffd:
                 ld bc, $0000
                 add hl, bc
-dynamic_9001:                
+dynamic_9001:
                 ld a, $00
                 ld (data_9b31), a
                 ld a, (largura_sprite_a_desenhar_copy)
                 ld b, a
-dynamic_900a:                            
+dynamic_900a:
                 call function_901d
                 ex de, hl
 dynamic_900e:
@@ -3859,7 +3945,7 @@ l_9065:
                 add a, c
                 ld (hl), a
                 inc de
-        _djnz 
+        _djnz
         ret
 
 
@@ -3959,7 +4045,7 @@ l_90d4:
                 add a, c
                 ld (hl), a
                 dec de
-        _djnz 
+        _djnz
         ret
 
 
@@ -3980,7 +4066,7 @@ limpa_a_area_de_jogo:
 
                         ld (hl), $00
                         inc hl
-                
+
                 _djnz
 
                 dec a
@@ -4001,7 +4087,7 @@ l_9106:
         srl e
         add hl, de
 dinamic_9112:
-        ld de,  screen_memory_map  +224 
+        ld de,  screen_memory_map  +224
         add hl, de
         ret
 
@@ -4030,14 +4116,14 @@ l_912f:
                 ld a, (hl)
                 and a
 
-                _break_if z 
-                
+                _break_if z
+
                 push hl
                 call desenha_uma_letra_no_ecra
                 pop hl
                 inc hl
         _while_true
-        
+
 
         jp coloca_em_de_hl_5e22_b830
 
@@ -4121,7 +4207,7 @@ write_level_name_01:
                 _break_if z
 
                 inc b
-                
+
                 cp $0e
                 _if_not z
 
@@ -4182,7 +4268,7 @@ indice_letras:
         db $3a, $45, $54, $41, $4f, $49, $4e, $53, $48, $52, $44, $4c, $55, $42
         db $43, $46, $47, $4a, $4b, $4d, $50, $51, $56, $57, $58, $59, $5a, $40, $3f, $30
         db $31, $32, $33, $34, $35, $36, $37, $38, $39, $3b, $26, $27, $3c, $3e, $3d
-        
+
 
 
 write_on_screen_08:
@@ -4374,7 +4460,7 @@ write_on_screen_07:
 dynamic_9356:
         ld c, $00
 
-        _do 
+        _do
                 ld l, (ix)
                 ld h, (ix+$01)
 dynamic_935e:
@@ -4386,7 +4472,7 @@ dynamic_9362:
                 _do
                         ld (hl), d
                         inc hl
-        
+
                 _djnz
 
                 inc ix
@@ -4435,7 +4521,7 @@ dynamic_9393:
         ld (dynamic_93a7+1), a
         in a, ($1f)
         xor $ff
-dynamic_93a7:        
+dynamic_93a7:
         bit 0, a
         pop hl
         ret
@@ -4449,8 +4535,8 @@ l_93ab:
 
 function_93b2:
         ld c, $00
-        ld hl, data_9d4d
-        ld de, data_9d53
+        ld hl, list_9d4d
+        ld de, list_9d53
         ld ix, data_9d59
         ld b, $06
 
@@ -4515,7 +4601,7 @@ data_9405:
 
 data_9406:
         db $60
-        
+
 data_9407:
         db $40
 data_9408:
@@ -4536,7 +4622,7 @@ janela_do_jogo_preto:
         ld bc, $1e11
         ld de, $0601
         call l_8d97
-        ld hl,  screen_memory_map  +224 
+        ld hl,  screen_memory_map  +224
         ld (dinamic_8dc0+1), hl
         ld (dinamic_9112+1), hl
         ret
@@ -4560,7 +4646,7 @@ copia_color_attributes_para_ecra:
                         ld (de), a
                         inc hl
                         inc de
-                
+
                 _djnz
 
                 inc hl
@@ -4610,7 +4696,7 @@ l_9458:
                         ld hl, $30b8; static
                         cp $67
                         _if_not z
-                        
+
                                 ld hl, $3064; static
                                 cp $7e
                                 jr nz, l_94a0
@@ -4659,7 +4745,7 @@ l_94a0:
                         call l_89d3
                         ld hl, $4c70
                         call l_89d3
-                _end_if 
+                _end_if
         _end_if
 
         call l_95a6
@@ -4693,7 +4779,7 @@ l_9503:
                 ld a, (de)
                 ld (valor_atual_index_001), a
                 and a
-                
+
                 ;_if_not z
                 jp z, l_959b
                         ld a, (posicao_atual_index_001)
@@ -4822,7 +4908,7 @@ l_95a6:
 
                 ld de, $0003
                 add ix, de
-        _djnz 
+        _djnz
         ret
 
 
@@ -4833,10 +4919,10 @@ l_95d5:
         ld ix, data_ffa2
         ld de, $0003
 
-        _do     
+        _do
                 res 7, (ix+$02)
                 add ix, de
-        _djnz 
+        _djnz
 
 l_95eb:
         ld a, (data_9d2a)
@@ -4844,7 +4930,7 @@ l_95eb:
         ld (data_9d2a), a
         ld hl, data_ff90
         call l_9122
-        ld hl, data_ff8b 
+        ld hl, data_ff8b
         call write_on_screen_01
         ld hl, data_ff90
         call l_912f
@@ -4858,7 +4944,7 @@ l_9607:
         ld bc, (last_energy_level)
         ld a, $2f
         call l_9624
-        ld hl, data_ff93 
+        ld hl, data_ff93
         call write_on_screen_01
         ld hl, data_ff98
         jp l_912f
@@ -4873,7 +4959,7 @@ l_9624:
 
         _do
                 ld (hl), a
-                inc hl        
+                inc hl
         _djnz
 
         ret
@@ -4883,28 +4969,28 @@ verify_and_handle_energy_level_change:
         ld hl, last_energy_level
         ld a, (energy_level)
         cp (hl)
-        ret z ; return if energy level didnt change  
+        ret z ; return if energy level didnt change
 
         _if_not c                                               ; if(energy_level >= last_energy_level)
-                inc (hl)                                        
+                inc (hl)
                 ld a, (hl)                                      ; last_energy_level = last_energy_level+1
         _else
-                add a, (hl)                                     
-                srl a                                           
+                add a, (hl)
+                srl a
                 ld (hl), a                                      ; last_energy_level = ( energy_level + last_energy_level ) / 2
         _end_if
 
-        
-        add a, a                                                
+
+        add a, a
         add a, a
         add a, a                                                ; a = 8 * last_energy_level
         xor $ff                                                 ; mirror bits of a
         ld (data_ff3d), a                                       ; never used
-        
-        
+
+
         ld a, $04
         ld (sound_to_play), a                                   ; define sound to play = 4
-        
+
         ld a, (last_energy_level)
         add a, a
         and $07
@@ -4914,11 +5000,11 @@ verify_and_handle_energy_level_change:
         add hl, de
         ld c, (hl)
 
-        ld hl, energy_level_screen_start 
-        ld de, $00f8 ; 248 
+        ld hl, energy_level_screen_start
+        ld de, $00f8 ; 248
         ld b, $06                                               ; energy level bar height = 6
 
-        _do 
+        _do
                 push bc
                 ld a, (last_energy_level)
                 add a, a
@@ -4928,7 +5014,7 @@ verify_and_handle_energy_level_change:
 l_9668:
                 sub $08                                         ; a = last_energy_level *2 - 8
 
-                _if_not c                                       ; if ( last_energy_level *2 - 8 >= 0) 
+                _if_not c                                       ; if ( last_energy_level *2 - 8 >= 0)
                         ld (hl), $ff
                         inc l
                         djnz l_9668
@@ -4950,7 +5036,7 @@ l_967a:
 
                 add hl, de
                 pop bc
-        _djnz 
+        _djnz
         ret
 
 
@@ -4959,10 +5045,10 @@ energy_level_gradient
 
 
 search_and_display_level_name:
-        ld hl, empty_string_for_level_name                        ; 
+        ld hl, empty_string_for_level_name                        ;
         call write_on_screen_01                    ; clean level name box
 
-        ld hl, data_fbb1                        
+        ld hl, data_fbb1
         ld a, (nivel)
         cp $01
 
@@ -4970,18 +5056,18 @@ search_and_display_level_name:
                                         ; if level = $01 => hl = data_fbb1
                 cp $18
                 _if_not z                    ; if level = $18 => hl = data_fbb1
-                        ld hl, data_fc69                
+                        ld hl, data_fc69
                         cp $1e
                         _if_not z                         ; if level = $1e => hl = data_fc69
-                                
-                                ld hl, data_fc92                
+
+                                ld hl, data_fc92
                                 cp $09
-                                
+
                                 _if_not z                    ; if level = $09 => hl = data_fc92
 
-                                        ld hl, data_fd56                
+                                        ld hl, data_fd56
                                         cp $54
-                                        
+
                                         _if_not z                    ; if level = $54 => hl = data_fd56
 
 
@@ -4990,31 +5076,31 @@ search_and_display_level_name:
                                                 ld hl, nomes_niveis             ; set nomes_niveis_index
 
 l_96b8:
-                                                ; _do                           ; 
-                                                        ld a, (hl)              ;       
+                                                ; _do                           ;
+                                                        ld a, (hl)              ;
                                                         cp $ff                  ; if (nomes_niveis_index) == $ff || (nomes_niveis_index) == nivel + $80  => break
                                                         jr z, l_96d6
                                                         cp b
                                                         jr z, l_96d6
-                                                        inc hl                  ; nomes_niveis_index ++ 
+                                                        inc hl                  ; nomes_niveis_index ++
 
                                                         _do
                                                                 ld a, (hl)      ;
-                                                                inc hl          ; nomes_niveis_index ++ 
-                                                                cp $ff                                                                
-                                                                
+                                                                inc hl          ; nomes_niveis_index ++
+                                                                cp $ff
+
                                                                 jr z, l_96b8    ; if (nomes_niveis_index) == $ff => _continue(2)
 
 
                                                                 and $0f
-                                                                cp $0f          
-                                                                
+                                                                cp $0f
+
                                                                 _continue_if nz ; if (nomes_niveis_index) == $0f => _continue
 
                                                                 ld a, (hl)
                                                                 cp $f0
                                                         _while nz
-                                                        inc hl                  ; nomes_niveis_index ++ 
+                                                        inc hl                  ; nomes_niveis_index ++
 
                                                         jp l_96b8; could be replaced with a jr
                                                 ; _while_true
@@ -5079,7 +5165,7 @@ l_9725:
         push ix
         ld a, $01
         ld (data_9d27), a
-        ld hl, data_fa0b 
+        ld hl, data_fa0b
         call write_on_screen_01
         ld b, $00
 
@@ -5092,7 +5178,7 @@ l_9725:
                 cp $04
         _while nz
 
-        ld hl, data_fa5f 
+        ld hl, data_fa5f
         ld a, (data_8cbd)
         and a
         call z, write_on_screen_01
@@ -5100,7 +5186,7 @@ l_9725:
         ld hl, data_fa3d
         and a
         _if_not nz
-                ld hl, data_fa20 
+                ld hl, data_fa20
         _end_if
 
         call write_on_screen_01
@@ -5119,12 +5205,12 @@ l_9764:
                 ld a, (data_9d2f)
                 cp c
         _while z
-        
+
         ld a, (data_9d35)
         inc a
         and $07
         ld (data_9d35), a
-        ld hl, data_9d36
+        ld hl, list_9d36
         ld e, a
         ld d, $00
         add hl, de
@@ -5250,7 +5336,7 @@ l_9826:
         ld b, a
         ld ix, dados_mapa_0
         ld de, $000f ; static
-        
+
         _do
                 add ix, de
         _djnz
@@ -5294,7 +5380,7 @@ l_9847:
                 ld a, (hl)
                 dec hl
                 cp $01
-                
+
                 _break_if z
 
                 ld (hl), a
@@ -5395,7 +5481,7 @@ l_98d2:
         ld (level_name_spacement), a
         ld a, b
         call l_98c7
-        ld hl, data_fa7a 
+        ld hl, data_fa7a
         jp z, write_on_screen_01
         ld hl, dados_mapa_0 + 5
         ld de, $000f ; -15
@@ -5443,9 +5529,9 @@ l_9926:
         ld (data_9947), a
         ld a, (nivel)
 
-        cp (hl) ;0 
+        cp (hl) ;0
         ret nz
-        inc hl 
+        inc hl
         ld e, (hl) ; 1
         inc hl
         ld d, (hl) ; 2
@@ -5453,7 +5539,7 @@ l_9926:
         ld a, (hl) ; 3
         inc hl
         ld b, (hl) ; 4
-        inc hl 
+        inc hl
         push hl
         ld l, a
         ld h, b
@@ -5511,14 +5597,14 @@ l_997a:
                                         ld a, (data_99c1)
                                         ld b, a
 
-                                
+
                                         _do
 
                                                 exx
                                                 call l_9ac2
                                                 inc (ix)
                                                 exx
-                                        
+
                                         _djnz
 
                                 _else
@@ -5529,7 +5615,7 @@ l_997a:
                                 _end_if
 
                                 dec e
-                        
+
                         _while nz
                         inc hl
                         dec d
@@ -5577,17 +5663,17 @@ l_99c4:
         ld hl, $1000
 
 
- 
+
         _do
 
                 call l_9a88
                 add ix, de
-        
+
         _djnz
 
         ld de, $0800
 
-        _do 
+        _do
                 push de
                 halt
                 ld a, (data_9d2e)
@@ -5605,7 +5691,7 @@ l_99c4:
                 ld b, $03
 
 
-        
+
                 _do
 
                         push bc
@@ -5615,7 +5701,7 @@ l_99c4:
                         ld de, $00c8
                         add ix, de
                         pop bc
-                
+
                 _djnz
 
                 pop de
@@ -5646,7 +5732,7 @@ l_9a0b:
                         call l_9ac2
                         exx
                         add ix, de
-                        
+
                 _djnz
 
                 ret
@@ -5690,7 +5776,7 @@ l_9a29:
                         ld bc, $0004
                         add ix, bc
                         pop bc
-                _djnz 
+                _djnz
                 pop bc
                 pop ix
                 ret
@@ -5707,7 +5793,7 @@ l_9a29:
                 call l_9ac2
                 exx
                 add ix, de
-               
+
         _djnz
 
         pop ix
@@ -5830,9 +5916,9 @@ sprite_espelho:
 sprit_actual_byte_to_draw:
         db $00
 
-        
+
         db $00
-        
+
 
 
 valor_de:
@@ -5858,9 +5944,9 @@ sprite_top_copy:
 sprite_left_copy:
         db $00
 
-        
+
         db $00, $00, $0f, $0f, $ff, $ff, $f0, $f0
-        
+
 
 data_9b3c:
         db $07
@@ -6174,19 +6260,19 @@ data_9cb8:
 data_9cb9:
         db $00
 
-        
+
         db $f5, $3e, $13, $18, $03, $f5
 
         db $3e, $10, $01, $fd, $7f, $ed, $79, $f1, $c9
-        
+
 function_9cc9
         db $cd, $ba, $9c, $3a, $45, $9d, $a7
-        
+
         db $28, $05, $3d, $28, $10, $18, $1c, $cd, $33, $c0, $3a, $46, $9d, $a7, $28, $24
         db $cd, $e3, $c1, $18, $0e, $cd, $33, $d3, $3a, $46, $9d, $3d, $28, $16, $cd, $e3
         db $d4, $18, $00, $3a, $46, $9d, $a7, $28, $08, $3d, $20, $08, $cd, $00, $d3, $18
         db $03, $cd, $00, $c0, $3a, $46, $9d, $32, $45, $9d, $c3, $bf, $9c
-        
+
 data_9d0d:
         db $19
 
@@ -6232,7 +6318,7 @@ sera_o_nivel_copia_3:
 
 data_9d1d:
         db $00
-        
+
         db $00, $00
         db $00, $00, $00
 
@@ -6244,8 +6330,8 @@ nivel:
 nivel_copy:
         db $00
 
-        
-data_9d25:        
+
+data_9d25:
         db $00
 data_9d26:
         db $00
@@ -6280,7 +6366,7 @@ data_9d34:
 data_9d35:
         db $00
 
-data_9d36:
+list_9d36:
         db $02, $03, $04, $05, $06, $05, $04, $03
 
 data_9d3e:
@@ -6298,10 +6384,9 @@ data_9d42:
 sound_to_play:
         db $ff
 
-        
+
 data_9d44:
         db $ff
-data_9d45:
         db $ff
 data_9d46:
         db $ff
@@ -6316,27 +6401,13 @@ data_9d4b:
         db $ff
 data_9d4c:
         db $ff
-data_9d4d:
-        db $c2
-        db $e2
-        db $c0
-        db $01
-        db $02
-        db $e0
-data_9d53:
-        db $81
-        db $82
-        db $80
-        db $84
-        db $83
-        db $81
+
+list_9d4d:
+        db $c2, $e2, $c0, $01, $02, $e0
+list_9d53:
+        db $81, $82, $80, $84, $83, $81       
 data_9d59:
-        db $13
-        db $12
-        db $14
-        db $11
-        db $10
-        db $13
+        db $13, $12, $14, $11, $10, $13
 
 data_9d5f:
         db $00
@@ -6369,11 +6440,7 @@ l_9d64:
         ret
 
 data_9d89:
-        db $59
-data_9d8a:
-        db $a3
-data_9d8b:
-        db $13
+        db $59, $a3, $13
 
 
 l_9d8c:
@@ -6492,65 +6559,65 @@ l_9e41:
         ret
 
 
-label_0001:       
-        ld a, (frame_movimento_do_hero)
-        and a
-        jp z, l_9eae
-        jp l_9f15
+        _do
+                ld a, (frame_movimento_do_hero)
+                and a
+                jp z, l_9eae
+                jp l_9f15
 
 
 function_9e54:
-        ld a , (data_9d2f)
-        and $03
-        ret nz
-        ld hl,  screen_memory_map  +224 
+                ld a , (data_9d2f)
+                and $03
+                ret nz
+                ld hl,  screen_memory_map  +224
 
-        ld (dinamic_9112+1), hl
-        call function_9e6a
+                ld (dinamic_9112+1), hl
+                call function_9e6a
 
-        ld hl, screenattributes
-        ld (dinamic_9112+1), hl
-        ret
+                ld hl, screenattributes
+                ld (dinamic_9112+1), hl
+                ret
 
 
 function_9e6a:
-        call l_9c7b
-        
-        ld a, (data_9d16)
-        cp $06
-        jp z, l_9f15
-        ld a, (energy_level)
-        and a
+                call l_9c7b
 
-        _if_not nz
                 ld a, (data_9d16)
-                cp $07
+                cp $06
+                jp z, l_9f15
+                ld a, (energy_level)
+                and a
+
                 _if_not nz
-                        xor a
-                        ld (data_9d60), a
-                        ld (data_9d61), a
-                        ld a, (frame_movimento_do_hero)
+                        ld a, (data_9d16)
                         cp $07
-                        jp nz, l_9f15
-                        ld a, $06
-                        ld (frame_movimento_do_hero), a
+                        _if_not nz
+                                xor a
+                                ld (data_9d60), a
+                                ld (data_9d61), a
+                                ld a, (frame_movimento_do_hero)
+                                cp $07
+                                jp nz, l_9f15
+                                ld a, $06
+                                ld (frame_movimento_do_hero), a
+                                xor a
+                                ld (data_9d44), a
+                                jr l_9f15
+                        _end_if
+
                         xor a
-                        ld (data_9d44), a
+                        ld (frame_movimento_do_hero), a
+                        ld a, $07
+                        ld (data_9d16), a
                         jr l_9f15
                 _end_if
 
-                xor a
-                ld (frame_movimento_do_hero), a
-                ld a, $07
-                ld (data_9d16), a
-                jr l_9f15
-        _end_if
 
+                ld a, (data_9d16)
+                cp $03
 
-        ld a, (data_9d16)
-        cp $03
-
-        jr nc, label_0001
+        _while nc
 
 l_9eae:
         ld a, (data_8b85)
@@ -6725,13 +6792,13 @@ l_9fb8:
         ld (data_9d19), a
 
 
- 
+
         _do
 
                 push bc
                 call l_a0f8
                 pop bc
-                jr nz, l_9fa8  
+                jr nz, l_9fa8
                 dec ix
                 dec ix
                 ld a, (data_9d19)
@@ -6742,7 +6809,7 @@ l_9fb8:
                 cp $42
                 jp c, l_9e24
                 ld (data_9d0e), a
-        
+
         _djnz
 
         jr l_9fa8
@@ -6768,7 +6835,7 @@ l_9fed:
         ld (data_9d0e), a
 
 
- 
+
         _do
 
                 push bc
@@ -6785,7 +6852,7 @@ l_9fed:
                 cp $b6
                 jp nc, l_9e34
                 ld (data_9d0e), a
-        
+
         _djnz
 
         jp l_9fa8
@@ -6801,7 +6868,7 @@ l_a034:
         ld (data_9d14), a
         ld a, (data_9d11)
         cp $02
-        
+
         _if_not c
                 ld a, $01
                 ld (sound_to_play), a
@@ -6957,24 +7024,21 @@ rest:
         db $00, $01, $00, $01, $00, $01, $00, $01
 walk_left:
         db $09, $0a, $0b, $0c, $0d, $0e, $0f, $10
-walk_right
+
+walk_right:
         db $11, $12, $13, $14, $15, $16, $17, $18
 jump:
         db $02, $03, $04, $05, $06, $07, $08, $01
-jump_left        
+jump_left:
         db $19, $1a, $1b, $1c, $1d, $1e, $1f, $09
-jump_right        
+jump_right:
         db $20, $21, $22, $23, $24, $25, $26, $11
-
         db $04, $05, $05, $06, $06, $05, $05, $04
         db $00, $01, $08, $08, $07, $06, $07, $07
         db $08, $07, $06, $05, $04, $03, $02, $01
-        
-        
+
 data_a18d:
         db $00, $02, $01, $03, $05, $04, $06, $07, $08
-        
-
 
 l_a196:
         ld de, (posicao_hero_x_em_nibbles)
@@ -6986,9 +7050,6 @@ l_a196:
                 jr nz, l_a1aa
         _end_if
 
-
- 
-       
         ld a, $50
         ld de, image_mask_22 + 60
 
@@ -7048,8 +7109,9 @@ l_a1f0:
                         _end_if
 
                         inc hl
-                _djnz 
+                _djnz
         _end_if
+
 l_a205:
         ld hl, $0000
         ld (data_9d5f), hl
@@ -7064,15 +7126,18 @@ l_a205:
         ld (energy_level), a
         ld a, $0f
         ld (data_9d31), a
+
         ld a, $01
         ld (data_9d12), a
         ld (data_9d44), a
-        ld a, $01
+        
+        ld a, $01               ; why?
         ld (data_9d27), a
+        
         ld hl, dados_mapa_52
         call l_7ccf
         call l_9458
-        
+
         _do
                 call run_all_map_data_and_run_the_function_defined
                 call verify_and_handle_energy_level_change
@@ -7093,12 +7158,12 @@ l_a205:
         _while nz
         call l_9de5
 
-        xor a 
+        xor a
         ld (data_9d27), a
         ret
 
-        
-list_a267        
+
+list_a267
         db $4c, $4f, $5c, $54
 
 l_a26b:
@@ -7123,8 +7188,6 @@ l_a287:
         ld (data_9d27), a
         call l_9458
         call l_9de5
-
-after_call_force_disassemle_005:
         xor a
         ld (data_9d27), a
         ret
@@ -7133,8 +7196,6 @@ after_call_force_disassemle_005:
 stack:
         db $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a, $2a
 
-numero_de_sprites_por_nivel:
-        db $30, $32, $26, $00, $00, $00, $00, $00, $00, $20, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $30, $1e, $00, $00, $00, $00, $00, $21, $00, $2d, $00, $00, $46, $28, $00, $00, $00, $00, $00, $06, $00, $2c, $1e, $24, $32, $00, $00, $00, $48, $3e, $29, $43, $3f, $37, $31, $4f, $3b, $00, $00, $00, $00, $32, $22, $3e, $00, $00, $2b, $36, $3a, $4b, $39, $5b, $42, $23, $38, $42, $22, $3d, $46, $4d, $29, $19, $2d, $1c, $54, $00, $5b, $00, $00, $38, $00, $00, $00, $00, $00, $00, $00, $00, $42, $4c, $36, $00, $00, $00, $00, $00, $00, $00, $48, $3e, $00, $00, $39, $2b, $00, $00, $00, $00, $00, $00, $00, $00, $00, $31, $00
 
 
         include "sprite_niveis.asm"
@@ -7142,8 +7203,8 @@ numero_de_sprites_por_nivel:
         include "texts.asm"
 
 
-        
-interrupt:        
+
+interrupt:
         jp interrupt_handler
 
 
@@ -7201,7 +7262,7 @@ playsound:
                 ld a, c
                 add a, d
                 ld c, a
-        
+
         _djnz
 
         ret
@@ -7217,24 +7278,24 @@ sons:
 data_ff3d:
         db $ff
 
-        
+
         db $00, $ff
 
 interrupt_handler:
-	di  
+	di
 	push af
 	push bc
 	push de
 	push hl
 	push ix
-	exx 
+	exx
 	ex   af,af'
 	push af
 	push bc
 	push de
 	push hl
 	push iy
-	ld   a,(data_728e)
+	ld   a,(is_128k)
 	and  a
 	call nz,function_9cc9
 	ld   a,(data_9d2f)
@@ -7249,42 +7310,35 @@ interrupt_handler:
 	pop  de
 	pop  bc
 	pop  af
-	exx 
+	exx
 	ex   af,af'
 	pop  ix
 	pop  hl
 	pop  de
 	pop  bc
 	pop  af
-	ei  
-	ret 
-        
-empty_string_for_level_name:        
-        db $f6, $f8, $08, $18, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $f8, $20, $10, $ff
+	ei
+	ret
 
+empty_string_for_level_name:
+        db $f6, $f8, $08, $18, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $f8, $20, $10, $ff
 
 data_ff8b:
         db $f6, $f8, $19, $08, $ff
 
-data_ff90:        
+data_ff90:
         db $30, $30, $00
-        
-data_ff93:        
+
+data_ff93:
         db $f6, $f8, $20, $08, $ff
 
-
-
-
-data_ff98:        
+data_ff98:
         db $20, $20, $20, $00
-        
 
 data_ff9c:
-        db $f7, $f8, $00, $00
+        db $f7, $f8, $00, $00, $11, $ff
 
-        ;ffa0        
-        db $11, $ff
-data_ffa2        
+data_ffa2
         db $28, $a0, $01
         db $48, $80, $17
         db $30, $98, $1e
@@ -7303,6 +7357,7 @@ data_ffa2
         db $38, $90, $4d
         db $24, $60, $4f
         db $3a, $40, $51
+
 data_ffd8:
         db $28, $98, $52
         db $36, $38, $53
@@ -7310,18 +7365,18 @@ data_ffd8:
         db $38, $90, $55
         db $24, $90, $57
         db $2e, $78, $5c, $26, $78
+
 data_ffec
         db $66, $44, $a0, $67
-        
-        ;fff0
         db $26, $88, $6f, $2e, $50, $6f, $26, $a0
+
 data_fff8:
         db $70, $4a
-        
+
 data_fffa
         db $a0, $74
 
 
 
 
- 
+

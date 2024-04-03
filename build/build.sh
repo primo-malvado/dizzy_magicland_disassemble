@@ -3,9 +3,9 @@ rm dist/*.bin
 
 
 
-sjasmplus build/01_container.asm
+# sjasmplus build/01_container.asm
 sjasmplus build/03_container.asm
-sjasmplus build/04_container.asm
+# sjasmplus build/04_container.asm
 sjasmplus build/05_container.asm
 
 

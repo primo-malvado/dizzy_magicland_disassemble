@@ -34,7 +34,9 @@ texts:
         db $36, $a0, $5e, $ad, $60, $b5, $d5, $1f, $d9, $44, $21, $a0, $24, $02, $81, $07
         db $d7, $42, $de, $ec, $ff, $f5, $f8, $06, $50, $f9, $14, $04, $f6, $fd, $eb, $5e
         db $ad, $60, $91, $3b, $bd, $c0, $56, $24, $fd, $63, $2c, $91, $ed, $d6, $36, $ed
+
         db $d0, $c2, $02, $85, $7f, $d5, $70, $24, $40, $d6, $cd, $18, $de, $ec, $ff, $ff
+data_ebb0:
         db $f5, $f8, $0a, $30, $f9, $12, $05, $f6, $fd, $eb, $81, $dc, $0d, $a4, $da, $0e
         db $f0, $50, $d2, $11, $bf, $dd, $29, $11, $de, $0d, $39, $44, $d9, $dc, $de, $fd
         db $28, $36, $d5, $70, $ef, $05, $ea, $bb, $07, $11, $fd, $dc, $4c, $0b, $32, $19
@@ -46,14 +48,15 @@ data_ebe6:
         db $95, $d0, $d0, $12, $de, $05, $2e, $a7, $0d, $61, $ed, $a4, $93, $de, $fd, $73
         db $d9, $10, $d6, $10, $a5, $dd, $dd, $dc, $de, $0d, $19, $43, $d5, $de, $ec, $ff
         db $ff
-        
+
+
+data_ec11        
         db $f5, $f8, $02, $30, $f9, $14, $04, $f6, $fd, $eb, $84, $20, $72, $cd, $2d
         db $20, $a5, $dd, $dd, $de, $05, $fd, $da, $37, $09, $13, $bb, $dc, $0d, $18, $5b
         db $b5, $6d, $3f, $d4, $c2, $05, $60, $28, $19, $1d, $ee, $cf, $ff, $5f, $80, $23
         db $0f, $91, $90, $3f, $6f, $de, $b8, $1d, $ce, $db, $44, $d5, $03, $d2, $21, $90
         db $28, $57, $0d, $24, $9f, $dd, $61, $ef, $d1, $32, $d1, $80, $dc, $30, $b3, $21
         db $9e, $cf, $ff, $f0
-        ; end of unknown area $ebe7 to $ec63
 
 
 data_ec64:
@@ -73,13 +76,11 @@ data_ec64:
         db $70, $72, $36, $a3, $9a, $7f, $ff, $7f, $80, $46, $0f, $91, $60, $3f, $3f, $d5
         db $2e, $ab, $b0, $23, $d5, $10, $30, $8c, $d3, $1f, $d7, $84, $d1, $d5, $02, $40
         db $da, $3d, $51, $08, $5d, $60, $cd, $7d, $ef, $ff, $f0
-        ; end of unknown area $ec65 to $ed4a
 
 
 data_ed4b:
         db $f6
 
-        ; start of unknown area $ed4c to $ee81
         db $f8, $14, $30, $f9
         db $08, $02, $f4, $fd, $eb, $44, $d7, $7d, $ee, $cf, $ff, $5f, $80, $a3, $0f, $91
         db $20, $5f, $6f, $de, $bd, $c5, $d5, $17, $de, $02, $83, $20, $da, $37, $fd, $78
@@ -93,7 +94,10 @@ data_ed4b:
         db $03, $0d, $09, $3d, $91, $08, $19, $4e, $dd, $c1, $2f, $d8, $10, $83, $70, $91
         db $2c, $96, $1a, $0d, $64, $91, $fd, $d7, $4d, $a1, $9d, $2c, $b0, $28, $36, $01
         db $d9, $19, $fd, $d0, $1d, $24, $91, $ee, $28, $57, $0d, $a5, $bb, $0d, $01, $02
-        db $81, $fd, $d2, $56, $3b, $0d, $14, $6d, $2b, $5d, $12, $ec, $ff, $ff, $f4, $f8
+        db $81, $fd, $d2, $56, $3b, $0d, $14, $6d, $2b, $5d, $12, $ec, $ff, $ff
+
+data_ee1e:
+        db $f4, $f8
         db $08, $30, $f9, $17, $04, $f7, $fd, $eb, $d5, $57, $70, $28, $10, $d2, $94, $d3
         db $df, $df, $05, $ea, $d9, $1f, $d2, $95, $1a, $02, $85, $70, $d0, $1d, $24, $91
         db $0e, $ff, $d5, $20, $83, $76, $ea, $20, $da, $49, $d5, $1a, $0d, $c1, $2d, $ee
@@ -101,7 +105,6 @@ data_ed4b:
         db $d1, $10, $d1, $83, $9d, $65, $6d, $3f, $dd, $55, $77, $17, $02, $81, $0d, $29
         db $4d, $3e, $ee, $ee, $ef, $d3, $6a, $0a, $49, $30, $3d, $7d, $71, $39, $7d, $ef
         db $ff, $f0
-        ; end of unknown area $ed4c to $ee81
 
 
 data_ee82:
@@ -113,8 +116,12 @@ data_ee82:
         db $30, $73, $dc, $7f, $df, $7f, $de, $b4, $8d, $e0, $5e, $ad, $60, $da, $49, $95
         db $1a, $07, $5d, $1d, $5f, $d3, $d0, $4c, $20, $d6, $dc, $0d, $34, $d0, $4b, $56
         db $4d, $ef, $dd, $7b, $13, $71, $0d, $25, $6a, $08, $5d, $60, $d2, $49, $0d, $61
+
         db $fd, $ef, $5e, $ad, $91, $0b, $44, $d5, $1a, $01, $d9, $19, $dc, $da, $81, $91
-        db $de, $ec, $ff, $ff, $f4, $f8, $02, $30, $f9, $14, $04, $f7, $fd, $eb, $48, $02
+        db $de, $ec, $ff, $ff
+        
+data_ef14:        
+        db $f4, $f8, $02, $30, $f9, $14, $04, $f7, $fd, $eb, $48, $02
         db $83, $6d, $50, $dc, $4c, $07, $4f, $dd, $6c, $d1, $8d, $e0, $84, $da, $07, $83
         db $bb, $05, $fd, $91, $2c, $96, $02, $81, $0d, $23, $d9, $4c, $9d, $fe, $cf, $ff
         db $4f, $80, $46, $0f, $91, $50, $4f, $3f, $de, $fd, $c4, $c0, $21, $bb, $02, $81
@@ -148,13 +155,13 @@ data_f06a:
         db $09, $4d, $1d, $50, $36, $a0, $94, $bb, $de, $fd, $1c, $91, $d5, $3d, $e0, $50
         db $78, $36, $ea, $2f, $d6, $11, $a0, $28, $57, $03, $6d, $cd, $64, $91, $de, $ec
         db $ff
-        ; end of unknown area $ee83 to $f0b0
+        
 
 
 data_f0b1:
         db $f4
 
-        ; start of unknown area $f0b2 to $f15a
+        
         db $f8, $02, $30, $f9, $18, $07, $f6, $fd, $28, $10, $a1, $d9, $5b, $07
         db $3d, $c7, $fd, $f2, $fd, $eb, $dd, $3d, $57, $0d, $63, $a1, $03, $0a, $13, $b0
         db $da, $52, $8f, $dd, $61, $0e, $f5, $0d, $7c, $20, $85, $70, $74, $cb, $05, $62
@@ -166,25 +173,25 @@ data_f0b1:
         db $f9, $18, $05, $f2, $fd, $eb, $23, $d5, $10, $28, $57, $02, $95, $a1, $62, $03
         db $6a, $fd, $d5, $5b, $b0, $dd, $3d, $57, $0e, $f2, $81, $60, $d0, $95, $6d, $3f
         db $dd, $61, $02, $81, $09, $56, $d3, $de, $ec, $ff, $ff
-        ; end of unknown area $f0b2 to $f15a
+        
 
 
 data_f15b:
         db $f4
 
-        ; start of unknown area $f15c to $f19c
+        
         db $f8, $02, $30, $f9
         db $14, $06, $f2, $fd, $eb, $1d, $bd, $11, $bb, $16, $2d, $e0, $64, $da, $fd, $d1
         db $37, $20, $28, $10, $95, $6d, $3f, $d5, $62, $40, $28, $10, $d1, $93, $d1, $d5
         db $70, $4d, $2f, $dd, $31, $81, $66, $30, $36, $a0, $a1, $72, $94, $dc, $fd, $dd
         db $3d, $57, $ea, $07, $4c, $b0, $d2, $49, $1d, $91, $9e, $cf, $f0
-        ; end of unknown area $f15c to $f19c
+        
 
 
 data_f19d:
         db $f4
 
-        ; start of unknown area $f19e to $f1f6
+        
         db $f8, $02
         db $30, $f9, $12, $04, $f2, $fd, $eb, $d2, $91, $10, $32, $0b, $37, $2d, $ef, $dd
         db $24, $90, $46, $d1, $10, $52, $07, $11, $d6, $7f, $d5, $04, $da, $10, $30, $a1
@@ -192,38 +199,48 @@ data_f19d:
         db $bb, $0d, $31, $20, $dc, $4c, $08, $4d, $61, $ef, $fd, $ee, $ee, $ee, $d0, $c2
         db $02, $81, $07, $d7, $1b, $bf, $d9, $1d, $8c, $59, $17, $0e, $3e, $00, $a5, $3d
         db $64, $6a, $7d, $ee, $cf, $ff, $f0
-        ; end of unknown area $f19e to $f1f6
+        
 
 
 data_f1f7:
         db $f4
 
-        ; start of unknown area $f1f8 to $f230
+        
         db $f8, $02, $30, $f9, $16, $05, $f2, $fd
         db $eb, $da, $1b, $b0, $a4, $61, $de, $05, $07, $83, $bb, $fd, $29, $36, $7d, $74
         db $92, $0d, $c4, $c0, $24, $0d, $44, $56, $fd, $dc, $4c, $90, $d2, $95, $16, $a7
         db $03, $20, $84, $d6, $1d, $ef, $dd, $23, $91, $da, $1b, $b0, $81, $94, $de, $ec
         db $ff
-        ; end of unknown area $f1f8 to $f230
+        
 
 
-data_f231:
-        db $f7
-
-        ; start of unknown area $f232 to $f28f
-        db $f8, $02, $30, $f9, $1a, $08, $f3, $fd, $a5, $dd, $dd, $dc, $03, $6a
+data_f231:  ;                             :h             di    z    z   y    :a   nd
+        db $f7, $f8, $02, $30, $f9, $1a, $08, $f3, $fd, $a5, $dd, $dd, $dc, $03, $6a
+;           :h   is   :    fr   ie   nd   s:   ar   e     p   a    fe   l    y:   ho    m       
         db $08, $57, $0d, $29, $51, $6a, $70, $39, $1f, $d7, $3d, $21, $bd, $c0, $84, $d6
+
+ ;          e    @;   th   e:   e    vi   l     z   di    z   ar   d:        
         db $1d, $e0, $28, $10, $1d, $95, $bf, $dd, $a5, $dd, $39, $a0, $dd, $3d, $57, $05
         db $70, $a1, $3a, $03, $2f, $db, $37, $20, $36, $a0, $28, $10, $dc, $4b, $d5, $d2
         db $4b, $d5, $03, $91, $fd, $73, $d2, $10, $46, $d1, $10, $3d, $33, $56, $ee, $ee
         db $ee, $fd, $d2, $49, $06, $4d, $ad, $ef, $dd, $a1, $bb, $0a, $46, $1d, $ef, $f0
-        ; end of unknown area $f232 to $f28f
+ 
+//                                                                   
+//  0    1    2    3    4    5    6    7    8    9    a    b    c    
+//[':', 'E', 'T', 'A', 'O', 'I', 'N', 'S', 'H', 'R', 'D', 'L', 'U', 
+//D                                                                          
+// 0    1    2    3    4    5    6    7    8    9    a    b    c    d    e    
+//'B', 'C', 'F', 'G', 'J', 'K', 'M', 'P', 'Q', 'V', 'W', 'X', 'Y', 'Z', '@', 
+//E                                                                                                   
+// 0    1    2    3    4    5    6    7    8    9    a    b    c    d    e    f 
+//'?', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ';', '&', "'", '<', '>', '=']
+
 
 
 data_f290:
         db $f2
 
-        ; start of unknown area $f291 to $f348
+        
         db $f8, $02, $30, $f9, $1a, $04, $f6, $fd, $7c, $aa, $16, $bd, $c0, $28, $10
         db $13, $92, $80, $78, $3d, $51, $7f, $d3, $6a, $0d, $d3, $d5, $7e, $a0, $d2, $c9
         db $54, $c7, $0d, $94, $5d, $11, $fd, $d0, $44, $d6, $70, $4d, $91, $90, $28, $10
@@ -240,25 +257,25 @@ data_f30b:
         db $81, $02, $94, $bb, $ed, $fd, $f7, $fd, $eb, $dc, $4c, $0d, $13, $6e, $a2, $0d
         db $19, $47, $70, $da, $52, $84, $c2, $fd, $d3, $5d, $95, $6d, $30, $d6, $10, $e3
         db $e0, $0a, $53, $d6, $46, $a7, $de, $ec, $ff
-        ; end of unknown area $f291 to $f348
+        
 
 
 data_f349:
         db $f6
 
-        ; start of unknown area $f34a to $f387
+        
         db $f8, $02, $30, $f9, $16, $05
         db $f4, $fd, $eb, $74, $99, $dc, $0d, $63, $21, $ed, $5e, $ad, $60, $d1, $b1, $36
         db $fd, $4c, $20, $4d, $20, $da, $57, $81, $7e, $e0, $dc, $4c, $fd, $da, $19, $16
         db $ea, $20, $28, $10, $d2, $59, $72, $02, $4f, $dd, $25, $6a, $0d, $61, $ed, $dc
         db $4c, $0d, $56, $4d, $ad, $ee, $cf, $f0
-        ; end of unknown area $f34a to $f387
+        
 
 
 data_f388:
         db $f6
 
-        ; start of unknown area $f389 to $f41d
+        
         db $f8, $02, $30, $f9, $16, $05, $f4
         db $fd, $da, $37, $02, $83, $20, $16, $4c, $d3, $80, $24, $fd, $da, $3d, $51, $0d
         db $c4, $c0, $cd, $7d, $f0, $b5, $72, $16, $ed, $fd, $5e, $ad, $91, $0d, $34, $20
@@ -272,47 +289,47 @@ data_f3e2:
         db $9d, $95, $6d, $30, $91, $3a, $70, $ef, $f5, $fd, $fd, $da, $84, $74, $1d, $91
         db $90, $d7, $cb, $b7, $fd, $1d, $bd, $13, $b5, $d0, $c9, $0d, $29, $4d, $60, $28
         db $1f, $d7, $24, $61, $07, $83, $bb, $0d, $01, $0d, $55, $6d, $3f, $f0
-        ; end of unknown area $f389 to $f41d
+        
 
 
 data_f41e:
         db $f2
 
-        ; start of unknown area $f41f to $f450
+        
         db $f8
         db $02, $30, $f9, $17, $04, $f6, $fd, $1d, $bd, $13, $b5, $d0, $c9, $0d, $a4, $6e
         db $a2, $0d, $0c, $ad, $31, $de, $fd, $dc, $4c, $0d, $4c, $72, $0d, $13, $6e, $a2
         db $0d, $31, $20, $3f, $dd, $34, $4a, $01, $64, $cd, $38, $0d, $39, $5d, $7d, $ef
         db $f0
-        ; end of unknown area $f41f to $f450
+        
 
 
 data_f451:
         db $f2
 
-        ; start of unknown area $f452 to $f494
+        
         db $f8, $02, $30, $f9, $14, $06, $f6, $fd, $dc, $4c, $90, $d3, $b4, $d9
         db $10, $57, $0d, $3b, $c1, $af, $d2, $40, $28, $10, $85, $b2, $de, $0d, $a5, $28
         db $03, $fd, $81, $3d, $91, $0d, $c4, $c0, $74, $46, $0d, $7c, $bb, $fd, $1d, $bd
         db $13, $b5, $d0, $c9, $0d, $29, $11, $de, $fd, $83, $5b, $0d, $55, $6d, $30, $a5
         db $dd, $dd, $dc, $de, $ff
-        ; end of unknown area $f452 to $f494
+        
 
 
 data_f495:
         db $f2
 
-        ; start of unknown area $f496 to $f4b4
+        
         db $f8, $02, $30, $f9, $11, $03, $f6, $fd, $dc, $cd
         db $1d, $5d, $e0, $52, $ea, $70, $72, $cd, $1d, $5f, $d2, $40, $dc, $4c, $90, $d3
         db $b4, $d9, $1d, $ef, $f0
-        ; end of unknown area $f496 to $f4b4
+        
 
 
 data_f4b5:
         db $f2
 
-        ; start of unknown area $f4b6 to $f592
+        
         db $f8, $02, $30, $f9, $13, $03, $f6, $fd, $dc, $4c
         db $90, $d3, $b4, $d9, $1e, $a7, $07, $25, $bb, $fd, $72, $cd, $1d, $50, $24, $02
         db $81, $08, $5b, $2d, $ef, $f0
@@ -321,7 +338,9 @@ data_f4d6:
         
         db $f2, $f8, $02, $30, $f9, $10, $03, $f6, $fd, $28
         db $10, $a4, $49, $0d, $19, $13, $d5, $7f, $d7, $b4, $da, $bd, $c0, $4d, $71, $6e
-        db $ee, $ee, $ef, $f0, $f2, $f8, $02, $30, $f9, $09, $02, $f6, $fd, $dc, $cd, $6d
+        db $ee, $ee, $ef, $f0
+        
+        db $f2, $f8, $02, $30, $f9, $09, $02, $f6, $fd, $dc, $cd, $6d
         db $6d, $cd, $ed, $ed, $ef, $f0
         
 data_f506:        
@@ -346,7 +365,7 @@ data_f575:
         db $f2, $f8, $02, $30, $f9, $11, $03, $f6, $fd, $dc, $4c
         db $09, $cd, $00, $28, $10, $b3, $d6, $d7, $fd, $da, $52, $80, $28, $10, $ac, $72
         db $19, $ee, $ff
-        ; end of unknown area $f4b6 to $f592
+        
 
 
 data_f593:
@@ -365,17 +384,17 @@ data_f5da
 data_f5ed:
         db $f2
 
-        ; start of unknown area $f5ee to $f604
+        
         db $f8, $02
         db $30, $f9, $12, $03, $f6, $fd, $28, $10, $d3, $43, $20, $d0, $c2, $27, $fd, $28
         db $10, $29, $4b, $bf, $f0
-        ; end of unknown area $f5ee to $f604
+        
 
 
 data_f605:
         db $f2
 
-        ; start of unknown area $f606 to $f68a
+        
         db $f8, $02, $30, $f9, $12, $04, $f6, $fd, $d1, $b5
         db $d1, $d5, $de, $07, $4d, $61, $28, $56, $d3, $fd, $83, $d7, $d7, $16, $1a, $0d
         db $a8, $16, $0d, $c4, $cf, $dd, $7c, $bb, $1a, $02, $81, $02, $49, $d1, $8d, $ef
@@ -397,23 +416,23 @@ data_f69f:
         db $f2, $f8, $02, $30, $f9, $16, $03, $f6, $fd, $dc, $4c, $0d, $25, $bb, $02, $81, $0d
         db $0c, $d1, $d5, $12, $fd, $da, $52, $80, $84, $20, $d3, $1d, $c7, $19, $0d, $a3
         db $21, $9f, $f0
-        ; end of unknown area $f68c to $f6c2
+        
 
 
 data_f6c3:
         db $f2
 
-        ; start of unknown area $f6c4 to $f6e6
+        
         db $f8, $02, $30, $f9, $15, $04, $f6, $fd, $a3, $57, $dc, $0d
         db $39, $4d, $a7, $0c, $62, $5b, $fd, $78, $10, $d2, $5b, $b7, $02, $81, $01, $62
         db $59, $1f, $d9, $44, $d6, $de, $ff
-        ; end of unknown area $f6c4 to $f6e6
+        
 
 
 data_f6e7:
         db $f5
 
-        ; start of unknown area $f6e8 to $f722
+        
         db $f8, $02, $40, $f9, $17, $03, $f6, $fd
         db $39, $10, $dc, $4c, $07, $c9, $10, $52, $ea, $7f, $d7, $3d, $21, $ed, $a5, $dd
         db $dd, $dc, $df, $ff, $f2, $f8, $04, $60, $f9, $13, $04, $f6, $fd, $a3, $57, $dc
@@ -441,13 +460,13 @@ data_f723:
         db $3b, $95, $d3, $82, $de, $08, $c9, $9d, $cf, $d8, $4d, $61, $0d, $6d, $c0, $a5
         db $dd, $dd, $5d, $55, $67, $de, $ff, $f4, $f8, $10, $58, $f9, $0f, $02, $f3, $fd
         db $a5, $dd, $dd, $5d, $55, $67, $df, $df, $df, $ff, $ff
-        ; end of unknown area $f724 to $f7ea
+        
 
 
 data_f7eb:
         db $f2
 
-        ; start of unknown area $f7ec to $f85d
+        
         db $f8, $02, $30, $f9
         db $1a, $06, $f6, $fd, $dd, $3d, $57, $ea, $0d, $39, $36, $ad, $64, $28, $19, $fd
         db $d9, $3d, $6d, $75, $93, $0d, $05, $21, $70, $dc, $4c, $03, $6a, $fd, $d5, $5b
@@ -464,83 +483,79 @@ data_f83a:
 data_f85e:
         db $f6
 
-        ; start of unknown area $f85f to $f877
+        
         db $f8
         db $0a, $40, $f9, $12, $06, $f2, $f8, $10, $74, $dc, $4c, $0b, $47, $10, $30, $b5
         db $d2, $1d, $ef, $5f, $81, $25, $0f, $f0
-        ; end of unknown area $f85f to $f877
+        
 
 
 data_f878:
         db $fd
 
-        ; start of unknown area $f879 to $f88b
+        
         db $dc, $4c, $0d, $a1, $91, $0d, $0c
         db $96, $2f, $dd, $0d, $c0, $28, $10, $d2, $b3, $d6, $17, $ff
-        ; end of unknown area $f879 to $f88b
+        
 
 
 data_f88c:
         db $fd
 
-        ; start of unknown area $f88d to $f89e
+        
         db $dc, $4c, $0d
         db $a1, $91, $0d, $0c, $96, $2f, $dd, $0d, $c0, $28, $10, $b3, $d9, $3f, $f0
-        ; end of unknown area $f88d to $f89e
+        
 
 
 data_f89f:
         db $fd
 
-        ; start of unknown area $f8a0 to $f8b3
+        
         db $dc, $4c, $0d, $21, $bb, $05, $60, $28, $1f, $dd, $a3, $21, $90, $36, $a0, $a9
         db $4d, $a6, $1a, $ff
-        ; end of unknown area $f8a0 to $f8b3
+        
 
 
 data_f8b4:
         db $fd
 
-        ; start of unknown area $f8b5 to $f8cb
+        
         db $a5, $dd, $dd, $dc, $0d, $4c, $72, $0d, $01, $d1, $3d
         db $61, $fd, $30, $d0, $45, $b1, $a0, $1d, $3d, $3d, $ef, $f0
-        ; end of unknown area $f8b5 to $f8cb
+        
 
 
 data_f8cc:
         db $fd
 
-        ; start of unknown area $f8cd to $f8df
+        
         db $dc, $4c, $0d
         db $34, $20, $d5, $5b, $b1, $af, $dd, $0d, $c0, $30, $83, $9d, $7d, $cd, $ef, $f0
-        ; end of unknown area $f8cd to $f8df
+        
 
 
 data_f8e0:
         db $fd
 
-        ; start of unknown area $f8e1 to $f8f2
+        
         db $dc, $4c, $0d, $34, $20, $d5, $5b, $b1, $af, $dd, $0d, $c0, $30, $d3, $84
         db $72, $de, $ff
-        ; end of unknown area $f8e1 to $f8f2
+        
 
 
 data_f8f3:
         db $fd, $dc, $4c, $0d, $34, $20, $d3, $4d, $0d, $0b, $1a, $fd, $d0, $dc, $02, $81, $09, $32, $de, $ff
 
 data_f907:
-        db $fd, $28
+        db $fd, $28, $10, $29, $4b, $b0, $d5, $5d, $1d, $51, $af, $dd, $c4, $c0, $83, $9a, $de, $ff
         
-        
-        db $10, $29, $4b, $b0, $d5, $5d, $1d
-        db $51, $af, $dd, $c4, $c0, $83, $9a, $de, $ff
-        ; end of unknown area $f8f4 to $f918
 
 
 data_f919:
         db $fd
 
-        ; start of unknown area $f91a to $f939
+        
         db $dc, $4c, $0d, $34, $20, $72
         db $9c, $d1, $d5, $fd, $d0, $dc, $0b, $5d, $38, $21, $65, $6d, $3d, $ef, $de, $f8
         db $4d, $a0
@@ -552,145 +567,135 @@ data_f919:
 data_f93a:
         db $fd
 
-        ; start of unknown area $f93b to $f94c
+        
         db $dc, $4c, $0d, $34, $20
         db $85, $20, $d0, $dc, $fd, $30, $d1, $4d, $14, $6c, $2d, $ef, $f0
-        ; end of unknown area $f93b to $f94c
+        
 
 
 data_f94d:
         db $fd
 
-        ; start of unknown area $f94e to $f961
+        
         db $7d, $7b
         db $32, $de, $0d, $c4, $c0, $d3, $42, $fd, $85, $20, $d0, $dc, $07, $b5, $d6, $1d
         db $ef, $f0
-        ; end of unknown area $f94e to $f961
+        
 
 
 data_f962:
         db $fd
 
-        ; start of unknown area $f963 to $f970
+        
         db $30, $d6, $47, $d8, $c5, $24, $fd, $d0, $52, $0d, $c4, $cd, $ef
         db $f0
-        ; end of unknown area $f963 to $f970
+        
 
 
 data_f971:
-        db $fd
-
-        ; start of unknown area $f972 to $f982
-        db $30, $91, $a0, $d7, $3d, $a6, $fd, $d1, $3d, $72, $c9, $1a, $0d, $c4
-        db $cd, $ef, $f0
-        ; end of unknown area $f972 to $f982
-
+        db $fd, $30, $91, $a0, $d7, $3d, $a6, $fd, $d1, $3d, $72, $c9, $1a, $0d, $c4, $cd, $ef, $f0
 
 data_f983:
         db $fd
 
-        ; start of unknown area $f984 to $f997
+        
         db $30, $d2, $b3, $d6, $10, $7d, $75, $95, $2f, $dd, $29, $3d
         db $dd, $db, $1a, $0d, $c4, $cd, $ef, $f0
-        ; end of unknown area $f984 to $f997
+        
 
 
 data_f998:
-        db $fd
-
-        ; start of unknown area $f999 to $f9a8
-        db $30, $d9, $3d, $6d, $75, $91, $0d
-        db $03, $2f, $dd, $05, $20, $dc, $4c, $de, $ff
-        ; end of unknown area $f999 to $f9a8
+        db $fd, $30, $d9, $3d, $6d, $75, $91, $0d, $03, $2f, $dd, $05, $20, $dc, $4c, $de, $ff
+        
 
 
 data_f9a9:
         db $fd
 
-        ; start of unknown area $f9aa to $f9b6
+        
         db $d9, $3d, $6d, $75, $93, $fd
         db $d0, $52, $0d, $c4, $cd, $ef, $f0
-        ; end of unknown area $f9aa to $f9b6
+        
 
 
 data_f9b7:
         db $fd
 
-        ; start of unknown area $f9b8 to $f9c2
+        
         db $d8, $c1, $16, $02, $3d, $51, $70, $d7
         db $3d, $a6, $ff
-        ; end of unknown area $f9b8 to $f9c2
+        
 
 
 data_f9c3:
         db $fd
 
-        ; start of unknown area $f9c4 to $f9d6
+        
         db $dc, $4c, $0d, $a1, $91, $07, $d8, $c5, $ad, $31, $af, $dd
         db $0d, $c0, $a3, $57, $dc, $de, $ff
-        ; end of unknown area $f9c4 to $f9d6
+        
 
 
 data_f9d7:
         db $fd
 
-        ; start of unknown area $f9d8 to $f9ea
+        
         db $dc, $4c, $0d, $a1, $91, $05, $d6, $d7
         db $3b, $1a, $fd, $46, $03, $07, $d7, $5d, $51, $de, $ff
-        ; end of unknown area $f9d8 to $f9ea
+        
 
 
 data_f9eb:
         db $f5
 
-        ; start of unknown area $f9ec to $fa0a
+        
         db $f8, $10, $40, $f9
         db $0c, $05, $f3, $fd, $da, $1b, $b0, $a4, $61, $de, $f6, $fd, $fd, $dc, $4c, $0d
         db $24, $c6, $a0, $3f, $da, $53, $d6, $46, $ad, $ef, $f0
-        ; end of unknown area $f9ec to $fa0a
+        
 
 
 data_fa0b:
         db $f4
 
-        ; start of unknown area $fa0c to $fa1f
+        
         db $f8, $06, $38, $f9
         db $16, $08, $f5, $fd, $dc, $4c, $03, $91, $0d, $13, $99, $dc, $56, $d3, $f2, $ff
-        ; end of unknown area $fa0c to $fa1f
+        
 
 
 data_fa20:
         db $f7
 
-        ; start of unknown area $fa21 to $fa3c
+        
         db $f8, $0e, $88, $f9, $0e, $02, $f5, $f8, $12, $98, $d1, $84, $47, $10, $52
         db $1d, $60, $24, $f8, $15, $a0, $c7, $10, $49, $0a, $94, $d7, $ff
-        ; end of unknown area $fa21 to $fa3c
+        
 
 
 data_fa3d:
         db $f7
 
-        ; start of unknown area $fa3e to $fa5e
+        
         db $f8, $0c
         db $88, $f9, $10, $02, $f5, $f8, $10, $98, $dc, $4c, $03, $91, $0d, $13, $99, $dc
         db $56, $d3, $f8, $10, $a0, $24, $40, $d6, $cd, $18, $02, $40, $84, $ba, $ff
-        ; end of unknown area $fa3e to $fa5e
+        
 
 
 data_fa5f:
         db $f8
 
-        ; start of unknown area $fa60 to $fa79
+        
         db $16, $60, $f7, $6f, $81, $96, $04, $f8, $1c, $60, $2f, $81, $f6, $08, $f8, $22
         db $60, $5f, $82, $56, $06, $f8, $28, $60, $d3, $ff
-        ; end of unknown area $fa60 to $fa79
+        
 
 
 data_fa7a:
         db $ff
 
-        ; start of unknown area $fa7b to $fb96
+        
         db $1d, $b5, $20, $36, $a0
         db $a4, $6e, $a2, $0a, $94, $d7, $ff, $74, $d6, $10, $d6, $3d, $35, $d1, $0d, $75
         db $d7, $17, $ff, $30, $d7, $19, $74, $63, $b0, $72, $19, $14, $ff, $30, $d0, $c9
@@ -710,7 +715,7 @@ data_fa7a:
         db $3d, $1d, $5a, $44, $90, $d5, $1d, $cf, $f0, $da, $11, $ad, $55, $bb, $19, $0d
         db $74, $25, $46, $ff, $1d, $6d, $72, $dc, $0d, $65, $bd, $50, $d0, $42, $2b, $1f
         db $f0, $30, $93, $5b, $56, $d3, $ff
-        ; end of unknown area $fa7b to $fb96
+        
 
 
 nomes_niveis:
@@ -775,7 +780,7 @@ data_fc92:
         db $28, $10, $d6, $dc, $72, $19, $54, $c7, $0d, $64, $64, $b5, $28, $ff
         
         db $d3, $da, $15, $9a, $81, $6d, $31, $ff
-        ; end of unknown area $fc93 to $fd55
+        
 
 
 data_fd56:
