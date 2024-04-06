@@ -9,8 +9,6 @@ energy_level_screen_start equ $4134
 dizzy_image_xor_background equ $5c00
 
 
-
-
 l_0562       equ $0562
 
 
@@ -7204,11 +7202,11 @@ stack:
 
 
 
+        org $fdfd
 interrupt:
         jp interrupt_handler
 
-
-lista_de_fd:
+interrupt_table:
         db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
         db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
         db $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd, $fd
